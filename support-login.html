@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support Login | Creative Web Solutions</title>
+  <style>
+    :root {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #eef2ff;
+      color: #111827;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+      background: radial-gradient(circle at top left, rgba(124, 58, 237, 0.18), transparent 35%),
+                  linear-gradient(180deg, #f8f6ff 0%, #eef0ff 45%, #f9f7ff 100%);
+      color: #111827;
+    }
+
+    .login-shell {
+      width: min(980px, 100%);
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 2rem;
+      background: rgba(255,255,255,0.96);
+      border: 1px solid rgba(124, 58, 237, 0.18);
+      border-radius: 32px;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(99, 102, 241, 0.12);
+    }
+
+    .info-panel,
+    .form-panel {
+      padding: 3rem;
+    }
+
+    .info-panel {
+      background: linear-gradient(180deg, #faf5ff 0%, #f3efff 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1.25rem;
+    }
+
+    .info-panel h1 { margin: 0; font-size: clamp(2rem, 2.8vw, 3rem); color: #4c1d95; }
+    .info-panel p { margin: 0; color: #5b4b96; line-height: 1.8; }
+    .info-panel .benefits { display: grid; gap: 1rem; }
+    .info-panel .benefit { display: flex; gap: 0.75rem; align-items: flex-start; }
+    .benefit-dot { width: 12px; height: 12px; margin-top: 0.45rem; border-radius: 999px; background: #8b5cf6; }
+
+    .agent-counts {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.85rem;
+      margin-top: 1.25rem;
+    }
+    .agent-count {
+      padding: 1rem;
+      border-radius: 18px;
+      background: #ffffff;
+      border: 1px solid rgba(124, 58, 237, 0.18);
+      color: #4338ca;
+    }
+    .agent-count strong {
+      display: block;
+      font-size: 1.9rem;
+      line-height: 1;
+    }
+    .agent-count span {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #6b7280;
+    }
+
+    .form-panel h2 { margin: 0 0 1rem; font-size: 2rem; }
+    .form-panel p { margin: 0 0 2rem; color: #6b7280; }
+
+    .form-group { margin-bottom: 1.25rem; }
+    label { display: block; margin-bottom: 0.5rem; color: #334155; font-size: 0.95rem; }
+    input { width: 100%; min-height: 3rem; padding: 0.95rem 1rem; border-radius: 16px; border: 1px solid #cbd5e1; font-size: 1rem; }
+    input:focus { outline: none; border-color: #7c3aed; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12); }
+
+    .primary-btn,
+    .secondary-btn {
+      width: 100%;
+      padding: 1rem 1.1rem;
+      border-radius: 16px;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .primary-btn { background: linear-gradient(135deg, #7c3aed 0%, #9333ea 100%); color: #fff; }
+    .primary-btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+    .secondary-btn { background: #fff; color: #4f46e5; border: 1px solid rgba(99, 102, 241, 0.25); }
+    .secondary-btn:hover { background: rgba(99, 102, 241, 0.08); }
+
+    .back-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.35rem; }
+    .page-footnote { margin-top: 1.5rem; color: #6b7280; font-size: 0.95rem; }
+    .page-footnote a { color: #7c3aed; text-decoration: none; font-weight: 600; }
+    .error-message { margin-top: 1rem; color: #b91c1c; font-size: 0.95rem; font-weight: 600; }
+    body.dark-mode .error-message { color: #fecaca; }
+
+    .theme-toggle { position: fixed; top: 1rem; right: 1rem; z-index: 1000; padding: 0.75rem 1rem; border-radius: 999px; border: 1px solid rgba(124, 58, 237, 0.25); background: #ffffff; color: #5b4b96; font-weight: 600; cursor: pointer; transition: background 0.2s ease, transform 0.2s ease; }
+    .theme-toggle:hover { background: rgba(124, 58, 237, 0.08); }
+
+    body.dark-mode { background: #0b1222; color: #e2e8f0; }
+    body.dark-mode .login-shell { background: #111827; border-color: #334155; }
+    body.dark-mode .info-panel,
+    body.dark-mode .form-panel { background: #111827; }
+    body.dark-mode label,
+    body.dark-mode input,
+    body.dark-mode .page-footnote,
+    body.dark-mode .info-panel p,
+    body.dark-mode .benefit span,
+    body.dark-mode .back-links a { color: #e2e8f0; }
+    body.dark-mode input { background: #111827; border-color: #334155; }
+    body.dark-mode .primary-btn { background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%); }
+    body.dark-mode .secondary-btn { background: #1f2937; border-color: rgba(148, 163, 184, 0.3); color: #e5e7eb; }
+    body.dark-mode .theme-toggle { background: #1f2937; color: #e5e7eb; border-color: rgba(148, 163, 184, 0.45); }
+    body.dark-mode .agent-count { background: #1f2937; border-color: #334155; color: #e5e7eb; }
+    body.dark-mode .agent-count span { color: #9ca3af; }
+
+    body.dark-mode a,
+    body.dark-mode button,
+    body.dark-mode textarea,
+    body.dark-mode select {
+      color: #e2e8f0;
+    }
+
+    body.dark-mode input::placeholder {
+      color: #94a3b8;
+    }
+
+    @media (max-width: 860px) { .login-shell { grid-template-columns: 1fr; } }
+    @media (max-width: 540px) { body { padding: 1.5rem; } .info-panel, .form-panel { padding: 2rem; } }
+  </style>
+</head>
+<body>
+  <button id="themeToggle" class="theme-toggle" type="button">Dark Mode</button>
+  <div class="login-shell">
+    <aside class="info-panel">
+      <h1>Support Team Login</h1>
+      <p>Secure access for customer support staff. Review open tickets, respond quickly, and assist your customers with everything they need.</p>
+      <div class="benefits">
+        <div class="benefit"><span class="benefit-dot"></span><span>Track customer requests in one place</span></div>
+        <div class="benefit"><span class="benefit-dot"></span><span>View ticket details and activity</span></div>
+        <div class="benefit"><span class="benefit-dot"></span><span>Update status and resolve issues faster</span></div>
+      </div>
+      <div class="agent-counts">
+        <div class="agent-count">
+          <strong id="onlineCount">0</strong>
+          <span>agents online</span>
+        </div>
+        <div class="agent-count">
+          <strong id="offlineCount">0</strong>
+          <span>agents offline</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="form-panel">
+      <div class="back-links">
+        <a class="secondary-btn" href="index.htm">← Home</a>
+        <a class="secondary-btn" href="login.html">← Customer Login</a>
+      </div>
+      <h2>Agent sign in</h2>
+      <p>Enter your staff credentials to access the support portal.</p>
+      <form id="supportLoginForm">
+        <div class="form-group">
+          <label for="supportEmail">Work email</label>
+          <input type="email" id="supportEmail" name="supportEmail" required placeholder="agent@creativewebsolutions.com">
+        </div>
+        <div class="form-group">
+          <label for="supportPassword">Password</label>
+          <input type="password" id="supportPassword" name="supportPassword" required placeholder="Enter your password">
+        </div>
+        <button type="submit" class="primary-btn">Sign In</button>
+      </form>
+      <p id="loginError" class="error-message"></p>
+      <p class="page-footnote">Need help? Contact your team lead or use the customer portal support desk.</p>
+    </main>
+  </div>
+
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+    const storedTheme = localStorage.getItem('siteTheme') || 'light';
+    const applyTheme = (theme) => {
+      document.body.classList.toggle('dark-mode', theme === 'dark');
+      themeToggle.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
+      themeToggle.setAttribute('aria-pressed', theme === 'dark');
+      localStorage.setItem('siteTheme', theme);
+    };
+
+    themeToggle.addEventListener('click', () => {
+      const nextTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+      applyTheme(nextTheme);
+    });
+    applyTheme(storedTheme);
+
+    if (!localStorage.getItem('supportStaff') && localStorage.getItem('portalCustomer')) {
+      window.location.href = 'index.htm';
+    }
+
+    const authorizedSupportAgents = {
+      'support@creativewebsolutions.com': 'Support Agent',
+      'helpdesk@creativewebsolutions.com': 'Support Agent',
+      'kyle.creativesolutions@gmail.com': 'Support Administrator'
+    };
+
+    const onlineCountEl = document.getElementById('onlineCount');
+    const offlineCountEl = document.getElementById('offlineCount');
+
+    const getSupportOnlineAgents = () => {
+      const stored = JSON.parse(localStorage.getItem('supportOnlineAgents') || '[]');
+      if (!Array.isArray(stored)) return [];
+      return [...new Set(stored
+        .map(email => String(email).toLowerCase())
+        .filter(email => Object.prototype.hasOwnProperty.call(authorizedSupportAgents, email))
+      )];
+    };
+
+    const saveSupportOnlineAgents = (emails) => {
+      localStorage.setItem('supportOnlineAgents', JSON.stringify(
+        [...new Set(emails.map(email => String(email).toLowerCase()))]
+      ));
+    };
+
+    const addOnlineAgent = (email) => {
+      const roster = getSupportOnlineAgents();
+      const normalized = String(email).toLowerCase();
+      if (!roster.includes(normalized)) {
+        roster.push(normalized);
+        saveSupportOnlineAgents(roster);
+      }
+    };
+
+    const updateAgentCounts = () => {
+      const online = getSupportOnlineAgents().length;
+      const totalAgents = Object.keys(authorizedSupportAgents).length;
+      onlineCountEl.textContent = online;
+      offlineCountEl.textContent = Math.max(totalAgents - online, 0);
+    };
+
+    const loginError = document.getElementById('loginError');
+    updateAgentCounts();
+    const supportLoginForm = document.getElementById('supportLoginForm');
+    supportLoginForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const email = document.getElementById('supportEmail').value.trim().toLowerCase();
+      const password = document.getElementById('supportPassword').value.trim();
+      if (!authorizedSupportAgents[email]) {
+        loginError.textContent = 'Access denied. This account does not have support portal permissions.';
+        return;
+      }
+      if (!password) {
+        loginError.textContent = 'Please enter your password.';
+        return;
+      }
+      loginError.textContent = '';
+      const name = email.split('@')[0].replace(/[^a-zA-Z0-9]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) || 'Support Agent';
+      localStorage.removeItem('portalCustomer');
+      const staff = { email, name, role: authorizedSupportAgents[email] };
+      localStorage.setItem('supportStaff', JSON.stringify(staff));
+      addOnlineAgent(email);
+      window.location.href = 'support-portal.html';
+    });
+
+    const existing = localStorage.getItem('supportStaff');
+    if (existing) {
+      const existingStaff = JSON.parse(existing);
+      if (existingStaff?.email && authorizedSupportAgents[existingStaff.email.toLowerCase()]) {
+        window.location.href = 'support-portal.html';
+      } else {
+        localStorage.removeItem('supportStaff');
+      }
+    }
+  </script>
+</body>
+</html>

@@ -166,10 +166,69 @@
       gap: 1.5rem;
     }
 
-    .grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+    .content-section {
+      display: none;
       gap: 1.5rem;
+    }
+
+    .content-section.active {
+      display: grid;
+    }
+
+    .project-list,
+    .invoice-list,
+    .message-list {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .project-card,
+    .invoice-card,
+    .message-card,
+    .setting-card {
+      padding: 1.25rem;
+      border-radius: 24px;
+      background: var(--surface-alt);
+      border: 1px solid rgba(229, 231, 235, 0.8);
+    }
+
+    .project-card strong,
+    .invoice-card strong,
+    .message-card strong {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.98rem;
+      color: #111827;
+    }
+
+    .project-card span,
+    .invoice-card span,
+    .message-card span {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    .detail-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    .nav-note {
+      margin-top: 1rem;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .main-content h2 {
+      margin-top: 0;
+    }
+
+    .card-list small {
+      color: var(--text-muted);
     }
 
     .recent-activity,
@@ -246,13 +305,100 @@
       transform: translateY(-1px);
     }
 
-    .footer-panel {
+    .theme-toggle,
+    .logout-button {
+      padding: 0.75rem 1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(124, 58, 237, 0.25);
+      background: #ffffff;
+      color: #5b4b96;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .theme-toggle:hover,
+    .logout-button:hover {
+      background: rgba(124, 58, 237, 0.08);
+    }
+
+    .theme-toggle.dark {
+      background: #1f2937;
+      color: #e5e7eb;
+      border-color: rgba(148, 163, 184, 0.45);
+    }
+
+    body.dark-mode .logout-button {
+      background: #1f2937;
+      color: #e5e7eb;
+      border-color: rgba(148, 163, 184, 0.45);
+    }
+
+    body.dark-mode {
+      background: #090b17;
+      color: #e2e8f0;
+    }
+
+    body.dark-mode .topbar,
+    body.dark-mode .panel {
+      background: #111827;
+      border-color: #374151;
+      color: #e5e7eb;
+    }
+
+    body.dark-mode .topbar a,
+    body.dark-mode .nav-link,
+    body.dark-mode .profile-pill {
+      color: #e5e7eb;
+    }
+
+    body.dark-mode .topbar a:hover,
+    body.dark-mode .nav-link:hover,
+    body.dark-mode .nav-link.active {
+      color: #a78bfa;
+    }
+
+    body.dark-mode .profile-pill {
+      background: #1f2937;
+    }
+
+    body.dark-mode .status-card .card,
+    body.dark-mode .chart-placeholder,
+    body.dark-mode .help-card button,
+    body.dark-mode .panel,
+    body.dark-mode section,
+    body.dark-mode .footer-panel,
+    body.dark-mode .status-card {
+      background: #111827;
+      border-color: #374151;
+    }
+
+    body.dark-mode h1,
+    body.dark-mode h2,
+    body.dark-mode h3,
+    body.dark-mode p,
+    body.dark-mode span,
+    body.dark-mode a,
+    body.dark-mode label,
+    body.dark-mode input,
+    body.dark-mode button,
+    body.dark-mode textarea,
+    body.dark-mode select {
+      color: #e5e7eb;
+    }
+
+    body.dark-mode .badge.success { background: #14532d; color: #d1fae5; }
+    body.dark-mode .badge.warning { background: #78350f; color: #fef3c7; }
+    body.dark-mode .badge.info { background: #4338ca; color: #eef2ff; }
+
+    body.dark-mode .footer-panel {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 1rem;
       padding-top: 0.5rem;
-      color: var(--text-muted);
+      color: #94a3b8;
       font-size: 0.95rem;
     }
 
@@ -291,11 +437,13 @@
     <header class="topbar">
       <div class="brand"><span class="brand-dot"></span>Creative Web Solutions Portal</div>
       <nav>
-        <a href="index.html">Home</a>
+        <a href="index.htm">Home</a>
         <a href="services.html">Services</a>
         <a href="login.html">Account</a>
       </nav>
       <div class="profile-pill" id="profilePill">Hi, Taylor</div>
+      <button id="logoutBtn" class="logout-button" type="button">Log Out</button>
+      <button id="themeToggle" class="theme-toggle" type="button">Dark Mode</button>
     </header>
 
     <section class="panel">
@@ -312,11 +460,12 @@
       <aside class="sidebar">
         <div class="panel">
           <h2>Navigation</h2>
-          <a class="nav-link active" href="#">Overview</a>
-          <a class="nav-link" href="#">Projects</a>
-          <a class="nav-link" href="#">Billing</a>
-          <a class="nav-link" href="#">Messages</a>
-          <a class="nav-link" href="#">Settings</a>
+          <a class="nav-link active" href="#" data-section="overview">Overview</a>
+          <a class="nav-link" href="#" data-section="projects">Projects</a>
+          <a class="nav-link" href="#" data-section="billing">Billing</a>
+          <a class="nav-link" href="#" data-section="messages">Messages</a>
+          <a class="nav-link" href="#" data-section="settings">Settings</a>
+          <p class="nav-note">Select a section to view the right pane with detailed stats and actions.</p>
         </div>
 
         <div class="panel">
@@ -331,70 +480,258 @@
       </aside>
 
       <main class="main-content">
-        <section class="panel status-card">
-          <div class="card">
-            <p class="card-title">Active projects</p>
-            <p class="card-value" id="activeProjects">8</p>
+        <section class="content-section panel active" id="overviewSection">
+          <div class="status-card">
+            <div class="card">
+              <p class="card-title">Active projects</p>
+              <p class="card-value" id="activeProjects">8</p>
+            </div>
+            <div class="card">
+              <p class="card-title">New leads</p>
+              <p class="card-value" id="newLeads">24</p>
+            </div>
+            <div class="card">
+              <p class="card-title">Support tickets</p>
+              <p class="card-value" id="supportTickets">3</p>
+            </div>
+            <div class="card">
+              <p class="card-title">Monthly spend</p>
+              <p class="card-value" id="monthlySpend">$2.4K</p>
+            </div>
           </div>
-          <div class="card">
-            <p class="card-title">New leads</p>
-            <p class="card-value" id="newLeads">24</p>
-          </div>
-          <div class="card">
-            <p class="card-title">Support tickets</p>
-            <p class="card-value" id="supportTickets">3</p>
-          </div>
-          <div class="card">
-            <p class="card-title">Monthly spend</p>
-            <p class="card-value" id="monthlySpend">$2.4K</p>
+
+          <div class="grid-2">
+            <section class="recent-activity">
+              <h2>Recent activity</h2>
+              <div class="activity-row">
+                <div>
+                  <strong>Brand refresh completed</strong>
+                  <span>Design assets delivered for client Alpha.</span>
+                </div>
+                <span class="badge.success">Done</span>
+              </div>
+              <div class="activity-row">
+                <div>
+                  <strong>Invoice #118 sent</strong>
+                  <span>Payment reminder scheduled for Tuesday.</span>
+                </div>
+                <span class="badge.info">Pending</span>
+              </div>
+              <div class="activity-row">
+                <div>
+                  <strong>New message from Mason</strong>
+                  <span>Strategy review call requested.</span>
+                </div>
+                <span class="badge.warning">Reply</span>
+              </div>
+            </section>
+
+            <section class="performance">
+              <h2>Performance snapshot</h2>
+              <div class="chart-placeholder">Revenue trend</div>
+            </section>
           </div>
         </section>
 
-        <div class="grid-2">
-          <section class="panel recent-activity">
-            <h2>Recent activity</h2>
-            <div class="activity-row">
-              <div>
-                <strong>Brand refresh completed</strong>
-                <span>Design assets delivered for client Alpha.</span>
-              </div>
-              <span class="badge.success">Done</span>
-            </div>
-            <div class="activity-row">
-              <div>
-                <strong>Invoice #118 sent</strong>
-                <span>Payment reminder scheduled for Tuesday.</span>
-              </div>
-              <span class="badge.info">Pending</span>
-            </div>
-            <div class="activity-row">
-              <div>
-                <strong>New message from Mason</strong>
-                <span>Strategy review call requested.</span>
-              </div>
-              <span class="badge.warning">Reply</span>
-            </div>
-          </section>
+        <section class="content-section panel" id="projectsSection">
+          <h2>Projects</h2>
+          <p class="nav-note">Tap a project for quick status and next steps.</p>
+          <div class="project-list" id="projectsList"></div>
+        </section>
 
-          <section class="panel performance">
-            <h2>Performance snapshot</h2>
-            <div class="chart-placeholder">Revenue trend</div>
-          </section>
-        </div>
-
-        <section class="panel support">
-          <h2>Support center</h2>
-          <div style="display: grid; gap: 1rem;">
-            <p style="margin: 0; color: var(--text-muted);">Need help or want to chat with your account manager? Use the quick actions below.</p>
-            <button>Open support ticket</button>
-            <button style="background: #eef2ff; color: #4338ca;">View help articles</button>
+        <section class="content-section panel" id="billingSection">
+          <h2>Billing</h2>
+          <div class="invoice-list" id="invoiceList"></div>
+          <div class="detail-row">
+            <span>Next payment due</span>
+            <strong id="nextPaymentDue">May 18</strong>
           </div>
+
+          <div class="payment-card" style="margin-top:1.5rem; padding:1.5rem; border:1px solid #d1d5db; border-radius:22px; background:#ffffff;">
+            <h3 style="margin-top:0;">Secure payment</h3>
+            <p style="margin:0 0 1rem; color:#6b7280;">Pay your plan invoice and save a tokenized payment method for future checkout.</p>
+            <form id="paymentForm">
+              <label style="display:block; margin-bottom:0.75rem; font-weight:700;">Cardholder name</label>
+              <input id="paymentName" type="text" style="width:100%; padding:0.85rem; border-radius:14px; border:1px solid #d1d5db; margin-bottom:1rem;" placeholder="Jane Doe" required />
+              <label style="display:block; margin-bottom:0.75rem; font-weight:700;">Card number</label>
+              <input id="paymentCard" type="text" inputmode="numeric" autocomplete="cc-number" style="width:100%; padding:0.85rem; border-radius:14px; border:1px solid #d1d5db; margin-bottom:1rem;" placeholder="1234 5678 9012 3456" required />
+              <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0.75rem; margin-bottom:1rem;">
+                <div>
+                  <label style="display:block; margin-bottom:0.75rem; font-weight:700;">Expiry</label>
+                  <input id="paymentExpiry" type="text" placeholder="MM/YY" style="width:100%; padding:0.85rem; border-radius:14px; border:1px solid #d1d5db;" required />
+                </div>
+                <div>
+                  <label style="display:block; margin-bottom:0.75rem; font-weight:700;">CVV</label>
+                  <input id="paymentCvv" type="password" inputmode="numeric" autocomplete="cc-csc" style="width:100%; padding:0.85rem; border-radius:14px; border:1px solid #d1d5db;" placeholder="123" required />
+                </div>
+                <div>
+                  <label style="display:block; margin-bottom:0.75rem; font-weight:700;">Amount</label>
+                  <input id="paymentAmount" type="number" step="0.01" min="1" style="width:100%; padding:0.85rem; border-radius:14px; border:1px solid #d1d5db;" value="99.99" required />
+                </div>
+              </div>
+              <button id="payNowBtn" type="submit" style="width:100%; padding:1rem; border:none; border-radius:18px; background:#10b981; color:#fff; cursor:pointer;">Pay Now</button>
+            </form>
+            <p id="paymentStatusMsg" style="margin-top:1rem; color:#16a34a;"></p>
+            <div id="paymentHistoryList" style="margin-top:1.5rem;"></div>
+          </div>
+        </section>
+
+        <section class="content-section panel" id="messagesSection">
+          <h2>Messages</h2>
+          <div class="message-list" id="messageList"></div>
+        </section>
+
+        <section class="content-section panel" id="settingsSection">
+          <h2>Settings</h2>
+          <div class="setting-card">
+            <strong>Account details</strong>
+            <span id="settingsDetails">Email: <span id="settingsEmail"></span> • Plan: <span id="settingsPlan"></span></span>
+          </div>
+          <div class="setting-card">
+            <strong>Manage preferences</strong>
+            <span>Use the dark mode toggle or log out from the top bar at any time.</span>
+          </div>
+          <div class="setting-card">
+            <strong>Edit account</strong>
+            <label style="display:block; margin:1rem 0 0.25rem; font-weight:700;">Full name</label>
+            <input id="settingsName" type="text" style="width:100%; padding:0.85rem; border-radius:14px; border:1px solid #d1d5db;" />
+            <label style="display:block; margin:1rem 0 0.25rem; font-weight:700;">Email address</label>
+            <input id="settingsEmailInput" type="email" style="width:100%; padding:0.85rem; border-radius:14px; border:1px solid #d1d5db;" />
+            <label style="display:block; margin:1rem 0 0.25rem; font-weight:700;">Plan</label>
+            <select id="settingsPlanSelect" style="width:100%; padding:0.85rem; border-radius:14px; border:1px solid #d1d5db;">
+              <option value="Basic">Basic</option>
+              <option value="Pro">Pro</option>
+              <option value="Premium">Premium</option>
+            </select>
+            <label style="display:flex; align-items:center; gap:0.75rem; margin:1rem 0 0;">
+              <input id="settingsNotifications" type="checkbox" />
+              <span>Receive promotional updates</span>
+            </label>
+            <span id="settingsStatusMsg" style="display:block; margin-top:1rem; color:#16a34a;"></span>
+          </div>
+          <button id="settingsSaveBtn" style="width:100%; padding:1rem; border:none; border-radius:18px; background:#7c3aed;color:#fff;cursor:pointer;">Save account settings</button>
         </section>
       </main>
     </div>
   </div>
   <script>
     const customerData = JSON.parse(localStorage.getItem('portalCustomer') || 'null');
+    const settingsNameInput = document.getElementById('settingsName');
+    const activeSupport = JSON.parse(localStorage.getItem('supportStaff') || 'null');
+    if (customerData?.email && !customerData.role) {
+      customerData.role = 'customer';
+      localStorage.setItem('portalCustomer', JSON.stringify(customerData));
+    }
+    const isValidCustomer = Boolean(customerData?.email && customerData.role === 'customer');
+    if (!isValidCustomer) {
+      localStorage.removeItem('portalCustomer');
+      if (activeSupport?.email) {
+        const onlineRoster = JSON.parse(localStorage.getItem('supportOnlineAgents') || '[]');
+        if (Array.isArray(onlineRoster)) {
+          const updatedRoster = onlineRoster.filter(item => String(item).toLowerCase() !== activeSupport.email.toLowerCase());
+          localStorage.setItem('supportOnlineAgents', JSON.stringify(updatedRoster));
+        }
+        localStorage.removeItem('supportStaff');
+      }
+      window.location.href = 'login.html';
+    }
+    if (customerData?.email && activeSupport?.email) {
+      const onlineRoster = JSON.parse(localStorage.getItem('supportOnlineAgents') || '[]');
+      if (Array.isArray(onlineRoster)) {
+        const updatedRoster = onlineRoster.filter(item => String(item).toLowerCase() !== activeSupport.email.toLowerCase());
+        localStorage.setItem('supportOnlineAgents', JSON.stringify(updatedRoster));
+      }
+      localStorage.removeItem('supportStaff');
+    }
+    const settingsEmailInput = document.getElementById('settingsEmailInput');
+    const settingsPlanSelect = document.getElementById('settingsPlanSelect');
+    const settingsNotifications = document.getElementById('settingsNotifications');
+    const settingsSaveBtn = document.getElementById('settingsSaveBtn');
+    const paymentForm = document.getElementById('paymentForm');
+    const paymentName = document.getElementById('paymentName');
+    const paymentCard = document.getElementById('paymentCard');
+    const paymentExpiry = document.getElementById('paymentExpiry');
+    const paymentCvv = document.getElementById('paymentCvv');
+    const paymentAmount = document.getElementById('paymentAmount');
+    const paymentStatusMsg = document.getElementById('paymentStatusMsg');
+    const paymentHistoryList = document.getElementById('paymentHistoryList');
+    const settingsStatusMsg = document.getElementById('settingsStatusMsg');
+
+    const getStoredPayments = () => {
+      const stored = JSON.parse(localStorage.getItem('customerPayments') || '[]');
+      return Array.isArray(stored) ? stored : [];
+    };
+
+    const saveStoredPayments = (payments) => {
+      localStorage.setItem('customerPayments', JSON.stringify(payments));
+    };
+
+    const getCustomerPayments = () => {
+      return getStoredPayments().filter(payment => payment.customerEmail === customerData.email);
+    };
+
+    const maskCardNumber = (value) => {
+      const digits = String(value).replace(/\D/g, '');
+      return digits.length > 4 ? '**** **** **** ' + digits.slice(-4) : value;
+    };
+
+    const getCardBrand = (number) => {
+      const digits = String(number).replace(/\D/g, '');
+      if (/^4/.test(digits)) return 'Visa';
+      if (/^5[1-5]/.test(digits)) return 'Mastercard';
+      if (/^3[47]/.test(digits)) return 'American Express';
+      return 'Card';
+    };
+
+    const renderPaymentHistory = () => {
+      const payments = getCustomerPayments();
+      if (!payments.length) {
+        paymentHistoryList.innerHTML = '<p style="margin:0; color:#6b7280;">No payment records yet.</p>';
+        return;
+      }
+      paymentHistoryList.innerHTML = '<h4 style="margin:0 0 0.75rem;">Payment history</h4>' + payments.map(payment => `
+        <div style="padding:1rem; margin-bottom:0.75rem; border:1px solid #e5e7eb; border-radius:18px; background:#f8fafc;">
+          <div style="display:flex; justify-content:space-between; gap:1rem; align-items:center;">
+            <strong>${payment.status}</strong>
+            <span>${payment.processedAt}</span>
+          </div>
+          <p style="margin:0.75rem 0 0; color:#4b5563;">${payment.method} • ${payment.maskedCard} • ${payment.currency} ${payment.amount.toFixed(2)}</p>
+        </div>`).join('');
+    };
+
+    const renderSavedPaymentMethod = () => {
+      const payments = getCustomerPayments();
+      const latest = payments[payments.length - 1];
+      const paymentSection = document.getElementById('billingSection');
+      const existingSummary = paymentSection.querySelector('.saved-payment-summary');
+      if (existingSummary) existingSummary.remove();
+      if (!latest) return;
+      const summary = document.createElement('div');
+      summary.className = 'saved-payment-summary';
+      summary.style.marginBottom = '1rem';
+      summary.style.padding = '1rem';
+      summary.style.border = '1px solid #d1d5db';
+      summary.style.borderRadius = '18px';
+      summary.style.background = '#f8fafc';
+      summary.innerHTML = `
+        <strong style="display:block; margin-bottom:0.5rem;">Saved payment method</strong>
+        <span style="color:#6b7280;">${latest.method} ending ${latest.maskedCard.slice(-4)}</span><br />
+        <span style="color:#6b7280;">Expires ${latest.expiry}</span>
+      `;
+      paymentSection.insertBefore(summary, paymentSection.querySelector('.payment-card'));
+    };
+
+    const addPaymentRecord = (record) => {
+      const payments = getStoredPayments();
+      payments.push(record);
+      saveStoredPayments(payments);
+    };
+
+    const renderPaymentSummary = () => {
+      renderPaymentHistory();
+      renderSavedPaymentMethod();
+    };
+
     if (!customerData || !customerData.email) {
       window.location.href = 'login.html';
     } else {
@@ -406,7 +743,184 @@
       document.getElementById('newLeads').textContent = customerData.newLeads;
       document.getElementById('supportTickets').textContent = customerData.supportTickets;
       document.getElementById('monthlySpend').textContent = customerData.monthlySpend;
+      document.getElementById('settingsEmail').textContent = customerData.email;
+      document.getElementById('settingsPlan').textContent = customerData.plan;
+      settingsNameInput.value = customerData.name || '';
+      settingsEmailInput.value = customerData.email;
+      settingsPlanSelect.value = customerData.plan || 'Basic';
+      settingsNotifications.checked = !!customerData.notifications;
+      document.getElementById('nextPaymentDue').textContent = customerData.renewal;
     }
+
+    const navLinks = document.querySelectorAll('.nav-link[data-section]');
+    const contentSections = document.querySelectorAll('.content-section');
+
+    const customerProjects = customerData?.projects || [
+      { title: 'Website refresh', owner: 'Team Alpha', due: 'Apr 6', status: 'In review' },
+      { title: 'E-commerce launch', owner: 'Client Omega', due: 'May 12', status: 'Design phase' },
+      { title: 'SEO upgrade', owner: 'Marketing Team', due: 'Apr 22', status: 'Ready to publish' }
+    ];
+
+    const customerInvoices = [
+      { number: '#118', amount: '$860', due: 'Apr 2', status: 'Paid' },
+      { number: '#119', amount: '$1,120', due: 'May 8', status: 'Due' },
+      { number: '#120', amount: '$2,340', due: 'Jun 15', status: 'Upcoming' }
+    ];
+
+    const customerMessages = [
+      { from: 'Mason', subject: 'Strategy review call', time: '1h ago', status: 'Action needed' },
+      { from: 'Avery', subject: 'Design approval', time: 'Yesterday', status: 'Waiting' },
+      { from: 'Support Team', subject: 'Invoice details', time: '2 days ago', status: 'Answered' }
+    ];
+
+    const showSection = (section) => {
+      contentSections.forEach(sec => sec.classList.toggle('active', sec.id === `${section}Section`));
+      navLinks.forEach(link => link.classList.toggle('active', link.dataset.section === section));
+    };
+
+    const renderProjects = () => {
+      const list = document.getElementById('projectsList');
+      list.innerHTML = '';
+      customerProjects.forEach(project => {
+        const card = document.createElement('div');
+        card.className = 'project-card';
+        card.innerHTML = `
+          <strong>${project.title}</strong>
+          <span>${project.owner} • Due ${project.due}</span>
+          <span>Status: ${project.status}</span>
+        `;
+        list.appendChild(card);
+      });
+    };
+
+    const renderInvoices = () => {
+      const list = document.getElementById('invoiceList');
+      list.innerHTML = '';
+      customerInvoices.forEach(invoice => {
+        const card = document.createElement('div');
+        card.className = 'invoice-card';
+        card.innerHTML = `
+          <strong>Invoice ${invoice.number}</strong>
+          <span>${invoice.amount} • Due ${invoice.due}</span>
+          <span>Status: ${invoice.status}</span>
+        `;
+        list.appendChild(card);
+      });
+    };
+
+    const renderMessages = () => {
+      const list = document.getElementById('messageList');
+      list.innerHTML = '';
+      customerMessages.forEach(message => {
+        const card = document.createElement('div');
+        card.className = 'message-card';
+        card.innerHTML = `
+          <strong>${message.subject}</strong>
+          <span>From ${message.from} • ${message.time}</span>
+          <span>Status: ${message.status}</span>
+        `;
+        list.appendChild(card);
+      });
+    };
+
+    renderProjects();
+    renderInvoices();
+    renderMessages();
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', (event) => {
+        event.preventDefault();
+        showSection(link.dataset.section);
+      });
+    });
+
+    const themeToggle = document.getElementById('themeToggle');
+    const storedTheme = localStorage.getItem('siteTheme') || 'light';
+
+    const applyTheme = (theme) => {
+      document.body.classList.toggle('dark-mode', theme === 'dark');
+      themeToggle.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
+      themeToggle.classList.toggle('dark', theme === 'dark');
+      localStorage.setItem('siteTheme', theme);
+    };
+
+    themeToggle.addEventListener('click', () => {
+      const nextTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+      applyTheme(nextTheme);
+    });
+
+    const logoutBtn = document.getElementById('logoutBtn');
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('portalCustomer');
+      window.location.href = 'login.html';
+    });
+
+    settingsSaveBtn.addEventListener('click', () => {
+      const updatedName = settingsNameInput.value.trim();
+      const updatedEmail = settingsEmailInput.value.trim();
+      const updatedPlan = settingsPlanSelect.value;
+      const updatedNotifications = settingsNotifications.checked;
+      if (!updatedName || !updatedEmail) {
+        settingsStatusMsg.textContent = 'Name and email are required.';
+        settingsStatusMsg.style.color = '#dc2626';
+        return;
+      }
+      customerData.name = updatedName;
+      customerData.email = updatedEmail;
+      customerData.plan = updatedPlan;
+      customerData.notifications = updatedNotifications;
+      localStorage.setItem('portalCustomer', JSON.stringify(customerData));
+      document.getElementById('profilePill').textContent = `Hi, ${customerData.name}`;
+      document.getElementById('welcomeName').textContent = customerData.name;
+      document.getElementById('planName').textContent = customerData.plan;
+      document.getElementById('settingsEmail').textContent = customerData.email;
+      document.getElementById('settingsPlan').textContent = customerData.plan;
+      settingsStatusMsg.textContent = 'Account settings updated successfully.';
+      settingsStatusMsg.style.color = '#16a34a';
+    });
+
+    paymentForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      paymentStatusMsg.textContent = '';
+      if (!customerData?.email || customerData.role !== 'customer') {
+        paymentStatusMsg.style.color = '#dc2626';
+        paymentStatusMsg.textContent = 'You do not have permission to process payments.';
+        return;
+      }
+      const name = paymentName.value.trim();
+      const card = paymentCard.value.replace(/\D/g, '');
+      const expiry = paymentExpiry.value.trim();
+      const cvv = paymentCvv.value.trim();
+      const amount = parseFloat(paymentAmount.value);
+
+      if (!name || card.length < 13 || card.length > 19 || !/^[0-9]{3,4}$/.test(cvv) || !/^\d{2}\/\d{2}$/.test(expiry) || isNaN(amount) || amount <= 0) {
+        paymentStatusMsg.style.color = '#dc2626';
+        paymentStatusMsg.textContent = 'Please enter valid payment details to continue.';
+        return;
+      }
+
+      const paymentRecord = {
+        customerEmail: customerData.email,
+        amount,
+        currency: 'USD',
+        method: getCardBrand(card),
+        maskedCard: maskCardNumber(card),
+        expiry,
+        status: 'Completed',
+        transactionReference: `TX-${Date.now()}`,
+        processedAt: new Date().toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
+      };
+
+      addPaymentRecord(paymentRecord);
+      paymentStatusMsg.style.color = '#16a34a';
+      paymentStatusMsg.textContent = `Payment of $${amount.toFixed(2)} processed successfully.`;
+      paymentCard.value = '';
+      paymentCvv.value = '';
+      renderPaymentSummary();
+    });
+
+    renderPaymentSummary();
+    applyTheme(storedTheme);
   </script>
 </body>
 </html>

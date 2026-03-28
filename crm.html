@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRM Dashboard | Creative Web Solutions</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <style>
+    body { background: linear-gradient(180deg, #f4efff 0%, #eef2ff 100%); color: #111827; }
+    .crm-shell { max-width: 1300px; margin: 0 auto; padding: 1.5rem; }
+    .crm-topbar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; align-items: center; margin-bottom: 1.5rem; }
+    .crm-brand { display: inline-flex; align-items: center; gap: 0.75rem; font-weight: 800; font-size: 1.15rem; }
+    .crm-brand::before { content: ''; width: 12px; height: 12px; border-radius: 999px; background: #7c3aed; box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.14); }
+    .crm-nav { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+    .crm-nav a, .crm-nav button { font-weight: 600; text-decoration: none; color: #4b5563; background: rgba(255,255,255,0.9); border: 1px solid #dbeafe; padding: 0.75rem 1rem; border-radius: 999px; transition: all 0.2s ease; }
+    .crm-nav a:hover, .crm-nav button:hover { background: #eef2ff; color: #4338ca; }
+    .crm-hero { display: grid; gap: 1rem; background: #fff; border: 1px solid #e5e7eb; border-radius: 24px; padding: 2rem; box-shadow: 0 25px 60px rgba(15, 23, 42, 0.08); }
+    .crm-hero h1 { margin: 0; font-size: clamp(2rem, 3vw, 2.8rem); }
+    .crm-hero p { margin: 0; color: #6b7280; font-size: 1.05rem; line-height: 1.8; }
+    .crm-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+    .crm-card { background: #f8f6ff; border-radius: 22px; padding: 1.35rem; display: grid; gap: 0.75rem; border: 1px solid #e5e7eb; }
+    .crm-card span { color: #6b7280; font-size: 0.95rem; }
+    .crm-card strong { font-size: 1.9rem; color: #111827; }
+    .crm-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+    .pipeline, .contacts { background: #fff; border: 1px solid #e5e7eb; border-radius: 24px; padding: 1.5rem; box-shadow: 0 20px 45px rgba(15, 23, 42, 0.06); }
+    .pipeline h2, .contacts h2 { margin-top: 0; font-size: 1.2rem; }
+    .pipeline-board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .pipeline-column { display: grid; gap: 0.85rem; padding: 1rem; border-radius: 22px; background: #f8f6ff; }
+    .pipeline-column strong { display: block; margin-bottom: 1rem; color: #4338ca; }
+    .deal-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 18px; padding: 1rem; display: grid; gap: 0.5rem; }
+    .deal-card h3 { margin: 0; font-size: 1rem; }
+    .deal-card p { margin: 0; color: #6b7280; font-size: 0.95rem; }
+    .deal-card .meta { display: flex; justify-content: space-between; gap: 0.5rem; font-size: 0.85rem; color: #6b7280; }
+    .contacts-list { display: grid; gap: 1rem; margin-top: 1rem; }
+    .contact-row { display: grid; grid-template-columns: 1fr auto; gap: 1rem; padding: 1rem; background: #f8f6ff; border-radius: 18px; border: 1px solid #e5e7eb; }
+    .contact-info strong { display: block; font-size: 1rem; color: #111827; }
+    .contact-info span { color: #6b7280; font-size: 0.95rem; }
+    .contact-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+    .pill { display: inline-flex; align-items: center; justify-content: center; padding: 0.45rem 0.8rem; border-radius: 999px; font-size: 0.8rem; font-weight: 700; }
+    .pill.lead { background: #ede9fe; color: #5b21b6; }
+    .pill.proposal { background: #dbeafe; color: #3730a3; }
+    .pill.won { background: #dcfce7; color: #166534; }
+    .pill.lost { background: #fee2e7; color: #991b1b; }
+    .crm-footer { margin-top: 2rem; text-align: center; color: #6b7280; }
+
+    body.dark-mode {
+      background: #0b1222;
+      color: #e2e8f0;
+    }
+
+    body.dark-mode .crm-topbar,
+    body.dark-mode .crm-hero,
+    body.dark-mode .crm-card,
+    body.dark-mode .pipeline,
+    body.dark-mode .contacts,
+    body.dark-mode .pipeline-column,
+    body.dark-mode .deal-card,
+    body.dark-mode .contact-row {
+      background: #111827;
+      border-color: #334155;
+      color: #e5e7eb;
+    }
+
+    body.dark-mode .crm-nav a,
+    body.dark-mode .crm-nav button {
+      background: #1f2937;
+      color: #e5e7eb;
+      border-color: #4b5563;
+    }
+
+    body.dark-mode .crm-nav a:hover,
+    body.dark-mode .crm-nav button:hover {
+      background: #273449;
+      color: #ffffff;
+    }
+
+    body.dark-mode .crm-hero p,
+    body.dark-mode .crm-card span,
+    body.dark-mode .deal-card p,
+    body.dark-mode .deal-card .meta,
+    body.dark-mode .contact-info span,
+    body.dark-mode .crm-footer {
+      color: #94a3b8;
+    }
+
+    body.dark-mode .crm-brand::before {
+      background: #8b5cf6;
+      box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.14);
+    }
+
+    body.dark-mode .pill.lead { background: #312e81; color: #c7d2fe; }
+    body.dark-mode .pill.proposal { background: #1e3a8a; color: #dbeafe; }
+    body.dark-mode .pill.won { background: #14532d; color: #dcfce7; }
+    body.dark-mode .pill.lost { background: #7f1d1d; color: #fee2e7; }
+
+    @media (max-width: 1020px) {
+      .crm-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .crm-grid { grid-template-columns: 1fr; }
+      .pipeline-board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 720px) {
+      .crm-topbar { flex-direction: column; align-items: stretch; }
+      .crm-nav { justify-content: center; }
+      .crm-summary { grid-template-columns: 1fr; }
+      .pipeline-board { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="crm-shell">
+    <div class="crm-topbar">
+      <div class="crm-brand">Creative CRM</div>
+      <div class="crm-nav">
+        <button id="backButton" type="button" onclick="window.history.back()">Back</button>
+        <a href="index.htm">Home</a>
+        <a href="services.html">Services</a>
+        <a href="support-login.html">Support Login</a>
+        <button id="themeToggle" type="button">Dark Mode</button>
+      </div>
+    </div>
+
+    <section class="crm-hero">
+      <div>
+        <p style="margin:0; text-transform:uppercase; letter-spacing:0.2em; font-size:0.75rem; color:#7c3aed;">CRM Dashboard</p>
+        <h1>Modern customer relationship management made simple.</h1>
+        <p>Track leads, manage opportunities, and keep every customer conversation organized in one clean dashboard.</p>
+      </div>
+      <div class="crm-summary">
+        <article class="crm-card">
+          <span>Active leads</span>
+          <strong>62</strong>
+        </article>
+        <article class="crm-card">
+          <span>Open opportunities</span>
+          <strong>24</strong>
+        </article>
+        <article class="crm-card">
+          <span>Pipeline value</span>
+          <strong>$128.4k</strong>
+        </article>
+        <article class="crm-card">
+          <span>Tasks due today</span>
+          <strong>8</strong>
+        </article>
+      </div>
+    </section>
+
+    <div class="crm-grid">
+      <section class="pipeline">
+        <h2>Sales pipeline</h2>
+        <div class="pipeline-board">
+          <div class="pipeline-column">
+            <strong>New leads</strong>
+            <div class="deal-card">
+              <h3>BrightWave Media</h3>
+              <p>Intro call scheduled. Needs new website and brand refresh.</p>
+              <div class="meta"><span>High value</span><span>Due: Apr 1</span></div>
+            </div>
+            <div class="deal-card">
+              <h3>Urban Grocery</h3>
+              <p>Proposal requested for e-commerce platform.</p>
+              <div class="meta"><span>Medium value</span><span>Due: Apr 4</span></div>
+            </div>
+          </div>
+
+          <div class="pipeline-column">
+            <strong>Contacted</strong>
+            <div class="deal-card">
+              <h3>Blue Ridge Co.</h3>
+              <p>Follow-up on service package sent.</p>
+              <div class="meta"><span>High priority</span><span>Due: Mar 30</span></div>
+            </div>
+          </div>
+
+          <div class="pipeline-column">
+            <strong>Proposal</strong>
+            <div class="deal-card">
+              <h3>Altura Fitness</h3>
+              <p>Proposal reviewed, awaiting approval.</p>
+              <div class="meta"><span>Potential $32k</span><span>Due: Apr 2</span></div>
+            </div>
+          </div>
+
+          <div class="pipeline-column">
+            <strong>Closed</strong>
+            <div class="deal-card">
+              <h3>Sunrise Studio</h3>
+              <p>Project won and kickoff scheduled.</p>
+              <div class="meta"><span class="pill won">Won</span><span>Closed</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="contacts">
+        <h2>Key customer accounts</h2>
+        <div class="contacts-list">
+          <div class="contact-row">
+            <div class="contact-info">
+              <strong>Chloe Harper</strong>
+              <span>Marketing Director, BrightWave Media</span>
+              <span>chloe@brightwave.co</span>
+            </div>
+            <div class="contact-actions">
+              <span class="pill lead">Lead</span>
+              <span class="pill proposal">Proposal</span>
+            </div>
+          </div>
+          <div class="contact-row">
+            <div class="contact-info">
+              <strong>Marcus Lee</strong>
+              <span>Owner, Urban Grocery</span>
+              <span>marcus@urbangrocery.com</span>
+            </div>
+            <div class="contact-actions">
+              <span class="pill lead">Lead</span>
+              <span class="pill lost">Follow-up</span>
+            </div>
+          </div>
+          <div class="contact-row">
+            <div class="contact-info">
+              <strong>Sofia Kim</strong>
+              <span>Founder, Altura Fitness</span>
+              <span>sofia@alturafit.com</span>
+            </div>
+            <div class="contact-actions">
+              <span class="pill proposal">Proposal</span>
+              <span class="pill won">Hot</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <p class="crm-footer">A modern CRM option for smarter customer tracking and clearer sales flow.</p>
+  </div>
+
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+    const savedTheme = localStorage.getItem('siteTheme');
+    const applyTheme = (theme) => {
+      document.body.classList.toggle('dark-mode', theme === 'dark');
+      themeToggle.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
+      localStorage.setItem('siteTheme', theme);
+    };
+    themeToggle.addEventListener('click', () => {
+      const nextTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+      applyTheme(nextTheme);
+    });
+    if (savedTheme === 'dark') applyTheme('dark'); else applyTheme('light');
+
+    const portalCustomer = localStorage.getItem('portalCustomer');
+    const supportStaff = JSON.parse(localStorage.getItem('supportStaff') || 'null');
+    const authorizedSupportAgents = [
+      'support@creativewebsolutions.com',
+      'helpdesk@creativewebsolutions.com',
+      'kyle.creativesolutions@gmail.com'
+    ];
+
+    if (portalCustomer) {
+      window.location.href = 'index.htm';
+    } else if (!supportStaff || !supportStaff.email || !authorizedSupportAgents.includes(supportStaff.email.toLowerCase())) {
+      window.location.href = 'support-login.html';
+    }
+  </script>
+</body>
+</html>

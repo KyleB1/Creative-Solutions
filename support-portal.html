@@ -1,0 +1,1088 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Support Portal | Creative Web Solutions</title>
+  <style>
+    :root {
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #111827;
+      background: #eef2ff;
+      --surface: #ffffff;
+      --surface-alt: #f8f6ff;
+      --border: #e5e7eb;
+      --primary: #7c3aed;
+      --primary-soft: #ede9ff;
+      --text-muted: #6b7280;
+      --info: #4338ca;
+      --success: #16a34a;
+      --warning: #c2410c;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      background: linear-gradient(180deg, #f5f3ff 0%, #eef2ff 100%);
+      color: #111827;
+    }
+
+    .page-shell {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.25rem;
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 25px 60px rgba(15, 23, 42, 0.06);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.85rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      font-size: 1.1rem;
+    }
+
+    .brand-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: var(--primary);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+    }
+
+    .topbar nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .topbar a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .topbar a:hover { color: var(--info); }
+
+    .topbar button {
+      border: none;
+      cursor: pointer;
+    }
+
+    .profile-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.8rem 1rem;
+      background: var(--primary-soft);
+      color: #4c1d95;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .hero-panel {
+      display: grid;
+      gap: 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 1.75rem;
+      box-shadow: 0 25px 60px rgba(15, 23, 42, 0.05);
+    }
+
+    .hero-copy {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .hero-copy h1 {
+      margin: 0;
+      font-size: clamp(2rem, 2.8vw, 2.8rem);
+      line-height: 1.03;
+    }
+
+    .hero-copy p {
+      margin: 0;
+      color: var(--text-muted);
+      max-width: 45rem;
+      line-height: 1.8;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .status-card {
+      background: var(--surface-alt);
+      border-radius: 24px;
+      padding: 1.25rem;
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .status-card span { color: var(--text-muted); }
+
+    .status-card strong {
+      font-size: 2rem;
+      line-height: 1;
+      color: #111827;
+    }
+
+    .admin-overview {
+      display: grid;
+      gap: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 1.5rem;
+      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.05);
+    }
+
+    .admin-overview .section-heading {
+      margin: 0 0 0.75rem;
+      font-size: 1.1rem;
+      letter-spacing: 0.02em;
+      color: #4338ca;
+    }
+
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .overview-card {
+      background: var(--surface-alt);
+      border-radius: 22px;
+      padding: 1rem 1.25rem;
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .overview-card strong {
+      font-size: 1.8rem;
+      color: #111827;
+    }
+
+    .overview-card span {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .chart-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 1.5rem;
+      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.05);
+    }
+
+    .chart-card h2 {
+      margin: 0 0 1rem;
+      font-size: 1.05rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 1.5rem;
+    }
+
+    .sidebar .panel {
+      padding: 1.5rem;
+    }
+
+    .ticket-list {
+      display: grid;
+      gap: 1rem;
+      margin-top: 1rem;
+      max-height: 720px;
+      overflow-y: auto;
+      padding-right: 0.25rem;
+    }
+
+    .ticket-card {
+      display: grid;
+      gap: 0.65rem;
+      padding: 1rem 1rem 0.9rem;
+      background: var(--surface-alt);
+      border-radius: 22px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .ticket-card:hover { transform: translateY(-1px); }
+    .ticket-card.active { border-color: var(--primary); background: #f5efff; }
+
+    .ticket-card strong { display: block; color: #111827; }
+    .ticket-card span { color: var(--text-muted); font-size: 0.95rem; }
+
+    .ticket-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .pill.status-open { background: #ede9fe; color: #5b21b6; }
+    .pill.status-inprogress { background: #fcd34d; color: #92400e; }
+    .pill.status-waiting { background: #fde68a; color: #92400e; }
+    .pill.status-pending { background: #dbeafe; color: #3730a3; }
+    .pill.status-resolved { background: #dcfce7; color: #166534; }
+
+    .detail-panel {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .detail-summary {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .detail-summary h2 {
+      margin: 0;
+      font-size: 1.35rem;
+    }
+
+    .detail-copy {
+      margin: 0;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    .detail-meta {
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    .meta-block {
+      background: var(--surface-alt);
+      border-radius: 20px;
+      padding: 1rem;
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .meta-block span { color: var(--text-muted); font-size: 0.95rem; }
+    .meta-block strong { display: block; font-size: 1.1rem; }
+
+    .ticket-history,
+    .note-chat-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .history-list { display: grid; gap: 0.85rem; }
+    .history-entry {
+      padding: 1rem;
+      border-radius: 20px;
+      background: var(--surface-alt);
+      border: 1px solid rgba(229, 231, 235, 0.9);
+    }
+
+    .history-entry.internal { background: #eef4ff; border-color: #c7d2fe; }
+    .history-entry.agent { background: #f8fafc; border-color: #dbeafe; }
+    .history-entry.customer { background: #ffffff; border-color: #e5e7eb; }
+
+    .history-entry strong { display: block; margin-bottom: 0.35rem; color: #111827; }
+    .history-entry span { display: block; margin-bottom: 0.65rem; color: var(--text-muted); font-size: 0.9rem; }
+    .history-entry p { margin: 0; line-height: 1.7; color: #334155; }
+
+    .team-chat-panel {
+      display: grid;
+      gap: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 1.5rem;
+    }
+
+    .team-chat-list {
+      display: grid;
+      gap: 0.75rem;
+      max-height: 320px;
+      overflow-y: auto;
+      padding-right: 0.25rem;
+    }
+
+    .team-chat-entry {
+      display: grid;
+      gap: 0.35rem;
+      padding: 0.95rem 1rem;
+      border-radius: 18px;
+      background: var(--surface-alt);
+      border: 1px solid rgba(229, 231, 235, 0.9);
+    }
+
+    .team-chat-entry strong { color: #111827; }
+    .team-chat-entry span { color: var(--text-muted); font-size: 0.82rem; }
+    .team-chat-entry p { margin: 0; line-height: 1.6; color: #334155; }
+
+    .team-chat-actions { display: grid; gap: 0.85rem; }
+
+    .team-chat-input {
+      width: 100%;
+      min-height: 100px;
+      padding: 1rem;
+      border-radius: 18px;
+      border: 1px solid #d1d5db;
+      resize: vertical;
+      font-family: inherit;
+      font-size: 1rem;
+      background: #ffffff;
+      color: #111827;
+    }
+
+    .team-chat-input:focus { outline: none; box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12); }
+
+    .team-chat-info { color: var(--text-muted); font-size: 0.9rem; }
+
+    .note-area { display: grid; gap: 0.85rem; }
+    .note-input,
+    .chat-input { width: 100%; min-height: 120px; padding: 1rem; border-radius: 18px; border: 1px solid #d1d5db; resize: vertical; font-family: inherit; font-size: 1rem; }
+
+    .note-actions { display: flex; flex-wrap: wrap; gap: 0.85rem; }
+
+    .action-btn {
+      border: none;
+      border-radius: 16px;
+      padding: 0.95rem 1.2rem;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .action-btn.primary { background: var(--primary); color: #fff; }
+    .action-btn.secondary { background: #eef2ff; color: #4338ca; }
+
+    .action-btn.secondary.status-action { background: #ffffff; color: #4338ca; border: 1px solid rgba(124, 58, 237, 0.18); }
+
+    .select-field {
+      width: 100%;
+      padding: 0.95rem 1rem;
+      border-radius: 16px;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: #111827;
+      font: inherit;
+    }
+
+    .select-field:focus {
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12);
+    }
+
+    .select-help {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .theme-toggle,
+    .logout-button {
+      padding: 0.75rem 1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(124, 58, 237, 0.25);
+      background: #ffffff;
+      color: #5b4b96;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .theme-toggle:hover,
+    .logout-button:hover { background: rgba(124, 58, 237, 0.08); }
+
+    .cards-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    @media (max-width: 1100px) {
+      .layout { grid-template-columns: 1fr; }
+      .status-grid,
+      .cards-row { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 760px) {
+      .topbar { flex-direction: column; align-items: stretch; }
+      .topbar nav { justify-content: space-between; }
+      .detail-grid { grid-template-columns: 1fr; }
+    }
+
+    body.dark-mode {
+      background: #090b17;
+      color: #e2e8f0;
+    }
+
+    body.dark-mode .topbar,
+    body.dark-mode .hero-panel,
+    body.dark-mode .panel,
+    body.dark-mode .chart-card,
+    body.dark-mode .status-card,
+    body.dark-mode .ticket-card,
+    body.dark-mode .history-entry,
+    body.dark-mode .note-input,
+    body.dark-mode .chat-input,
+    body.dark-mode .team-chat-panel,
+    body.dark-mode .team-chat-entry,
+    body.dark-mode .team-chat-input {
+      background: #111827;
+      border-color: #334155;
+      color: #e5e7eb;
+    }
+
+    body.dark-mode .topbar a,
+    body.dark-mode .ticket-card strong,
+    body.dark-mode .ticket-card span,
+    body.dark-mode .detail-copy,
+    body.dark-mode .ticket-details dt,
+    body.dark-mode .ticket-details dd,
+    body.dark-mode .bar-label,
+    body.dark-mode .history-entry strong,
+    body.dark-mode .history-entry span,
+    body.dark-mode .history-entry p,
+    body.dark-mode .admin-overview,
+    body.dark-mode .overview-card,
+    body.dark-mode .meta-block,
+    body.dark-mode .ticket-actions .action-btn,
+    body.dark-mode .select-field,
+    body.dark-mode .ticket-history,
+    body.dark-mode .note-area,
+    body.dark-mode .bar,
+    body.dark-mode .bar-track,
+    body.dark-mode .bar-label {
+      color: #d1d5db;
+    }
+
+    body.dark-mode .admin-overview,
+    body.dark-mode .overview-card,
+    body.dark-mode .detail-panel,
+    body.dark-mode .meta-block,
+    body.dark-mode .ticket-actions .action-btn,
+    body.dark-mode .select-field,
+    body.dark-mode .ticket-history,
+    body.dark-mode .note-area,
+    body.dark-mode .ticket-card,
+    body.dark-mode .status-card {
+      background: #111827;
+      border-color: #374151;
+      color: #e5e7eb;
+    }
+
+    body.dark-mode .select-field {
+      background: #1f2937;
+      color: #e5e7eb;
+      border-color: #334155;
+    }
+
+    body.dark-mode .pill.status-open { background: #3730a3; color: #c7d2fe; }
+    body.dark-mode .pill.status-inprogress { background: #78350f; color: #fde68a; }
+    body.dark-mode .pill.status-waiting { background: #78350f; color: #fde68a; }
+    body.dark-mode .pill.status-pending { background: #1e3a8a; color: #dbeafe; }
+    body.dark-mode .pill.status-resolved { background: #14532d; color: #d1fae5; }
+
+    body.dark-mode .bar-track { background: #1f2937; }
+    body.dark-mode .bar.active .bar-track { box-shadow: inset 0 0 0 2px rgba(148, 163, 184, 0.35); }
+    body.dark-mode .bar-count { color: #eef2ff; }
+    body.dark-mode .filter-btn { background: #1f2937; color: #e5e7eb; border-color: #4b5563; }
+    body.dark-mode .filter-btn.active { background: #7c3aed; color: #fff; }
+    body.dark-mode .action-btn.primary { background: #8b5cf6; }
+    body.dark-mode .action-btn.secondary { background: #1f2937; color: #e5e7eb; }
+    body.dark-mode .action-btn.secondary.status-action { background: #1f2937; color: #e5e7eb; border-color: rgba(148, 163, 184, 0.25); }
+    body.dark-mode .profile-pill { background: #1f2937; color: #e5e7eb; }
+    body.dark-mode .theme-toggle,
+    body.dark-mode .logout-button { background: #1f2937; color: #e5e7eb; border-color: rgba(148, 163, 184, 0.45); }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-dot"></span>Support Portal</div>
+      <nav>
+        <a href="index.htm">Home</a>
+        <a href="support-login.html">Agent Login</a>
+        <a href="customer-portal.html">Customer Portal</a>
+      </nav>
+      <div class="profile-pill" id="staffPill">Support Agent</div>
+      <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+        <button id="logoutBtn" class="logout-button" type="button">Log Out</button>
+        <button id="themeToggle" class="theme-toggle" type="button">Dark Mode</button>
+      </div>
+    </header>
+
+    <section class="hero-panel">
+      <div class="hero-copy">
+        <p style="margin:0; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.2em; font-size:0.75rem;">Support desk</p>
+        <h1>Support ticket management that flows.</h1>
+        <p>Quickly review open issues, follow the ticket history, and respond with notes or customer messages without losing context.</p>
+      </div>
+      <div class="status-grid">
+        <article class="status-card">
+          <span>Open tickets</span>
+          <strong id="openCount">0</strong>
+        </article>
+        <article class="status-card">
+          <span>Pending tickets</span>
+          <strong id="pendingCount">0</strong>
+        </article>
+        <article class="status-card">
+          <span>Resolved tickets</span>
+          <strong id="resolvedCount">0</strong>
+        </article>
+      </div>
+    </section>
+
+    <section class="admin-overview">
+      <p class="section-heading">System admin overview</p>
+      <div class="overview-grid">
+        <article class="overview-card">
+          <span>Total tickets</span>
+          <strong id="totalTickets">0</strong>
+        </article>
+        <article class="overview-card">
+          <span>Agents online</span>
+          <strong id="activeAgents">0</strong>
+        </article>
+        <article class="overview-card">
+          <span>Agents offline</span>
+          <strong id="offlineAgents">0</strong>
+        </article>
+        <article class="overview-card">
+          <span>Customers with open issues</span>
+          <strong id="customerCount">0</strong>
+        </article>
+        <article class="overview-card">
+          <span>SLA compliance</span>
+          <strong id="slaScore">0%</strong>
+        </article>
+      </div>
+    </section>
+
+    <section class="chart-card">
+      <h2>Ticket status overview</h2>
+      <div class="bar-chart" id="ticketBarChart" aria-label="Ticket status chart"></div>
+    </section>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="panel">
+          <h2>Ticket queue</h2>
+          <div class="filter-row">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="open">Open</button>
+            <button class="filter-btn" data-filter="inprogress">In progress</button>
+            <button class="filter-btn" data-filter="waiting">Waiting</button>
+            <button class="filter-btn" data-filter="pending">Pending</button>
+            <button class="filter-btn" data-filter="resolved">Resolved</button>
+          </div>
+          <div class="ticket-list" id="ticketList"></div>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <section class="panel detail-panel">
+          <div class="detail-grid">
+            <div class="detail-summary">
+              <h2 id="detailSubject">Select a ticket to view details</h2>
+              <p class="detail-copy" id="detailDescription">Choose any ticket from the queue to inspect the issue, recent activity, and next steps.</p>
+            </div>
+
+            <div class="detail-meta">
+              <div class="meta-block">
+                <span>Status</span>
+                <strong id="detailStatus">Open</strong>
+              </div>
+              <div class="meta-block">
+                <span>Customer</span>
+                <strong id="detailCustomer">—</strong>
+              </div>
+              <div class="meta-block">
+                <span>Priority</span>
+                <strong id="detailPriority">—</strong>
+                <select id="prioritySelect" class="select-field">
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                </select>
+                <span class="select-help">Change this ticket's priority for triage.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="meta-block">
+            <span>Product</span>
+            <strong id="detailProduct">—</strong>
+          </div>
+
+          <div class="cards-row">
+            <div class="meta-block">
+              <span>Created</span>
+              <strong id="detailCreated">—</strong>
+            </div>
+            <div class="meta-block">
+              <span>Last update</span>
+              <strong id="detailUpdated">—</strong>
+            </div>
+          </div>
+
+          <div class="ticket-actions">
+            <button class="action-btn secondary status-action" data-status="open">Mark open</button>
+            <button class="action-btn secondary status-action" data-status="inprogress">In progress</button>
+            <button class="action-btn secondary status-action" data-status="waiting">Waiting on customer</button>
+            <button id="resolveTicketBtn" class="action-btn primary">Mark resolved</button>
+            <button id="replyTicketBtn" class="action-btn secondary">Open reply draft</button>
+          </div>
+        </section>
+
+        <section class="panel ticket-history">
+          <h2>Ticket history</h2>
+          <div id="ticketHistory" class="history-list"></div>
+        </section>
+
+        <section class="team-chat-panel">
+          <h2>Team chat</h2>
+          <div class="team-chat-list" id="agentChatList"></div>
+          <div class="team-chat-actions">
+            <textarea id="agentChatInput" class="team-chat-input" placeholder="Send a message to your support team..."></textarea>
+            <button id="sendAgentChatBtn" class="action-btn primary" type="button">Send to Team</button>
+            <p class="team-chat-info">Messages are shared across this browser session for support agents on the same origin.</p>
+          </div>
+        </section>
+
+        <section class="panel note-chat-grid">
+          <div class="note-area">
+            <h2 style="margin:0 0 0.75rem;">Add internal note</h2>
+            <textarea id="noteInput" class="note-input" placeholder="Write an internal note for your teammates..."></textarea>
+            <div class="note-actions">
+              <button id="addNoteBtn" class="action-btn secondary">Add note</button>
+            </div>
+          </div>
+
+          <div class="note-area">
+            <h2 style="margin:0 0 0.75rem;">Chat with customer</h2>
+            <textarea id="chatInput" class="chat-input" placeholder="Type your response to the customer..."></textarea>
+            <div class="note-actions">
+              <button id="sendChatBtn" class="action-btn primary">Send message</button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const authorizedSupportAgents = [
+      'support@creativewebsolutions.com',
+      'helpdesk@creativewebsolutions.com',
+      'kyle.creativesolutions@gmail.com'
+    ];
+
+    const staffData = JSON.parse(localStorage.getItem('supportStaff') || 'null');
+    if (!staffData || !staffData.email || !authorizedSupportAgents.includes(staffData.email.toLowerCase())) {
+      localStorage.removeItem('supportStaff');
+      window.location.href = 'support-login.html';
+    }
+
+    const getSupportOnlineAgents = () => {
+      const stored = JSON.parse(localStorage.getItem('supportOnlineAgents') || '[]');
+      if (!Array.isArray(stored)) return [];
+      return [...new Set(stored
+        .map(email => String(email).toLowerCase())
+        .filter(email => authorizedSupportAgents.includes(email))
+      )];
+    };
+
+    const saveSupportOnlineAgents = (emails) => {
+      localStorage.setItem('supportOnlineAgents', JSON.stringify(
+        [...new Set(emails.map(email => String(email).toLowerCase()))]
+      ));
+    };
+
+    const addOnlineAgent = (email) => {
+      const roster = getSupportOnlineAgents();
+      const normalized = String(email).toLowerCase();
+      if (!roster.includes(normalized)) {
+        roster.push(normalized);
+        saveSupportOnlineAgents(roster);
+      }
+    };
+
+    const removeOnlineAgent = (email) => {
+      const roster = getSupportOnlineAgents().filter(item => item !== String(email).toLowerCase());
+      saveSupportOnlineAgents(roster);
+    };
+
+    const getAgentCounts = () => {
+      const online = getSupportOnlineAgents().length;
+      const offline = Math.max(authorizedSupportAgents.length - online, 0);
+      return { online, offline };
+    };
+
+    const staffPill = document.getElementById('staffPill');
+    staffPill.textContent = `${staffData.name} • ${staffData.role}`;
+    addOnlineAgent(staffData.email);
+
+    const supportTickets = [
+      { id: 'TCK-1012', customer: 'Avery Francis', subject: 'Login not working', status: 'open', priority: 'High', created: 'Mar 27', updated: 'Mar 28', product: 'Client portal', description: 'Customer cannot access their account after password reset. They receive a generic error on login.', messages: [
+        { author: 'Customer', timestamp: 'Mar 27, 10:12', content: 'The reset link keeps failing and I cannot sign in.' },
+        { author: 'Agent', timestamp: 'Mar 27, 10:42', content: 'Checked the reset flow; looks like a token expiry issue. Need to patch the login handler.' }
+      ] },
+      { id: 'TCK-1009', customer: 'Mason Lee', subject: 'Invoice mismatch', status: 'pending', priority: 'Medium', created: 'Mar 24', updated: 'Mar 27', product: 'Billing dashboard', description: 'Invoice total does not match the contract price. Customer requests updated invoice and correction.', messages: [
+        { author: 'Customer', timestamp: 'Mar 24, 09:18', content: 'The total on invoice #118 is higher than expected.' },
+        { author: 'Agent', timestamp: 'Mar 24, 11:05', content: 'Reviewing line items and contract terms now.' }
+      ] },
+      { id: 'TCK-1004', customer: 'Jada Rivera', subject: 'Website update request', status: 'resolved', priority: 'Low', created: 'Mar 20', updated: 'Mar 25', product: 'Website CMS', description: 'Customer requested a homepage hero image update and content tweak, completed successfully.', messages: [
+        { author: 'Customer', timestamp: 'Mar 20, 14:30', content: 'Please update the hero image and CTA text to match new branding.' },
+        { author: 'Agent', timestamp: 'Mar 21, 09:12', content: 'Implemented the requested content changes and published the page.' }
+      ] },
+      { id: 'TCK-1015', customer: 'Harper Wells', subject: 'Broken form submission', status: 'open', priority: 'High', created: 'Mar 28', updated: 'Mar 28', product: 'Contact form', description: 'Form submissions are failing with a 500 error. Customer needs urgent fix for lead capture.', messages: [
+        { author: 'Customer', timestamp: 'Mar 28, 08:54', content: 'My form is returning an error after submit and leads are not getting captured.' },
+        { author: 'Agent', timestamp: 'Mar 28, 09:20', content: 'Investigating server error logs and validation rules.' }
+      ] }
+    ];
+
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const ticketBarChart = document.getElementById('ticketBarChart');
+    const ticketListEl = document.getElementById('ticketList');
+    const ticketHistoryEl = document.getElementById('ticketHistory');
+    const noteInput = document.getElementById('noteInput');
+    const addNoteBtn = document.getElementById('addNoteBtn');
+    const chatInput = document.getElementById('chatInput');
+    const sendChatBtn = document.getElementById('sendChatBtn');
+    const agentChatList = document.getElementById('agentChatList');
+    const agentChatInput = document.getElementById('agentChatInput');
+    const sendAgentChatBtn = document.getElementById('sendAgentChatBtn');
+    const detailSubject = document.getElementById('detailSubject');
+    const detailDescription = document.getElementById('detailDescription');
+    const detailCustomer = document.getElementById('detailCustomer');
+    const detailCreated = document.getElementById('detailCreated');
+    const detailUpdated = document.getElementById('detailUpdated');
+    const detailPriority = document.getElementById('detailPriority');
+    const prioritySelect = document.getElementById('prioritySelect');
+    const detailProduct = document.getElementById('detailProduct');
+    const detailStatus = document.getElementById('detailStatus');
+    const resolveTicketBtn = document.getElementById('resolveTicketBtn');
+    const replyTicketBtn = document.getElementById('replyTicketBtn');
+    const openCount = document.getElementById('openCount');
+    const pendingCount = document.getElementById('pendingCount');
+    const resolvedCount = document.getElementById('resolvedCount');
+    const totalTicketsEl = document.getElementById('totalTickets');
+    const activeAgentsEl = document.getElementById('activeAgents');
+    const offlineAgentsEl = document.getElementById('offlineAgents');
+    const customerCountEl = document.getElementById('customerCount');
+    const slaScoreEl = document.getElementById('slaScore');
+    const statusActionButtons = document.querySelectorAll('.status-action');
+
+    let activeFilter = 'all';
+    let selectedTicket = supportTickets[0];
+
+    const ticketStatusValues = [
+      { key: 'open', label: 'Open', color: '#7c3aed' },
+      { key: 'inprogress', label: 'In progress', color: '#f97316' },
+      { key: 'waiting', label: 'Waiting', color: '#facc15' },
+      { key: 'pending', label: 'Pending', color: '#8b5cf6' },
+      { key: 'resolved', label: 'Resolved', color: '#16a34a' }
+    ];
+
+    const renderCounts = () => {
+      const counts = ticketStatusValues.reduce((acc, type) => {
+        acc[type.key] = supportTickets.filter(ticket => ticket.status === type.key).length;
+        return acc;
+      }, {});
+      openCount.textContent = counts.open;
+      pendingCount.textContent = counts.pending;
+      resolvedCount.textContent = counts.resolved;
+      renderAdminOverview(counts);
+      renderBarChart(counts);
+    };
+
+    const renderAdminOverview = (counts) => {
+      totalTicketsEl.textContent = supportTickets.length;
+      const agentCounts = getAgentCounts();
+      activeAgentsEl.textContent = agentCounts.online;
+      offlineAgentsEl.textContent = agentCounts.offline;
+      customerCountEl.textContent = new Set(supportTickets.map(ticket => ticket.customer)).size;
+      const sla = supportTickets.length > 0 ? Math.round((counts.resolved / supportTickets.length) * 100) : 0;
+      slaScoreEl.textContent = `${sla}%`;
+    };
+
+    const renderBarChart = ({ open, inprogress, waiting, pending, resolved }) => {
+      ticketBarChart.innerHTML = '';
+      const values = { open, inprogress, waiting, pending, resolved };
+      const total = Math.max(...Object.values(values), 1);
+
+      ticketStatusValues.forEach(status => {
+        const count = values[status.key] || 0;
+        const bar = document.createElement('button');
+        bar.type = 'button';
+        bar.className = 'bar';
+        bar.dataset.filter = status.key;
+        bar.innerHTML = `
+          <div class="bar-track">
+            <div class="bar-fill" style="height: ${Math.round((count / total) * 100)}%; background: ${status.color};"></div>
+          </div>
+          <div class="bar-label">
+            <span class="bar-count">${count}</span>
+            <span>${status.label}</span>
+          </div>
+        `;
+        if (activeFilter === status.key) bar.classList.add('active');
+        bar.addEventListener('click', () => setActiveFilter(status.key));
+        ticketBarChart.appendChild(bar);
+      });
+    };
+
+    const setActiveFilter = (filter) => {
+      activeFilter = filter;
+      filterButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.filter === filter));
+      renderTickets();
+      renderCounts();
+    };
+
+    const getStatusLabel = (status) => {
+      const item = ticketStatusValues.find(type => type.key === status);
+      return item ? item.label : status.charAt(0).toUpperCase() + status.slice(1);
+    };
+
+    const getStatusClass = (status) => {
+      if (status === 'open') return 'status-open';
+      if (status === 'inprogress') return 'status-inprogress';
+      if (status === 'waiting') return 'status-waiting';
+      if (status === 'pending') return 'status-pending';
+      return 'status-resolved';
+    };
+
+    const buildTicketCard = (ticket) => {
+      const wrapper = document.createElement('button');
+      wrapper.type = 'button';
+      wrapper.className = 'ticket-card';
+      wrapper.innerHTML = `
+        <strong>${ticket.subject}</strong>
+        <span>${ticket.customer} • ${ticket.product}</span>
+        <div class="ticket-meta">
+          <span class="pill ${getStatusClass(ticket.status)}">${getStatusLabel(ticket.status)}</span>
+          <span>${ticket.priority} priority</span>
+        </div>
+      `;
+      if (selectedTicket.id === ticket.id) wrapper.classList.add('active');
+      wrapper.addEventListener('click', () => {
+        selectedTicket = ticket;
+        renderTickets();
+        showTicketDetails(ticket);
+      });
+      return wrapper;
+    };
+
+    const renderTickets = () => {
+      ticketListEl.innerHTML = '';
+      const filtered = supportTickets.filter(ticket => activeFilter === 'all' ? true : ticket.status === activeFilter);
+      filtered.forEach(ticket => ticketListEl.appendChild(buildTicketCard(ticket)));
+      if (!filtered.find(ticket => ticket.id === selectedTicket.id)) {
+        selectedTicket = filtered[0] || supportTickets[0];
+      }
+      if (selectedTicket) showTicketDetails(selectedTicket);
+    };
+
+    const updateTicketStatus = (ticket, status) => {
+      ticket.status = status;
+      ticket.updated = 'Now';
+      ticket.messages.push({ author: 'Internal Note', timestamp: 'Now', content: `Status changed to ${getStatusLabel(status)} by ${staffData.name}.` });
+      renderCounts();
+      renderTickets();
+      showTicketDetails(ticket);
+    };
+
+    const renderTicketHistory = (ticket) => {
+      ticketHistoryEl.innerHTML = '';
+      ticket.messages.forEach(entry => {
+        const historyItem = document.createElement('div');
+        const typeClass = entry.author === 'Customer' ? 'customer' : entry.author === 'Agent' ? 'agent' : 'internal';
+        historyItem.className = `history-entry ${typeClass}`;
+        historyItem.innerHTML = `
+          <strong>${entry.author}</strong>
+          <span>${entry.timestamp}</span>
+          <p>${entry.content}</p>
+        `;
+        ticketHistoryEl.appendChild(historyItem);
+      });
+    };
+
+    const getAgentChat = () => {
+      const stored = JSON.parse(localStorage.getItem('supportTeamChat') || '[]');
+      return Array.isArray(stored) ? stored : [];
+    };
+
+    const saveAgentChat = (messages) => {
+      localStorage.setItem('supportTeamChat', JSON.stringify(messages));
+    };
+
+    const renderAgentChat = () => {
+      const messages = getAgentChat();
+      agentChatList.innerHTML = '';
+      messages.slice(-50).forEach(entry => {
+        const chatItem = document.createElement('div');
+        chatItem.className = 'team-chat-entry';
+        chatItem.innerHTML = `
+          <strong>${entry.author}</strong>
+          <span>${entry.timestamp}</span>
+          <p>${entry.content}</p>
+        `;
+        agentChatList.appendChild(chatItem);
+      });
+      agentChatList.scrollTop = agentChatList.scrollHeight;
+    };
+
+    const addAgentChatMessage = (message) => {
+      const content = String(message || '').trim();
+      if (!content) return;
+      const thread = getAgentChat();
+      thread.push({
+        author: staffData.name,
+        timestamp: new Date().toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }),
+        content
+      });
+      saveAgentChat(thread);
+      renderAgentChat();
+    };
+
+    const showTicketDetails = (ticket) => {
+      detailSubject.textContent = `${ticket.subject} (${ticket.id})`;
+      detailDescription.textContent = ticket.description;
+      detailCustomer.textContent = ticket.customer;
+      detailCreated.textContent = ticket.created;
+      detailUpdated.textContent = ticket.updated;
+      detailPriority.textContent = ticket.priority;
+      prioritySelect.value = ticket.priority;
+      detailProduct.textContent = ticket.product;
+      detailStatus.textContent = getStatusLabel(ticket.status);
+      detailStatus.className = `pill ${getStatusClass(ticket.status)}`;
+      resolveTicketBtn.textContent = ticket.status === 'resolved' ? 'Resolved' : 'Mark resolved';
+      resolveTicketBtn.disabled = ticket.status === 'resolved';
+      renderTicketHistory(ticket);
+    };
+
+    filterButtons.forEach(button => {
+      button.addEventListener('click', () => setActiveFilter(button.dataset.filter));
+    });
+
+    statusActionButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        if (!selectedTicket) return;
+        updateTicketStatus(selectedTicket, button.dataset.status);
+      });
+    });
+
+    resolveTicketBtn.addEventListener('click', () => {
+      if (selectedTicket.status === 'resolved') return;
+      updateTicketStatus(selectedTicket, 'resolved');
+    });
+
+    replyTicketBtn.addEventListener('click', () => { chatInput.focus(); });
+
+    prioritySelect.addEventListener('change', () => {
+      if (!selectedTicket) return;
+      selectedTicket.priority = prioritySelect.value;
+      selectedTicket.updated = 'Now';
+      selectedTicket.messages.push({ author: 'Internal Note', timestamp: 'Now', content: `Priority updated to ${prioritySelect.value} by ${staffData.name}.` });
+      renderTickets();
+      showTicketDetails(selectedTicket);
+    });
+
+    addNoteBtn.addEventListener('click', () => {
+      const note = noteInput.value.trim();
+      if (!note) return;
+      selectedTicket.messages.push({ author: 'Internal Note', timestamp: 'Now', content: note });
+      noteInput.value = '';
+      renderTicketHistory(selectedTicket);
+    });
+
+    sendChatBtn.addEventListener('click', () => {
+      const message = chatInput.value.trim();
+      if (!message) return;
+      selectedTicket.messages.push({ author: staffData.name, timestamp: 'Now', content: message });
+      chatInput.value = '';
+      renderTicketHistory(selectedTicket);
+    });
+
+    sendAgentChatBtn.addEventListener('click', () => {
+      addAgentChatMessage(agentChatInput.value);
+      agentChatInput.value = '';
+    });
+
+    agentChatInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendAgentChatBtn.click();
+      }
+    });
+
+    window.addEventListener('storage', (event) => {
+      if (event.key === 'supportTeamChat') renderAgentChat();
+      if (event.key === 'supportOnlineAgents') renderCounts();
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      removeOnlineAgent(staffData.email);
+      localStorage.removeItem('supportStaff');
+      window.location.href = 'support-login.html';
+    });
+
+    const themeToggle = document.getElementById('themeToggle');
+    const storedTheme = localStorage.getItem('siteTheme') || 'light';
+    const applyTheme = (theme) => {
+      document.body.classList.toggle('dark-mode', theme === 'dark');
+      themeToggle.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
+      themeToggle.setAttribute('aria-pressed', theme === 'dark');
+      localStorage.setItem('siteTheme', theme);
+    };
+    themeToggle.addEventListener('click', () => {
+      const nextTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+      applyTheme(nextTheme);
+    });
+
+    renderCounts();
+    renderTickets();
+    renderAgentChat();
+    applyTheme(storedTheme);
+  </script>
+</body>
+</html>
