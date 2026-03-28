@@ -1,25 +1,185 @@
-.head{
-    background: #3F5EFB;
-background: radial-gradient(circle, rgba(63, 94, 251, 1) 0%, rgba(252, 70, 107, 1) 100%);
-    font-family: 'Poppins', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
+:root {
+  color-scheme: light;
+  --bg: #f5f3ff;
+  --surface: #ffffff;
+  --surface-alt: #f2e7ff;
+  --text: #1f1b34;
+  --muted: #6d5b7b;
+  --primary: #7c3aed;
+  --primary-soft: #ede9ff;
+  --surface-contrast: rgba(124, 58, 237, 0.15);
 }
 
+body.dark-mode {
+  color-scheme: dark;
+  --bg: #0f172a;
+  --surface: #111827;
+  --surface-alt: #1f2937;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --primary: #82aaff;
+  --primary-soft: #1e2a5b;
+  --surface-contrast: rgba(148, 163, 184, 0.16);
+}
 
+body.dark-mode .navbar,
+body.dark-mode .hero-section,
+body.dark-mode .section-bg,
+body.dark-mode .service-card,
+body.dark-mode .portfolio-card,
+body.dark-mode .contact-form,
+body.dark-mode .hero-card,
+body.dark-mode .feature-box,
+body.dark-mode footer.footer {
+  background: var(--surface) !important;
+}
 
+body.dark-mode .hero-section {
+  background: radial-gradient(circle at top left, rgba(130, 170, 255, 0.14), transparent 48%),
+              linear-gradient(180deg, #111827 0%, #0f172a 100%);
+}
 
+body.dark-mode .section-bg {
+  background: var(--bg);
+}
 
-body{
-    background: #3F5EFB;
-background: radial-gradient(circle, rgba(63, 94, 251, 1) 0%, rgba(252, 70, 107, 1) 100%);
-    font-family: 'Poppins', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
+body.dark-mode .feature-box {
+  background: var(--surface-alt);
+  border-color: rgba(148, 163, 184, 0.25);
+}
+
+body.dark-mode .navbar-brand,
+body.dark-mode .nav-link,
+body.dark-mode .navbar-toggler-icon,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode p,
+body.dark-mode .form-label,
+body.dark-mode .form-control,
+body.dark-mode .form-control::placeholder,
+body.dark-mode .btn,
+body.dark-mode .btn-outline-secondary,
+body.dark-mode .btn-outline-primary,
+body.dark-mode .list-unstyled,
+body.dark-mode .list-unstyled li {
+  color: var(--text) !important;
+}
+
+body.dark-mode .text-muted {
+  color: var(--muted) !important;
+}
+
+body.dark-mode .navbar-light .navbar-toggler-icon {
+  filter: invert(1) brightness(1.5);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: #f2f5fb;
+  color: var(--text);
+}
+
+body {
+  padding-top: 76px;
+  background: radial-gradient(circle at top left, rgba(124, 58, 237, 0.14), transparent 28%),
+              linear-gradient(180deg, #f4efff 0%, #f5f3ff 45%, #ede9ff 100%);
+  color: var(--text);
+}
+
+header {
+  margin-bottom: 1rem;
+}
+
+.hero-section {
+  background: radial-gradient(circle at top left, rgba(124, 58, 237, 0.18), transparent 38%),
+              linear-gradient(180deg, #fbf5ff 0%, #f5ecff 42%, #efe1ff 100%);
+}
+
+.hero-section .eyebrow {
+  letter-spacing: .24em;
+  color: var(--primary);
+}
+
+.hero-card {
+  background: var(--surface);
+}
+
+.navbar,
+footer.footer,
+.service-card,
+.portfolio-card,
+.contact-form,
+.hero-card {
+  transition: background .3s ease, color .3s ease, border-color .3s ease;
+}
+
+.feature-box {
+  background: var(--surface-alt);
+  border: 1px solid rgba(59, 91, 219, 0.12);
+}
+
+.section-bg {
+  background: linear-gradient(180deg, #fbf5ff 0%, #f7efff 100%);
+}
+
+#services .service-card,
+#portfolio .portfolio-card,
+.contact-form {
+  background: var(--surface);
+}
+
+.service-card h3,
+.portfolio-card h3 {
+  margin-bottom: .75rem;
+}
+
+.service-card p,
+.portfolio-card p {
+  color: var(--muted);
+}
+
+.section-bg h2,
+#portfolio h2,
+#contact h2 {
+  color: var(--text);
+}
+
+.contact-form {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+footer.footer {
+  background: transparent;
+}
+
+footer.footer p {
+  margin: 0;
+  font-size: .95rem;
+}
+
+@media (max-width: 992px) {
+  .hero-section {
+    padding-top: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .service-card,
+  .portfolio-card,
+  .contact-form,
+  .hero-card {
+    padding: 1.5rem;
+  }
+
+  .hero-section {
+    padding-top: 2rem;
+  }
 }

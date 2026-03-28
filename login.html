@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Creative Web Solutions</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Inter, system-ui, sans-serif;
+      background: #f4f3ff;
+      color: #111827;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at top left, rgba(124, 58, 237, 0.18), transparent 30%),
+                  linear-gradient(180deg, #f8f6ff 0%, #eef0ff 45%, #f9f7ff 100%);
+      padding: 1.5rem;
+    }
+
+    .login-shell {
+      width: min(960px, 100%);
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 2rem;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(124, 58, 237, 0.18);
+      border-radius: 32px;
+      box-shadow: 0 35px 90px rgba(99, 102, 241, 0.12);
+      overflow: hidden;
+    }
+
+    .login-side {
+      padding: 3rem;
+      background: linear-gradient(180deg, #faf5ff 0%, #f3efff 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .login-side h1 {
+      margin: 0 0 1rem;
+      font-size: clamp(2.2rem, 2.8vw, 3.3rem);
+      line-height: 1.05;
+      color: #4c1d95;
+    }
+
+    .login-side p {
+      margin: 0;
+      color: #5b4b96;
+      font-size: 1rem;
+      line-height: 1.8;
+      max-width: 30rem;
+    }
+
+    .login-side .benefits {
+      margin-top: 2rem;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .benefit {
+      display: flex;
+      gap: 0.85rem;
+      align-items: flex-start;
+    }
+
+    .benefit-dot {
+      width: 12px;
+      height: 12px;
+      margin-top: 0.45rem;
+      border-radius: 999px;
+      background: #8b5cf6;
+      flex-shrink: 0;
+    }
+
+    .benefit span {
+      color: #5b4b96;
+      font-size: 0.98rem;
+      line-height: 1.7;
+    }
+
+    .login-form-card {
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .login-form-card h2 {
+      margin: 0 0 1rem;
+      font-size: 1.8rem;
+      letter-spacing: -0.03em;
+    }
+
+    .login-form-card p {
+      margin: 0 0 2rem;
+      color: #6b7280;
+    }
+
+    .form-group {
+      margin-bottom: 1.3rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.6rem;
+      color: #374151;
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 100%;
+      min-height: 3.1rem;
+      padding: 0.95rem 1rem;
+      font-size: 1rem;
+      color: #111827;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 16px;
+      background: #ffffff;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus {
+      border-color: #7c3aed;
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12);
+    }
+
+    .remember-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.85rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      color: #4b5563;
+      font-size: 0.95rem;
+    }
+
+    .remember-row a {
+      color: #7c3aed;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .primary-btn {
+      width: 100%;
+      padding: 1rem 1.1rem;
+      background: linear-gradient(135deg, #7c3aed 0%, #9333ea 100%);
+      border: none;
+      border-radius: 16px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+
+    .primary-btn:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      padding: 0.75rem 1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(124, 58, 237, 0.25);
+      background: #ffffff;
+      color: #5b4b96;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .back-btn:hover {
+      background: rgba(124, 58, 237, 0.08);
+      transform: translateY(-0.1rem);
+    }
+
+    .alt-link {
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+      color: #6b7280;
+      text-align: center;
+    }
+
+    .alt-link a {
+      color: #7c3aed;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    @media (max-width: 860px) {
+      .login-shell {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .login-side,
+      .login-form-card {
+        padding: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-shell">
+    <aside class="login-side">
+      <h1>Welcome back</h1>
+      <p>Log in to continue managing projects, tracking progress, and building better digital experiences with Creative Web Solutions.</p>
+      <div class="benefits">
+        <div class="benefit"><span class="benefit-dot"></span><span>Secure access to your dashboard</span></div>
+        <div class="benefit"><span class="benefit-dot"></span><span>Fast onboarding and project updates</span></div>
+        <div class="benefit"><span class="benefit-dot"></span><span>Integrated support and account tools</span></div>
+      </div>
+    </aside>
+
+    <main class="login-form-card">
+      <a href="javascript:history.back()" class="back-btn">← Back</a>
+      <h2>Sign in to your account</h2>
+      <p>Enter your credentials below to access your workspace.</p>
+      <form>
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        </div>
+
+        <div class="remember-row">
+          <label><input type="checkbox"> Remember me</label>
+          <a href="#">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="primary-btn">Log In</button>
+      </form>
+      <p class="alt-link">Don’t have an account? <a href="signup.html">Create one</a></p>
+    </main>
+  </div>
+  <script>
+    const loginForm = document.querySelector('form');
+    loginForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const displayName = email.split('@')[0].replace(/[^a-zA-Z0-9]+/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()) || 'Customer';
+      const customer = {
+        email,
+        name: displayName,
+        plan: 'Growth plan',
+        renewal: 'May 18',
+        activeProjects: 8,
+        newLeads: 24,
+        supportTickets: 3,
+        monthlySpend: '$2.4K'
+      };
+      localStorage.setItem('portalCustomer', JSON.stringify(customer));
+      window.location.href = 'customer-portal.html';
+    });
+  </script>
+</body>
+</html>
