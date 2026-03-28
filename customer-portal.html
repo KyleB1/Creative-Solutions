@@ -614,35 +614,15 @@
       </main>
     </div>
   </div>
+  <script src="auth.js"></script>
+  <script src="header.js"></script>
   <script>
-    const customerData = JSON.parse(localStorage.getItem('portalCustomer') || 'null');
+    const customerData = SiteAuth.requireCustomer('login.html');
+    if (!customerData) {
+      throw new Error('Unauthorized customer session.');
+    }
+    SiteAuth.clearSupport();
     const settingsNameInput = document.getElementById('settingsName');
-    const activeSupport = JSON.parse(localStorage.getItem('supportStaff') || 'null');
-    if (customerData?.email && !customerData.role) {
-      customerData.role = 'customer';
-      localStorage.setItem('portalCustomer', JSON.stringify(customerData));
-    }
-    const isValidCustomer = Boolean(customerData?.email && customerData.role === 'customer');
-    if (!isValidCustomer) {
-      localStorage.removeItem('portalCustomer');
-      if (activeSupport?.email) {
-        const onlineRoster = JSON.parse(localStorage.getItem('supportOnlineAgents') || '[]');
-        if (Array.isArray(onlineRoster)) {
-          const updatedRoster = onlineRoster.filter(item => String(item).toLowerCase() !== activeSupport.email.toLowerCase());
-          localStorage.setItem('supportOnlineAgents', JSON.stringify(updatedRoster));
-        }
-        localStorage.removeItem('supportStaff');
-      }
-      window.location.href = 'login.html';
-    }
-    if (customerData?.email && activeSupport?.email) {
-      const onlineRoster = JSON.parse(localStorage.getItem('supportOnlineAgents') || '[]');
-      if (Array.isArray(onlineRoster)) {
-        const updatedRoster = onlineRoster.filter(item => String(item).toLowerCase() !== activeSupport.email.toLowerCase());
-        localStorage.setItem('supportOnlineAgents', JSON.stringify(updatedRoster));
-      }
-      localStorage.removeItem('supportStaff');
-    }
     const settingsEmailInput = document.getElementById('settingsEmailInput');
     const settingsPlanSelect = document.getElementById('settingsPlanSelect');
     const settingsNotifications = document.getElementById('settingsNotifications');
@@ -732,25 +712,21 @@
       renderSavedPaymentMethod();
     };
 
-    if (!customerData || !customerData.email) {
-      window.location.href = 'login.html';
-    } else {
-      document.getElementById('profilePill').textContent = `Hi, ${customerData.name}`;
-      document.getElementById('welcomeName').textContent = customerData.name;
-      document.getElementById('planName').textContent = customerData.plan;
-      document.getElementById('renewalDate').textContent = customerData.renewal;
-      document.getElementById('activeProjects').textContent = customerData.activeProjects;
-      document.getElementById('newLeads').textContent = customerData.newLeads;
-      document.getElementById('supportTickets').textContent = customerData.supportTickets;
-      document.getElementById('monthlySpend').textContent = customerData.monthlySpend;
-      document.getElementById('settingsEmail').textContent = customerData.email;
-      document.getElementById('settingsPlan').textContent = customerData.plan;
-      settingsNameInput.value = customerData.name || '';
-      settingsEmailInput.value = customerData.email;
-      settingsPlanSelect.value = customerData.plan || 'Basic';
-      settingsNotifications.checked = !!customerData.notifications;
-      document.getElementById('nextPaymentDue').textContent = customerData.renewal;
-    }
+    document.getElementById('profilePill').textContent = `Hi, ${customerData.name}`;
+    document.getElementById('welcomeName').textContent = customerData.name;
+    document.getElementById('planName').textContent = customerData.plan;
+    document.getElementById('renewalDate').textContent = customerData.renewal;
+    document.getElementById('activeProjects').textContent = customerData.activeProjects;
+    document.getElementById('newLeads').textContent = customerData.newLeads;
+    document.getElementById('supportTickets').textContent = customerData.supportTickets;
+    document.getElementById('monthlySpend').textContent = customerData.monthlySpend;
+    document.getElementById('settingsEmail').textContent = customerData.email;
+    document.getElementById('settingsPlan').textContent = customerData.plan;
+    settingsNameInput.value = customerData.name || '';
+    settingsEmailInput.value = customerData.email;
+    settingsPlanSelect.value = customerData.plan || 'Basic';
+    settingsNotifications.checked = !!customerData.notifications;
+    document.getElementById('nextPaymentDue').textContent = customerData.renewal;
 
     const navLinks = document.querySelectorAll('.nav-link[data-section]');
     const contentSections = document.querySelectorAll('.content-section');
@@ -851,8 +827,7 @@
 
     const logoutBtn = document.getElementById('logoutBtn');
     logoutBtn.addEventListener('click', () => {
-      localStorage.removeItem('portalCustomer');
-      window.location.href = 'login.html';
+      SiteAuth.logoutCustomer('login.html');
     });
 
     settingsSaveBtn.addEventListener('click', () => {

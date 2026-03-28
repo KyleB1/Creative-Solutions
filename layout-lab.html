@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layout Lab | Creative Web Solutions</title>
+    <style>
+        :root {
+            font-family: "Segoe UI", system-ui, sans-serif;
+            --bg: #f8fafc;
+            --panel: #ffffff;
+            --text: #0f172a;
+            --muted: #64748b;
+            --border: #dbe2ea;
+            --primary: #2563eb;
+            --primary-soft: #dbeafe;
+            --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top right, rgba(37, 99, 235, 0.08), transparent 32%),
+                linear-gradient(180deg, #f8fbff 0%, #f1f5f9 100%);
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .topbar-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0.9rem 1rem;
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .brand {
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #0f172a;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            padding: 0.5rem 0.9rem;
+            border-radius: 999px;
+            text-decoration: none;
+            color: #334155;
+            border: 1px solid var(--border);
+            background: #fff;
+            font-size: 0.92rem;
+            font-weight: 600;
+        }
+
+        .nav-links a.active {
+            background: var(--primary-soft);
+            border-color: #93c5fd;
+            color: #1d4ed8;
+        }
+
+        .topbar-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .topbar-actions .btn {
+            width: auto;
+            min-height: auto;
+            border-radius: 999px;
+            padding: 0.52rem 0.9rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: #334155;
+            white-space: nowrap;
+        }
+
+        .topbar-actions .btn.primary {
+            background: var(--primary);
+            color: #fff;
+            border-color: transparent;
+        }
+
+        .wrap {
+            max-width: 1200px;
+            margin: 1.5rem auto 2.5rem;
+            padding: 0 1rem;
+            display: grid;
+            gap: 1rem;
+            grid-template-columns: 340px minmax(0, 1fr);
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+        }
+
+        .controls {
+            padding: 1.1rem;
+            position: sticky;
+            top: 80px;
+            height: fit-content;
+        }
+
+        .controls h1 {
+            margin: 0;
+            font-size: 1.4rem;
+            letter-spacing: -0.02em;
+        }
+
+        .controls p {
+            color: var(--muted);
+            line-height: 1.6;
+            margin: 0.7rem 0 1rem;
+            font-size: 0.95rem;
+        }
+
+        .field {
+            margin-bottom: 1rem;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 0.45rem;
+            font-size: 0.86rem;
+            color: #475569;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        select, .btn, input[type="text"] {
+            width: 100%;
+            min-height: 2.7rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 0.6rem 0.75rem;
+            font: inherit;
+            color: #0f172a;
+            background: #fff;
+        }
+
+        .style-grid {
+            display: grid;
+            gap: 0.5rem;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .style-option {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 0.93rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0.55rem 0.65rem;
+            background: #fff;
+        }
+
+        .button-row {
+            display: grid;
+            gap: 0.55rem;
+            grid-template-columns: 1fr 1fr;
+            margin-top: 0.8rem;
+        }
+
+        .button-row.with-auth {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        #authOptionBtn {
+            display: none;
+        }
+
+        .btn {
+            cursor: pointer;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn.primary {
+            background: var(--primary);
+            color: #fff;
+            border-color: transparent;
+        }
+
+        .btn.secondary {
+            background: #fff;
+            color: #334155;
+        }
+
+        .preview {
+            padding: 1rem;
+            display: grid;
+            gap: 1rem;
+        }
+
+        .device-tabs {
+            display: inline-flex;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            overflow: hidden;
+            width: fit-content;
+            background: #fff;
+        }
+
+        .device-tabs button {
+            border: none;
+            padding: 0.45rem 0.9rem;
+            background: transparent;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+        }
+
+        .device-tabs button.active {
+            background: var(--primary-soft);
+            color: #1d4ed8;
+        }
+
+        .viewport {
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            background: #fff;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: width 0.25s ease;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .viewport.mobile {
+            width: 390px;
+            max-width: 100%;
+        }
+
+        .site-demo {
+            min-height: 560px;
+            background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+        }
+
+        .demo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid #dbe2ea;
+            background: #ffffff;
+        }
+
+        .demo-logo {
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .demo-chip {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            background: #dbeafe;
+            border-radius: 999px;
+            padding: 0.3rem 0.55rem;
+        }
+
+        .demo-hero {
+            padding: 2rem 1.2rem 1.5rem;
+        }
+
+        .demo-hero h2 {
+            margin: 0 0 0.6rem;
+            font-size: clamp(1.35rem, 2.8vw, 2rem);
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+        }
+
+        .demo-hero p {
+            margin: 0;
+            color: #475569;
+            line-height: 1.6;
+            max-width: 58ch;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: 0.85rem;
+            padding: 0 1.2rem 1.2rem;
+        }
+
+        .demo-card {
+            padding: 0.9rem;
+            border-radius: 14px;
+            border: 1px solid #dbe2ea;
+            background: #fff;
+        }
+
+        .demo-card h3 {
+            margin: 0 0 0.4rem;
+            font-size: 0.95rem;
+        }
+
+        .demo-card p {
+            margin: 0;
+            color: #64748b;
+            font-size: 0.84rem;
+            line-height: 1.45;
+        }
+
+        .template-grid {
+            display: grid;
+            gap: 0.8rem;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+
+        .template {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 0.9rem;
+            background: #fff;
+        }
+
+        .template h3 {
+            margin: 0 0 0.45rem;
+            font-size: 1rem;
+        }
+
+        .template p {
+            margin: 0 0 0.8rem;
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.45;
+        }
+
+        .template button {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: #f8fafc;
+            color: #0f172a;
+            padding: 0.5rem 0.75rem;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .theme-dark {
+            --bg-dark: #0f172a;
+            --panel-dark: #111827;
+            --text-dark: #e2e8f0;
+            --muted-dark: #94a3b8;
+            --border-dark: #334155;
+        }
+
+        body.dark-mode {
+            background:
+                radial-gradient(circle at top right, rgba(56, 189, 248, 0.09), transparent 30%),
+                linear-gradient(180deg, #0f172a 0%, #111827 100%);
+        }
+
+        body.dark-mode .topbar,
+        body.dark-mode .panel,
+        body.dark-mode .viewport,
+        body.dark-mode .demo-header,
+        body.dark-mode .demo-card,
+        body.dark-mode .template,
+        body.dark-mode .style-option,
+        body.dark-mode select,
+        body.dark-mode .btn.secondary,
+        body.dark-mode input[type="text"] {
+            background: #111827;
+            color: #e2e8f0;
+            border-color: #334155;
+        }
+
+        body.dark-mode .demo-hero p,
+        body.dark-mode .controls p,
+        body.dark-mode .field label,
+        body.dark-mode .template p,
+        body.dark-mode .demo-card p,
+        body.dark-mode .nav-links a {
+            color: #cbd5e1;
+        }
+
+        body.dark-mode .nav-links a.active,
+        body.dark-mode .device-tabs button.active {
+            background: #1e293b;
+            color: #bfdbfe;
+        }
+
+        body.dark-mode .topbar-actions .btn {
+            background: #111827;
+            color: #e2e8f0;
+            border-color: #334155;
+        }
+
+        body.dark-mode .topbar-actions .btn.primary {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        body.dark-mode .site-demo {
+            background: linear-gradient(180deg, #111827 0%, #0f172a 100%);
+        }
+
+        body.dark-mode .demo-chip {
+            background: #1e293b;
+            color: #bfdbfe;
+        }
+
+        @media (max-width: 980px) {
+            .wrap {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                position: static;
+            }
+
+            .topbar-inner {
+                justify-content: center;
+            }
+
+            .topbar-actions {
+                justify-content: center;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="wrap">
+        <section class="panel controls" aria-label="Layout controls">
+            <h1>Layout Lab</h1>
+            <p>Try different page styles and save your favorite before purchase. Your selection follows you to signup.</p>
+
+            <div class="field">
+                <label for="industrySelect">Business Type</label>
+                <select id="industrySelect">
+                    <option value="agency">Creative Agency</option>
+                    <option value="restaurant">Restaurant</option>
+                    <option value="shop">Online Store</option>
+                    <option value="coach">Coach / Consultant</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Visual Style</label>
+                <div class="style-grid">
+                    <label class="style-option"><input type="radio" name="style" value="minimal" checked> Minimal</label>
+                    <label class="style-option"><input type="radio" name="style" value="bold"> Bold</label>
+                    <label class="style-option"><input type="radio" name="style" value="editorial"> Editorial</label>
+                    <label class="style-option"><input type="radio" name="style" value="soft"> Soft</label>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="accentSelect">Accent Color</label>
+                <select id="accentSelect">
+                    <option value="#2563eb">Blue</option>
+                    <option value="#0ea5e9">Sky</option>
+                    <option value="#16a34a">Green</option>
+                    <option value="#ea580c">Orange</option>
+                    <option value="#7c3aed">Violet</option>
+                </select>
+            </div>
+
+            <div class="button-row" id="actionButtons">
+                <button class="btn secondary" id="saveSelection" type="button">Save</button>
+                <a class="btn primary" id="continueBtn" href="signup.html">Continue</a>
+                <a class="btn secondary" id="authOptionBtn" href="login.html">Sign In</a>
+            </div>
+        </section>
+
+        <section class="panel preview">
+            <div class="device-tabs" role="tablist" aria-label="Device preview">
+                <button type="button" class="active" data-device="desktop">Desktop</button>
+                <button type="button" data-device="mobile">Mobile</button>
+            </div>
+
+            <div id="viewport" class="viewport">
+                <article class="site-demo" id="siteDemo">
+                    <div class="demo-header">
+                        <div class="demo-logo" id="demoLogo">Creative Agency</div>
+                        <span class="demo-chip" id="demoChip">Minimal</span>
+                    </div>
+                    <div class="demo-hero">
+                        <h2 id="demoTitle">Build trust with a focused, clean layout.</h2>
+                        <p id="demoText">This preview updates instantly based on your business type, style, and brand color.</p>
+                    </div>
+                    <div class="demo-grid" id="demoGrid"></div>
+                </article>
+            </div>
+
+            <h2 style="margin:0.2rem 0 0; font-size:1.15rem;">Quick Template Starters</h2>
+            <div class="template-grid">
+                <article class="template">
+                    <h3>Conversion Landing</h3>
+                    <p>High-contrast sections with clear CTA hierarchy for lead generation.</p>
+                    <button type="button" data-template='{"industry":"coach","style":"bold","accent":"#ea580c"}'>Try Template</button>
+                </article>
+                <article class="template">
+                    <h3>Storefront Showcase</h3>
+                    <p>Product-first layout with card-based visual rhythm for ecommerce teams.</p>
+                    <button type="button" data-template='{"industry":"shop","style":"minimal","accent":"#16a34a"}'>Try Template</button>
+                </article>
+                <article class="template">
+                    <h3>Brand Story Site</h3>
+                    <p>Editorial composition with typography-led storytelling and soft spacing.</p>
+                    <button type="button" data-template='{"industry":"agency","style":"editorial","accent":"#7c3aed"}'>Try Template</button>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <script src="theme.js"></script>
+    <script src="auth.js"></script>
+    <script src="header.js"></script>
+    <script>
+        const industrySelect = document.getElementById('industrySelect');
+        const accentSelect = document.getElementById('accentSelect');
+        const styleRadios = document.querySelectorAll('input[name="style"]');
+        const demoLogo = document.getElementById('demoLogo');
+        const demoChip = document.getElementById('demoChip');
+        const demoTitle = document.getElementById('demoTitle');
+        const demoText = document.getElementById('demoText');
+        const demoGrid = document.getElementById('demoGrid');
+        const saveSelection = document.getElementById('saveSelection');
+        const continueBtn = document.getElementById('continueBtn');
+        const viewport = document.getElementById('viewport');
+        const templateButtons = document.querySelectorAll('button[data-template]');
+        const authOptionBtn = document.getElementById('authOptionBtn');
+        const actionButtons = document.getElementById('actionButtons');
+
+        function hasRegisteredAccounts() {
+            return SiteAuth.hasRegisteredAccounts();
+        }
+
+        function syncAuthOptions() {
+            const hasAccounts = hasRegisteredAccounts();
+            if (hasAccounts) {
+                authOptionBtn.style.display = 'inline-flex';
+                actionButtons.classList.add('with-auth');
+            } else {
+                authOptionBtn.style.display = 'none';
+                actionButtons.classList.remove('with-auth');
+            }
+        }
+
+        const contentMap = {
+            agency: {
+                logo: 'Creative Agency',
+                title: 'Design premium digital experiences that convert.',
+                text: 'Perfect for agencies that need authority, clarity, and a strong service narrative.',
+                cards: ['Service Snapshot', 'Client Results', 'Book a Strategy Call']
+            },
+            restaurant: {
+                logo: 'North Point Bistro',
+                title: 'Turn menu browsers into bookings.',
+                text: 'Great for local restaurants that need easy reservation and menu visibility.',
+                cards: ['Featured Dishes', 'Book a Table', 'Weekend Specials']
+            },
+            shop: {
+                logo: 'Summit Supply Co.',
+                title: 'Highlight products with clean shopping flow.',
+                text: 'Made for ecommerce brands focused on product storytelling and checkout speed.',
+                cards: ['Best Sellers', 'Seasonal Bundle', 'Free Shipping Offer']
+            },
+            coach: {
+                logo: 'Momentum Coaching',
+                title: 'Build trust and capture qualified leads fast.',
+                text: 'Ideal for consultants and coaches who sell outcomes and booked calls.',
+                cards: ['Transformation Stories', 'Program Tiers', 'Book Discovery Call']
+            }
+        };
+
+        const styleMap = {
+            minimal: { chip: 'Minimal', heroFont: '700', spacing: '1.2rem' },
+            bold: { chip: 'Bold', heroFont: '800', spacing: '1rem' },
+            editorial: { chip: 'Editorial', heroFont: '700', spacing: '1.5rem' },
+            soft: { chip: 'Soft', heroFont: '700', spacing: '1.35rem' }
+        };
+
+        function selectedStyle() {
+            const checked = document.querySelector('input[name="style"]:checked');
+            return checked ? checked.value : 'minimal';
+        }
+
+        function getConfig() {
+            return {
+                industry: industrySelect.value,
+                style: selectedStyle(),
+                accent: accentSelect.value
+            };
+        }
+
+        function applyVisualConfig(config) {
+            const content = contentMap[config.industry];
+            const style = styleMap[config.style];
+
+            demoLogo.textContent = content.logo;
+            demoChip.textContent = style.chip;
+            demoTitle.textContent = content.title;
+            demoText.textContent = content.text;
+
+            demoTitle.style.fontWeight = style.heroFont;
+            demoText.style.marginTop = style.spacing;
+
+            demoChip.style.background = config.accent + '22';
+            demoChip.style.color = config.accent;
+
+            demoGrid.innerHTML = '';
+            content.cards.forEach((item) => {
+                const card = document.createElement('article');
+                card.className = 'demo-card';
+                card.style.borderColor = config.accent + '33';
+                card.innerHTML = '<h3>' + item + '</h3><p>Preview block tuned for this style direction.</p>';
+                demoGrid.appendChild(card);
+            });
+
+            continueBtn.href = 'signup.html?layout=' + encodeURIComponent(config.style) + '&industry=' + encodeURIComponent(config.industry);
+        }
+
+        function saveConfig() {
+            const config = getConfig();
+            localStorage.setItem('layoutPreference', JSON.stringify(config));
+            saveSelection.textContent = 'Saved';
+            setTimeout(() => {
+                saveSelection.textContent = 'Save';
+            }, 1200);
+        }
+
+        function loadConfig() {
+            try {
+                const raw = localStorage.getItem('layoutPreference');
+                if (!raw) return;
+                const config = JSON.parse(raw);
+                if (config.industry) industrySelect.value = config.industry;
+                if (config.accent) accentSelect.value = config.accent;
+                if (config.style) {
+                    const radio = document.querySelector('input[name="style"][value="' + config.style + '"]');
+                    if (radio) radio.checked = true;
+                }
+            } catch (error) {
+                console.warn('Unable to load saved layout preference.', error);
+            }
+        }
+
+        industrySelect.addEventListener('change', () => applyVisualConfig(getConfig()));
+        accentSelect.addEventListener('change', () => applyVisualConfig(getConfig()));
+        styleRadios.forEach((radio) => {
+            radio.addEventListener('change', () => applyVisualConfig(getConfig()));
+        });
+        saveSelection.addEventListener('click', saveConfig);
+
+        document.querySelectorAll('.device-tabs button').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.device-tabs button').forEach((b) => b.classList.remove('active'));
+                btn.classList.add('active');
+                viewport.classList.toggle('mobile', btn.dataset.device === 'mobile');
+            });
+        });
+
+        templateButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                const template = JSON.parse(button.getAttribute('data-template'));
+                industrySelect.value = template.industry;
+                accentSelect.value = template.accent;
+                const radio = document.querySelector('input[name="style"][value="' + template.style + '"]');
+                if (radio) radio.checked = true;
+                applyVisualConfig(getConfig());
+            });
+        });
+
+        loadConfig();
+        syncAuthOptions();
+        applyVisualConfig(getConfig());
+    </script>
+</body>
+</html>

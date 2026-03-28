@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -235,6 +235,8 @@
     <p class="crm-footer">A modern CRM option for smarter customer tracking and clearer sales flow.</p>
   </div>
 
+  <script src="auth.js"></script>
+  <script src="header.js"></script>
   <script>
     const themeToggle = document.getElementById('themeToggle');
     const savedTheme = localStorage.getItem('siteTheme');
@@ -249,17 +251,9 @@
     });
     if (savedTheme === 'dark') applyTheme('dark'); else applyTheme('light');
 
-    const portalCustomer = localStorage.getItem('portalCustomer');
-    const supportStaff = JSON.parse(localStorage.getItem('supportStaff') || 'null');
-    const authorizedSupportAgents = [
-      'support@creativewebsolutions.com',
-      'helpdesk@creativewebsolutions.com',
-      'kyle.creativesolutions@gmail.com'
-    ];
-
-    if (portalCustomer) {
+    if (SiteAuth.isCustomerLoggedIn()) {
       window.location.href = 'index.htm';
-    } else if (!supportStaff || !supportStaff.email || !authorizedSupportAgents.includes(supportStaff.email.toLowerCase())) {
+    } else if (!SiteAuth.getSupport()) {
       window.location.href = 'support-login.html';
     }
   </script>

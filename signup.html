@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup Form</title>
+    <title>Sign Up | Creative Web Solutions</title>
     <style>
         :root {
             color-scheme: light;
@@ -12,468 +11,207 @@
             background: #eff3fb;
             color: #0f172a;
         }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        html,
-        body {
-            margin: 0;
-            min-height: 100%;
-            background: linear-gradient(180deg, #eef2ff 0%, #f8fafc 100%);
-        }
-
-        body {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-
+        * { box-sizing: border-box; }
+        html, body { margin: 0; min-height: 100%; background: linear-gradient(180deg, #eef2ff 0%, #f8fafc 100%); }
+        body { display: flex; align-items: center; justify-content: center; padding: 2rem; }
         .signup-shell {
             width: min(980px, 100%);
             display: grid;
             grid-template-columns: 1.1fr 0.9fr;
             gap: 2rem;
-            background: rgba(255, 255, 255, 0.92);
-            border: 1px solid rgba(15, 23, 42, 0.08);
+            background: rgba(255,255,255,0.92);
+            border: 1px solid rgba(15,23,42,0.08);
             border-radius: 28px;
-            box-shadow: 0 30px 80px rgba(15, 23, 42, 0.12);
+            box-shadow: 0 30px 80px rgba(15,23,42,0.12);
             overflow: hidden;
         }
-
-        .signup-intro {
-            padding: 3rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            background: linear-gradient(180deg, #eef2ff 0%, #ffffff 100%);
-        }
-
-        .signup-intro h1 {
-            margin: 0 0 1rem;
-            font-size: clamp(2.2rem, 2.8vw, 3.3rem);
-            line-height: 1.05;
-        }
-
-        .signup-intro p {
-            margin: 0;
-            color: #64748b;
-            max-width: 38rem;
-            font-size: 1rem;
-            line-height: 1.8;
-        }
-
-        .highlight {
-            color: #2563eb;
-            font-weight: 700;
-        }
-
-        .signup-card {
-            padding: 2.5rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .step-label {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-            font-size: 0.95rem;
-            color: #475569;
-        }
-
-        .step-badge {
-            width: 2rem;
-            height: 2rem;
-            display: inline-grid;
-            place-items: center;
-            border-radius: 999px;
-            background: #e0e7ff;
-            color: #1d4ed8;
-            font-weight: 700;
-        }
-
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
-
-        label {
-            display: block;
-            font-size: 0.95rem;
-            margin-bottom: 0.5rem;
-            color: #334155;
-        }
-
-        input {
-            width: 100%;
-            min-height: 3.1rem;
-            padding: 0.95rem 1rem;
-            border-radius: 16px;
-            border: 1px solid #cbd5e1;
-            font-size: 1rem;
-            color: #0f172a;
-            background: #fff;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
-        }
-
-        .hint,
-        .error {
-            display: block;
-            margin-top: 0.6rem;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        .hint {
-            color: #64748b;
-        }
-
-        .error {
-            color: #dc2626;
-        }
-
-        .password-strength {
-            margin-top: 0.8rem;
-            height: 8px;
-            border-radius: 999px;
-            overflow: hidden;
-            background: #e2e8f0;
-        }
-
-        .password-strength div {
-            height: 100%;
-            transition: width 0.2s ease;
-        }
-
-        .weak {
-            width: 33%;
-            background: #f97316;
-        }
-
-        .medium {
-            width: 66%;
-            background: #facc15;
-        }
-
-        .strong {
-            width: 100%;
-            background: #22c55e;
-        }
-
-        .primary-btn {
-            width: 100%;
-            border: none;
-            border-radius: 16px;
-            padding: 1rem 1.1rem;
-            background: #2563eb;
-            color: #fff;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.2s ease, background 0.2s ease;
-        }
-
-        .primary-btn:hover {
-            background: #1d4ed8;
-            transform: translateY(-1px);
-        }
-
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            padding: 0.75rem 1rem;
-            border-radius: 999px;
-            border: 1px solid rgba(37, 99, 235, 0.24);
-            background: #ffffff;
-            color: #334155;
-            font-size: 0.95rem;
-            text-decoration: none;
-            transition: background 0.2s ease, transform 0.2s ease;
-        }
-
-        .back-btn:hover {
-            background: rgba(37, 99, 235, 0.08);
-            transform: translateY(-0.1rem);
-        }
-
-        .message {
-            min-height: 1.5rem;
-            margin-top: 1rem;
-            font-weight: 600;
-        }
-
-        .message.success {
-            color: #16a34a;
-        }
-
-        .message.error {
-            color: #dc2626;
-        }
-
-        .form-footer {
-            margin-top: 1.5rem;
-            font-size: 0.95rem;
-            color: #64748b;
-        }
-
-        .form-footer a {
-            color: #2563eb;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .theme-toggle {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            z-index: 1000;
-            padding: 0.75rem 1rem;
-            border-radius: 999px;
-            border: 1px solid rgba(37, 99, 235, 0.25);
-            background: #ffffff;
-            color: #374151;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s ease, transform 0.2s ease;
-        }
-
-        .theme-toggle:hover {
-            background: rgba(37, 99, 235, 0.08);
-        }
-
-        body.dark-mode {
-            background: #0b1222;
-            color: #e2e8f0;
-        }
-
-        body.dark-mode .signup-shell {
-            background: #111827;
-            border-color: #334155;
-        }
-
-        body.dark-mode .signup-intro,
-        body.dark-mode .signup-card {
-            background: #111827;
-        }
-
-        body.dark-mode .signup-intro p,
-        body.dark-mode .highlight,
-        body.dark-mode .step-label,
-        body.dark-mode .step-badge {
-            color: #cbd5e1;
-        }
-
-        body.dark-mode .signup-intro {
-            background: linear-gradient(180deg, #171a2b 0%, #111827 100%);
-        }
-
-        body.dark-mode label,
-        body.dark-mode input,
-        body.dark-mode .form-footer,
-        body.dark-mode .hint {
-            color: #e2e8f0;
-        }
-
-        body.dark-mode input {
-            background: #111827;
-            border-color: #334155;
-        }
-
-        body.dark-mode .primary-btn {
-            background: #7c3aed;
-        }
-
-        body.dark-mode .back-btn {
-            background: #111827;
-            border-color: #4f46e5;
-            color: #e2e8f0;
-        }
-
-        body.dark-mode .theme-toggle {
-            background: #1f2937;
-            color: #e5e7eb;
-            border-color: rgba(148, 163, 184, 0.45);
-        }
-
-        body.dark-mode a,
-        body.dark-mode button,
-        body.dark-mode textarea,
-        body.dark-mode select {
-            color: #e2e8f0;
-        }
-
-        body.dark-mode input::placeholder {
-            color: #94a3b8;
-        }
-            color: #e5e7eb;
-            border-color: rgba(148, 163, 184, 0.45);
-        }
-
-        @media (max-width: 900px) {
-            .signup-shell {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 600px) {
-            body {
-                padding: 1.5rem;
-            }
-
-            .signup-intro,
-            .signup-card {
-                padding: 1.8rem;
-            }
-        }
+        .signup-intro { padding: 3rem; display: flex; flex-direction: column; justify-content: center; background: linear-gradient(180deg, #eef2ff 0%, #ffffff 100%); }
+        .signup-intro h1 { margin: 0 0 1rem; font-size: clamp(2.2rem,2.8vw,3.3rem); line-height: 1.05; }
+        .signup-intro p { margin: 0; color: #64748b; max-width: 38rem; font-size: 1rem; line-height: 1.8; }
+        .highlight { color: #2563eb; font-weight: 700; }
+        .signup-card { padding: 2.5rem; display: flex; flex-direction: column; justify-content: space-between; }
+        .step-label { display: inline-flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; font-size: 0.95rem; color: #475569; }
+        .step-badge { width: 2rem; height: 2rem; display: inline-grid; place-items: center; border-radius: 999px; background: #e0e7ff; color: #1d4ed8; font-weight: 700; }
+        .form-group { margin-bottom: 1.25rem; }
+        label { display: block; font-size: 0.95rem; margin-bottom: 0.5rem; color: #334155; }
+        input { width: 100%; min-height: 3.1rem; padding: 0.95rem 1rem; border-radius: 16px; border: 1px solid #cbd5e1; font-size: 1rem; color: #0f172a; background: #fff; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+        input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 4px rgba(59,130,246,0.12); }
+        .hint, .error { display: block; margin-top: 0.6rem; font-size: 0.9rem; line-height: 1.5; }
+        .hint { color: #64748b; }
+        .error { color: #dc2626; }
+        .password-strength { margin-top: 0.8rem; height: 8px; border-radius: 999px; overflow: hidden; background: #e2e8f0; }
+        .password-strength div { height: 100%; transition: width 0.2s ease; }
+        .weak { width: 33%; background: #f97316; }
+        .medium { width: 66%; background: #facc15; }
+        .strong { width: 100%; background: #22c55e; }
+        .primary-btn { width: 100%; border: none; border-radius: 16px; padding: 1rem 1.1rem; background: #2563eb; color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer; transition: transform 0.2s ease, background 0.2s ease; }
+        .primary-btn:hover { background: #1d4ed8; transform: translateY(-1px); }
+        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; padding: 0.75rem 1rem; border-radius: 999px; border: 1px solid rgba(37,99,235,0.24); background: #ffffff; color: #334155; font-size: 0.95rem; text-decoration: none; transition: background 0.2s ease, transform 0.2s ease; }
+        .back-btn:hover { background: rgba(37,99,235,0.08); transform: translateY(-0.1rem); }
+        .message { min-height: 1.5rem; margin-top: 1rem; font-weight: 600; }
+        .message.success { color: #16a34a; }
+        .message.error { color: #dc2626; }
+        .form-footer { margin-top: 1.5rem; font-size: 0.95rem; color: #64748b; }
+        .form-footer a { color: #2563eb; text-decoration: none; font-weight: 600; }
+        .layout-selection { margin: 0 0 1rem; padding: 0.75rem 0.9rem; border-radius: 12px; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; font-size: 0.9rem; }
+        .theme-toggle { position: fixed; top: 1rem; right: 1rem; z-index: 1000; padding: 0.75rem 1rem; border-radius: 999px; border: 1px solid rgba(37,99,235,0.25); background: #ffffff; color: #374151; font-weight: 600; cursor: pointer; transition: background 0.2s ease; }
+        .theme-toggle:hover { background: rgba(37,99,235,0.08); }
+        body.dark-mode { background: #0b1222; color: #e2e8f0; }
+        body.dark-mode .signup-shell { background: #111827; border-color: #334155; }
+        body.dark-mode .signup-intro, body.dark-mode .signup-card { background: #111827; }
+        body.dark-mode .signup-intro p, body.dark-mode .step-label, body.dark-mode .step-badge { color: #cbd5e1; }
+        body.dark-mode .signup-intro { background: linear-gradient(180deg, #171a2b 0%, #111827 100%); }
+        body.dark-mode label, body.dark-mode input, body.dark-mode .form-footer, body.dark-mode .hint { color: #e2e8f0; }
+        body.dark-mode input { background: #111827; border-color: #334155; }
+        body.dark-mode .layout-selection { background: #0f172a; border-color: #334155; color: #e2e8f0; }
+        body.dark-mode input::placeholder { color: #94a3b8; }
+        body.dark-mode .primary-btn { background: #7c3aed; }
+        body.dark-mode .back-btn { background: #111827; border-color: #4f46e5; color: #e2e8f0; }
+        body.dark-mode .theme-toggle { background: #1f2937; color: #e5e7eb; border-color: rgba(148,163,184,0.45); }
+        @media (max-width: 900px) { .signup-shell { grid-template-columns: 1fr; } }
+        @media (max-width: 600px) { body { padding: 1.5rem; } .signup-intro, .signup-card { padding: 1.8rem; } }
     </style>
 </head>
-
 <body>
     <button id="themeToggle" class="theme-toggle" type="button">Dark Mode</button>
     <div class="signup-shell">
         <div class="signup-intro">
             <span class="step-label"><span class="step-badge">1</span> Create your account</span>
-            <h1>Signup for <span class="highlight">Creative Web Solutions</span></h1>
+            <h1>Sign up for <span class="highlight">Creative Web Solutions</span></h1>
             <p>Join now and get access to beautiful templates, fast onboarding, and ongoing support for your next web project.</p>
         </div>
-
+ 
         <div class="signup-card">
-            <div style="display:flex; flex-wrap:wrap; gap:0.75rem; align-items:center; margin-bottom:1rem;">
-              <a href="javascript:history.back()" class="back-btn">← Back</a>
-              <a href="index.htm" class="back-btn">🏠 Home</a>
+            <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;margin-bottom:1rem;">
+                <a href="javascript:history.back()" class="back-btn">← Back</a>
+                <a href="index.htm" class="back-btn">🏠 Home</a>
             </div>
+            <p id="layoutSelection" class="layout-selection" style="display:none;"></p>
             <form id="signupForm">
                 <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required placeholder="jane.doe">
+                    <label for="username">Full name</label>
+                    <input type="text" id="username" name="username" required placeholder="Jane Doe">
                 </div>
-
                 <div class="form-group">
                     <label for="email">Email address</label>
-                    <input type="email" id="email" name="email" required placeholder="you@example.com">
+                    <input type="email" id="email" name="email" required placeholder="you@example.com" autocomplete="email">
                 </div>
-
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required placeholder="Create a secure password">
+                    <input type="password" id="password" name="password" required placeholder="Create a secure password" autocomplete="new-password">
                     <span class="hint" id="passwordHint">At least 8 characters, upper/lowercase, number, and symbol.</span>
                     <span id="passwordError" class="error"></span>
                     <div class="password-strength" id="passwordStrength"></div>
                 </div>
-
                 <div class="form-group">
                     <label for="confirmPassword">Confirm password</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Repeat your password">
+                    <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Repeat your password" autocomplete="new-password">
                     <span id="confirmPasswordError" class="error"></span>
                 </div>
-
                 <button type="submit" class="primary-btn">Create Account</button>
                 <p id="message" class="message"></p>
-                <p class="form-footer">Already registered? <a href="index.htm">Sign in</a></p>
+                <!-- Fixed: link goes to login.html, not index.htm -->
+                <p class="form-footer">Already have an account? <a href="login.html">Sign in</a></p>
             </form>
         </div>
     </div>
-
+ 
+    <script src="theme.js"></script>
+    <script src="header.js"></script>
     <script>
         const signupForm = document.getElementById('signupForm');
         const passwordInput = document.getElementById('password');
-        const passwordHint = document.getElementById('passwordHint');
         const passwordStrength = document.getElementById('passwordStrength');
         const passwordError = document.getElementById('passwordError');
         const confirmPasswordError = document.getElementById('confirmPasswordError');
         const message = document.getElementById('message');
+        const layoutSelection = document.getElementById('layoutSelection');
 
-        signupForm.addEventListener('submit', (event) => {
-            event.preventDefault();
+        function renderLayoutSelection() {
+            const params = new URLSearchParams(window.location.search);
+            const layoutFromUrl = params.get('layout');
+            const industryFromUrl = params.get('industry');
+            let saved = null;
+            try {
+                saved = JSON.parse(localStorage.getItem('layoutPreference') || 'null');
+            } catch (error) {
+                saved = null;
+            }
 
+            const layout = layoutFromUrl || saved?.style;
+            const industry = industryFromUrl || saved?.industry;
+            if (!layout && !industry) {
+                return;
+            }
+
+            const labelLayout = layout ? layout.charAt(0).toUpperCase() + layout.slice(1) : 'Custom';
+            const labelIndustry = industry ? industry.charAt(0).toUpperCase() + industry.slice(1) : 'Business';
+            layoutSelection.style.display = 'block';
+            layoutSelection.textContent = 'Selected layout: ' + labelLayout + ' for ' + labelIndustry + '.';
+        }
+
+        renderLayoutSelection();
+ 
+        signupForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const name = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim().toLowerCase();
             const password = passwordInput.value;
             const confirmPassword = document.getElementById('confirmPassword').value;
-
+ 
             if (!validatePassword(password)) {
                 passwordError.textContent = 'Password does not meet the requirements.';
                 message.textContent = '';
                 return;
             }
-
             passwordError.textContent = '';
-
+ 
             if (password !== confirmPassword) {
                 confirmPasswordError.textContent = 'Passwords do not match.';
                 message.textContent = '';
                 return;
             }
-
             confirmPasswordError.textContent = '';
+ 
+            // Save account so they can log in immediately
+            const accounts = JSON.parse(localStorage.getItem('registeredAccounts') || '{}');
+            if (accounts[email]) {
+                message.className = 'message error';
+                message.textContent = 'An account with that email already exists.';
+                return;
+            }
+            // NOTE: In production, send credentials to your server — never store passwords client-side
+            accounts[email] = { name, email, passwordHash: password };
+            localStorage.setItem('registeredAccounts', JSON.stringify(accounts));
+ 
             message.className = 'message success';
-            message.textContent = 'Signup successful! You can now log in.';
+            message.textContent = 'Account created! Redirecting to login…';
             signupForm.reset();
             updateStrengthBar('');
+            setTimeout(() => { window.location.href = 'login.html'; }, 1200);
         });
-
-        passwordInput.addEventListener('focus', () => {
-            passwordHint.style.opacity = '1';
-        });
-
-        passwordInput.addEventListener('blur', () => {
-            passwordHint.style.opacity = '0.75';
-        });
-
+ 
         passwordInput.addEventListener('input', () => {
             updateStrengthBar(getPasswordStrength(passwordInput.value));
         });
-
+ 
         function validatePassword(password) {
-            const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-            return regex.test(password);
+            return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
         }
-
+ 
         function getPasswordStrength(password) {
-            if (password.length < 8) {
-                return 'weak';
-            }
-            if (password.match(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/)) {
-                return 'strong';
-            }
+            if (password.length < 8) return 'weak';
+            if (/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/.test(password)) return 'strong';
             return 'medium';
         }
-
+ 
         function updateStrengthBar(level) {
             passwordStrength.innerHTML = '';
-            if (!level) {
-                return;
-            }
+            if (!level) return;
             const bar = document.createElement('div');
             bar.className = level;
             passwordStrength.appendChild(bar);
         }
-
-        const themeToggle = document.getElementById('themeToggle');
-        const storedTheme = localStorage.getItem('siteTheme') || 'light';
-
-        const applyTheme = (theme) => {
-            document.body.classList.toggle('dark-mode', theme === 'dark');
-            themeToggle.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
-            localStorage.setItem('siteTheme', theme);
-        };
-
-        themeToggle.addEventListener('click', () => {
-            applyTheme(document.body.classList.contains('dark-mode') ? 'light' : 'dark');
-        });
-
-        applyTheme(storedTheme);
     </script>
 </body>
-
 </html>

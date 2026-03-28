@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Not Found | Creative Web Solutions</title>
+  <style>
+    :root { font-family: Inter, system-ui, sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: linear-gradient(180deg, #f8f6ff 0%, #eef0ff 100%); color: #111827; padding: 2rem; text-align: center; }
+    .shell { max-width: 480px; }
+    .code { font-size: 7rem; font-weight: 800; line-height: 1; color: #7c3aed; opacity: 0.15; margin: 0; }
+    h1 { margin: 0 0 1rem; font-size: 2rem; }
+    p { color: #6b7280; line-height: 1.8; margin: 0 0 2rem; }
+    .actions { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+    a { display: inline-flex; padding: 0.9rem 1.5rem; border-radius: 16px; font-weight: 700; text-decoration: none; transition: transform 0.2s ease, filter 0.2s ease; }
+    a:hover { transform: translateY(-2px); filter: brightness(1.05); }
+    .primary { background: #7c3aed; color: #fff; }
+    .secondary { background: #fff; color: #4b5563; border: 1px solid #e5e7eb; }
+    body.dark-mode { background: #0b1222; color: #e2e8f0; }
+    body.dark-mode .secondary { background: #111827; border-color: #374151; color: #e2e8f0; }
+    body.dark-mode p { color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <p class="code">404</p>
+    <h1>Page not found</h1>
+    <p>The page you're looking for doesn't exist or may have moved. Let's get you back on track.</p>
+    <div class="actions">
+      <a href="index.htm" class="primary">Go home</a>
+      <a href="index.htm#contact" class="secondary">Contact support</a>
+    </div>
+  </div>
+  <script src="theme.js"></script>
+  <script src="header.js"></script>
+</body>
+</html>

@@ -3,197 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creative Web Solutions Servies</title>
+    <!-- Fixed typo: "Servies" → "Services" -->
+    <title>Services | Creative Web Solutions</title>
     <style>
         :root {
             font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             color: #111827;
             background: linear-gradient(180deg, #f8f2ff 0%, #eef4ff 100%);
         }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background: linear-gradient(180deg, #f8f2ff 0%, #eef4ff 100%);
-            color: #111827;
-        }
-
-        nav {
-            background: rgba(255,255,255,0.92);
-            backdrop-filter: blur(16px);
-            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
-            padding: 1rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        nav ul {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin: 0;
-            padding: 0;
-            list-style: none;
-            justify-content: center;
-        }
-
-        nav a {
-            color: #4b5563;
-            text-decoration: none;
-            font-weight: 700;
-            transition: color 0.2s ease;
-        }
-
-        nav a:hover {
-            color: #7c3aed;
-        }
-
-        header {
-            max-width: 960px;
-            margin: 3rem auto;
-            padding: 2rem;
-            border-radius: 28px;
-            background: #ffffff;
-            box-shadow: 0 30px 80px rgba(15, 23, 42, 0.08);
-        }
-
-        header h1 {
-            margin-top: 0;
-            font-size: clamp(2.4rem, 4vw, 3.5rem);
-            letter-spacing: -0.03em;
-        }
-
-        header p {
-            line-height: 1.8;
-            max-width: 48rem;
-            color: #475569;
-        }
-
-        .theme-toggle {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            z-index: 1000;
-            padding: 0.75rem 1rem;
-            border-radius: 999px;
-            border: 1px solid rgba(124, 58, 237, 0.25);
-            background: #ffffff;
-            color: #4b5563;
-            font-weight: 700;
-            cursor: pointer;
-            transition: background 0.2s ease, transform 0.2s ease;
-        }
-
-        .theme-toggle:hover {
-            background: rgba(124, 58, 237, 0.08);
-        }
-
-        body.dark-mode {
-            background: #0b1222;
-            color: #e2e8f0;
-        }
-
-        body.dark-mode nav {
-            background: #111827;
-        }
-
-        body.dark-mode nav a {
-            color: #cbd5e1;
-        }
-
-        body.dark-mode nav a:hover {
-            color: #a78bfa;
-        }
-
-        body.dark-mode header {
-            background: #111827;
-            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.30);
-        }
-
-        body.dark-mode header p {
-            color: #cbd5e1;
-        }
-
-        body.dark-mode section,
-        body.dark-mode article,
-        body.dark-mode .feature-card,
-        body.dark-mode .service-card,
-        body.dark-mode .card {
-            background: #111827;
-            border-color: #374151;
-            color: #e5e7eb;
-        }
-
-        body.dark-mode a,
-        body.dark-mode button,
-        body.dark-mode textarea,
-        body.dark-mode select,
-        body.dark-mode label,
-        body.dark-mode input {
-            color: #e2e8f0;
-        }
-
-        body.dark-mode input::placeholder {
-            color: #94a3b8;
-        }
-
-        body.dark-mode .theme-toggle {
-            background: #1f2937;
-            color: #e5e7eb;
-            border-color: rgba(148, 163, 184, 0.45);
-        }
-
+        * { box-sizing: border-box; }
+        body { margin: 0; min-height: 100vh; background: linear-gradient(180deg, #f8f2ff 0%, #eef4ff 100%); color: #111827; }
+ 
+        .page-header { max-width: 960px; margin: 3rem auto; padding: 2rem; border-radius: 28px; background: #ffffff; box-shadow: 0 30px 80px rgba(15,23,42,0.08); }
+        .page-header h1 { margin-top: 0; font-size: clamp(2.4rem,4vw,3.5rem); letter-spacing: -0.03em; }
+        .page-header p { line-height: 1.8; max-width: 48rem; color: #475569; }
+ 
+        .services-grid { max-width: 960px; margin: 0 auto 3rem; padding: 0 2rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+        .service-card { background: #ffffff; border-radius: 24px; padding: 2rem; box-shadow: 0 20px 50px rgba(15,23,42,0.07); border: 1px solid rgba(124,58,237,0.1); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .service-card:hover { transform: translateY(-4px); box-shadow: 0 30px 60px rgba(124,58,237,0.12); }
+        .service-icon { width: 48px; height: 48px; border-radius: 14px; background: #ede9ff; display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; font-size: 1.5rem; }
+        .service-card h3 { margin: 0 0 0.75rem; font-size: 1.15rem; color: #111827; }
+        .service-card p { margin: 0 0 1rem; color: #6b7280; font-size: 0.97rem; line-height: 1.7; }
+        .service-tag { display: inline-flex; padding: 0.3rem 0.75rem; border-radius: 999px; background: #ede9ff; color: #5b21b6; font-size: 0.8rem; font-weight: 700; }
+ 
+        .pricing-section { max-width: 960px; margin: 0 auto 4rem; padding: 0 2rem; }
+        .pricing-section h2 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .pricing-section > p { color: #6b7280; margin-bottom: 2rem; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
+        .pricing-card { background: #ffffff; border-radius: 24px; padding: 2rem; border: 1px solid #e5e7eb; box-shadow: 0 16px 40px rgba(15,23,42,0.06); }
+        .pricing-card.featured { border-color: #7c3aed; background: linear-gradient(180deg, #faf5ff 0%, #ffffff 100%); }
+        .pricing-card .price { font-size: 2.5rem; font-weight: 800; color: #111827; margin: 1rem 0 0.25rem; }
+        .pricing-card .price span { font-size: 1rem; font-weight: 400; color: #6b7280; }
+        .pricing-card h3 { margin: 0; font-size: 1.1rem; color: #7c3aed; }
+        .pricing-card ul { margin: 1.25rem 0 1.5rem; padding: 0; list-style: none; display: grid; gap: 0.6rem; }
+        .pricing-card li { font-size: 0.95rem; color: #374151; padding-left: 1.25rem; position: relative; }
+        .pricing-card li::before { content: '✓'; position: absolute; left: 0; color: #7c3aed; font-weight: 700; }
+        .cta-btn { display: block; text-align: center; padding: 0.85rem 1rem; border-radius: 16px; background: #7c3aed; color: #fff; font-weight: 700; text-decoration: none; transition: filter 0.2s ease, transform 0.2s ease; }
+        .cta-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+        .cta-btn.outline { background: transparent; border: 2px solid #7c3aed; color: #7c3aed; }
+        .cta-btn.outline:hover { background: rgba(124,58,237,0.06); }
+ 
+        body.dark-mode { background: #0b1222; color: #e2e8f0; }
+        body.dark-mode .page-header, body.dark-mode .service-card, body.dark-mode .pricing-card { background: #111827; border-color: #374151; }
+        body.dark-mode .page-header p, body.dark-mode .service-card p, body.dark-mode .pricing-card li { color: #cbd5e1; }
+        body.dark-mode .service-icon { background: #1f2937; }
+        body.dark-mode .service-tag { background: #312e81; color: #c7d2fe; }
+        body.dark-mode .pricing-card.featured { background: #1a1030; border-color: #7c3aed; }
+        body.dark-mode .pricing-card .price { color: #f3f4f6; }
+        body.dark-mode .pricing-section > p { color: #9ca3af; }
+        body.dark-mode .service-card h3, body.dark-mode .pricing-section h2 { color: #f3f4f6; }
+ 
         @media (max-width: 640px) {
-            nav ul {
-                justify-content: center;
-            }
-
-            header {
-                margin: 2rem 1rem;
-                padding: 1.5rem;
-            }
+            .page-header { margin: 2rem 1rem; padding: 1.5rem; }
+            .services-grid, .pricing-section { padding: 0 1rem; }
         }
     </style>
 </head>
 <body>
-<button id="themeToggle" class="theme-toggle" type="button">Dark Mode</button>
-    <nav>
-        <ul>
-            <li><a href="index.htm">Home</a></li>
-            <li><a href="services.html">Services</a></li>
-            <li><a href="index.htm#portfolio">Portfolio</a></li>
-            <li><a href="index.htm#contact">Contact</a></li>
-            <li><a href="index.htm#about">About Us</a></li>
-            <li><a href="support-login.html">Support</a></li>
-            <li><a href="login.html">Customer Portal</a></li>
-        </ul>
-    </nav>
-    <header>
-        <h1>Creative Web Solutions Services</h1>
-        <p>Providing innovative web solutions for your business needs is at the heart of what we do. Explore our range of services designed to help your business thrive in the digital world.From custom website design to digital marketing strategies, we offer comprehensive services to elevate your online presence and drive success.</p>
-        <p>Our team of experts is dedicated to delivering high-quality solutions tailored to your unique requirements. Whether you're looking to build a new website, optimize your existing one, or enhance your digital marketing efforts, we have the expertise to help you achieve your goals.</p>
-    </header>
-    <script>
-      const themeToggle = document.getElementById('themeToggle');
-      const storedTheme = localStorage.getItem('siteTheme') || 'light';
+<div class="page-header">
+    <h1>Our Services</h1>
+    <p>Providing innovative web solutions for your business needs is at the heart of what we do. From custom website design to digital marketing strategies, we offer comprehensive services to elevate your online presence and drive success.</p>
+    <p>Our team of experts is dedicated to delivering high-quality solutions tailored to your unique requirements — whether you're building from scratch, optimizing what you have, or scaling for growth.</p>
+</div>
+ 
+<div class="services-grid">
+    <div class="service-card">
+        <div class="service-icon">🎨</div>
+        <h3>Custom Website Design</h3>
+        <p>Beautiful, responsive websites crafted to reflect your brand. Every pixel intentional, every interaction smooth.</p>
+        <span class="service-tag">Design</span>
+    </div>
+    <div class="service-card">
+        <div class="service-icon">🛒</div>
+        <h3>E-commerce Development</h3>
+        <p>Secure, scalable online stores with seamless checkout, inventory management, and payment integrations.</p>
+        <span class="service-tag">Commerce</span>
+    </div>
+    <div class="service-card">
+        <div class="service-icon">🔍</div>
+        <h3>SEO Optimization</h3>
+        <p>Get found by the right people. We handle technical SEO, on-page optimization, and keyword strategy.</p>
+        <span class="service-tag">Growth</span>
+    </div>
+    <div class="service-card">
+        <div class="service-icon">📝</div>
+        <h3>CMS Integration</h3>
+        <p>Take control of your content with flexible CMS setups — WordPress, Webflow, Sanity, and more.</p>
+        <span class="service-tag">Content</span>
+    </div>
+    <div class="service-card">
+        <div class="service-icon">📱</div>
+        <h3>App Development</h3>
+        <p>Mobile-first applications built for performance, usability, and long-term maintainability.</p>
+        <span class="service-tag">Development</span>
+    </div>
+    <div class="service-card">
+        <div class="service-icon">📣</div>
+        <h3>Digital Marketing</h3>
+        <p>Campaigns that move the needle — paid ads, email, social, and content strategies tied to real results.</p>
+        <span class="service-tag">Marketing</span>
+    </div>
+    <div class="service-card">
+        <div class="service-icon">⚙️</div>
+        <h3>Website Maintenance</h3>
+        <p>Ongoing updates, security patches, performance monitoring, and peace of mind after launch.</p>
+        <span class="service-tag">Support</span>
+    </div>
+    <div class="service-card">
+        <div class="service-icon">📊</div>
+        <h3>Analytics & Reporting</h3>
+        <p>Know what's working. We set up dashboards, track conversions, and translate data into decisions.</p>
+        <span class="service-tag">Insights</span>
+    </div>
+    <div class="service-card">
+        <div class="service-icon">🔒</div>
+        <h3>Security Audits</h3>
+        <p>Vulnerability assessments, SSL setup, and hardening recommendations to keep your site protected.</p>
+        <span class="service-tag">Security</span>
+    </div>
+</div>
+ 
+<div class="pricing-section">
+    <h2>Simple, transparent pricing</h2>
+    <p>All plans include hosting setup, onboarding support, and a dedicated project contact.</p>
+    <div class="pricing-grid">
+        <div class="pricing-card">
+            <h3>Starter</h3>
+            <div class="price">$799 <span>one-time</span></div>
+            <ul>
+                <li>Up to 5 pages</li>
+                <li>Mobile-responsive design</li>
+                <li>Basic SEO setup</li>
+                <li>Contact form</li>
+                <li>30-day post-launch support</li>
+            </ul>
+            <a href="index.htm#contact" class="cta-btn outline">Get started</a>
+        </div>
+        <div class="pricing-card featured">
+            <h3>Growth</h3>
+            <div class="price">$2,400 <span>one-time</span></div>
+            <ul>
+                <li>Up to 15 pages</li>
+                <li>Custom UI/UX design</li>
+                <li>CMS integration</li>
+                <li>Full SEO optimization</li>
+                <li>Analytics setup</li>
+                <li>90-day support</li>
+            </ul>
+            <a href="index.htm#contact" class="cta-btn">Get started</a>
+        </div>
+        <div class="pricing-card">
+            <h3>Enterprise</h3>
+            <div class="price">Custom <span>/ quote</span></div>
+            <ul>
+                <li>Unlimited pages</li>
+                <li>E-commerce or app dev</li>
+                <li>Ongoing retainer option</li>
+                <li>Priority support</li>
+                <li>Dedicated project manager</li>
+            </ul>
+            <a href="index.htm#contact" class="cta-btn outline">Contact us</a>
+        </div>
+    </div>
+</div>
 
-      const applyTheme = (theme) => {
-        document.body.classList.toggle('dark-mode', theme === 'dark');
-        themeToggle.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
-        localStorage.setItem('siteTheme', theme);
-      };
-
-      themeToggle.addEventListener('click', () => {
-        const nextTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
-        applyTheme(nextTheme);
-      });
-
-      applyTheme(storedTheme);
-    </script>
+<div class="pricing-section" style="margin-top: 0;">
+    <div class="pricing-card featured" style="text-align: center;">
+        <h3>Not sure which style fits your business?</h3>
+        <p style="margin: 0.75rem 0 1.25rem; color: #6b7280;">Use our Layout Lab to preview multiple homepage styles before you purchase.</p>
+        <a href="layout-lab.html" class="cta-btn">Open Layout Lab</a>
+    </div>
+</div>
+ 
+<script src="theme.js"></script>
+<script src="auth.js"></script>
+<script src="header.js"></script>
 </body>
 </html>

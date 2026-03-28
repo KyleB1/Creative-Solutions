@@ -339,6 +339,8 @@
       <p class="alt-link">Don’t have an account? <a href="signup.html">Create one</a></p>
     </main>
   </div>
+  <script src="auth.js"></script>
+  <script src="header.js"></script>
   <script>
     const loginForm = document.querySelector('form');
     const themeToggle = document.getElementById('themeToggle');
@@ -352,7 +354,7 @@
 
     loginForm.addEventListener('submit', (event) => {
       event.preventDefault();
-      const email = document.getElementById('email').value.trim();
+      const email = SiteAuth.normalizeEmail(document.getElementById('email').value);
       const displayName = email.split('@')[0].replace(/[^a-zA-Z0-9]+/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()) || 'Customer';
       const customer = {
         email,
@@ -365,16 +367,7 @@
         supportTickets: 3,
         monthlySpend: '$2.4K'
       };
-      const previousSupport = JSON.parse(localStorage.getItem('supportStaff') || 'null');
-      if (previousSupport?.email) {
-          const onlineRoster = JSON.parse(localStorage.getItem('supportOnlineAgents') || '[]');
-          if (Array.isArray(onlineRoster)) {
-              const updatedRoster = onlineRoster.filter(item => String(item).toLowerCase() !== previousSupport.email.toLowerCase());
-              localStorage.setItem('supportOnlineAgents', JSON.stringify(updatedRoster));
-          }
-      }
-      localStorage.removeItem('supportStaff');
-      localStorage.setItem('portalCustomer', JSON.stringify(customer));
+      SiteAuth.setCustomer(customer);
       window.location.href = 'customer-portal.html';
     });
 
@@ -385,14 +378,10 @@
 
     applyTheme(storedTheme);
 
-    const existingSupport = JSON.parse(localStorage.getItem('supportStaff') || 'null');
-    if (existingSupport?.email) {
-      window.location.href = 'support-portal.html';
-    }
-
-    const existingCustomer = localStorage.getItem('portalCustomer');
-    if (existingCustomer) {
-        window.location.href = 'customer-portal.html';
+    if (SiteAuth.redirectIfSupport('support-portal.html')) {
+      // Redirect handled.
+    } else {
+      SiteAuth.redirectIfCustomer('customer-portal.html');
     }
   </script>
 </body>

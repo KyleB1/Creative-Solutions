@@ -14,40 +14,6 @@
     </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
-            <div class="container-fluid">
-                <a class="navbar-brand fw-bold" href="#">Creative Web Solutions</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="#about">About Us</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#services">Services</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#portfolio">Portfolio</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#contact">Contact Us</a>
-                        </li>
-                    </ul>
-                    <div class="d-flex gap-2 align-items-center">
-                        <button id="themeToggle" class="btn btn-outline-secondary" type="button" aria-pressed="false">Dark Mode</button>
-                        <a id="crmButton" class="btn btn-outline-secondary" href="crm.html">CRM</a>
-                        <a id="supportLoginButton" class="btn btn-outline-secondary" href="support-login.html">Support Login</a>
-                        <a class="btn btn-outline-primary" href="login.html">Login</a>
-                        <a class="btn btn-primary" href="signup.html">Sign Up</a>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </header>
-
     <main class="site-main">
         <section id="about" class="hero-section pt-5">
             <div class="container py-5">
@@ -58,6 +24,7 @@
                         <div class="d-flex flex-wrap gap-3 mt-4">
                             <a class="btn btn-primary btn-lg" href="#contact">Get Started</a>
                             <a class="btn btn-outline-secondary btn-lg" href="#services">View Services</a>
+                            <a class="btn btn-outline-success btn-lg" href="layout-lab.html">Test Layouts</a>
                         </div>
                     </div>
                     <div class="col-lg-6 mt-5 mt-lg-0">
@@ -216,39 +183,7 @@
         </div>
     </footer>
 
-    <script>
-        const themeToggle = document.getElementById('themeToggle');
-        const savedTheme = localStorage.getItem('siteTheme');
-
-        const applyTheme = (theme) => {
-            document.body.classList.toggle('dark-mode', theme === 'dark');
-            themeToggle.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
-            themeToggle.setAttribute('aria-pressed', theme === 'dark');
-            localStorage.setItem('siteTheme', theme);
-        };
-
-        themeToggle.addEventListener('click', () => {
-            const nextTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
-            applyTheme(nextTheme);
-        });
-
-        if (savedTheme === 'dark') {
-            applyTheme('dark');
-        } else {
-            applyTheme('light');
-        }
-
-        const supportLoginButton = document.getElementById('supportLoginButton');
-        const crmButton = document.getElementById('crmButton');
-        const portalCustomer = localStorage.getItem('portalCustomer');
-        const supportStaff = JSON.parse(localStorage.getItem('supportStaff') || 'null');
-        if (portalCustomer) {
-            if (supportLoginButton) supportLoginButton.style.display = 'none';
-            if (crmButton) crmButton.style.display = 'none';
-        }
-        if (supportStaff?.email && supportLoginButton) {
-            supportLoginButton.style.display = 'none';
-        }
-    </script>
+    <script src="auth.js"></script>
+    <script src="header.js"></script>
 </body>
 </html>

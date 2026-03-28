@@ -103,13 +103,13 @@ html, body {
 }
 
 body {
-  padding-top: 76px;
+  padding-top: 0;
   background: radial-gradient(circle at top left, rgba(124, 58, 237, 0.14), transparent 28%),
               linear-gradient(180deg, #f4efff 0%, #f5f3ff 45%, #ede9ff 100%);
   color: var(--text);
 }
 
-header {
+header:not(.global-header) {
   margin-bottom: 1rem;
 }
 

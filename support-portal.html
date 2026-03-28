@@ -709,17 +709,14 @@
     </div>
   </div>
 
+  <script src="auth.js"></script>
+  <script src="header.js"></script>
   <script>
-    const authorizedSupportAgents = [
-      'support@creativewebsolutions.com',
-      'helpdesk@creativewebsolutions.com',
-      'kyle.creativesolutions@gmail.com'
-    ];
+    const authorizedSupportAgents = SiteAuth.getAuthorizedSupportEmails();
 
-    const staffData = JSON.parse(localStorage.getItem('supportStaff') || 'null');
-    if (!staffData || !staffData.email || !authorizedSupportAgents.includes(staffData.email.toLowerCase())) {
-      localStorage.removeItem('supportStaff');
-      window.location.href = 'support-login.html';
+    const staffData = SiteAuth.requireSupport('support-login.html');
+    if (!staffData) {
+      throw new Error('Unauthorized support session.');
     }
 
     const getSupportOnlineAgents = () => {
@@ -1061,9 +1058,7 @@
     });
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
-      removeOnlineAgent(staffData.email);
-      localStorage.removeItem('supportStaff');
-      window.location.href = 'support-login.html';
+      SiteAuth.logoutSupport('support-login.html');
     });
 
     const themeToggle = document.getElementById('themeToggle');

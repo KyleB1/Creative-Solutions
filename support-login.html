@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -189,6 +189,8 @@
     </main>
   </div>
 
+  <script src="auth.js"></script>
+  <script src="header.js"></script>
   <script>
     const themeToggle = document.getElementById('themeToggle');
     const storedTheme = localStorage.getItem('siteTheme') || 'light';
@@ -205,15 +207,11 @@
     });
     applyTheme(storedTheme);
 
-    if (!localStorage.getItem('supportStaff') && localStorage.getItem('portalCustomer')) {
+    if (!SiteAuth.isSupportLoggedIn() && SiteAuth.isCustomerLoggedIn()) {
       window.location.href = 'index.htm';
     }
 
-    const authorizedSupportAgents = {
-      'support@creativewebsolutions.com': 'Support Agent',
-      'helpdesk@creativewebsolutions.com': 'Support Agent',
-      'kyle.creativesolutions@gmail.com': 'Support Administrator'
-    };
+    const authorizedSupportAgents = SiteAuth.SUPPORT_ROLES;
 
     const onlineCountEl = document.getElementById('onlineCount');
     const offlineCountEl = document.getElementById('offlineCount');
@@ -222,7 +220,7 @@
       const stored = JSON.parse(localStorage.getItem('supportOnlineAgents') || '[]');
       if (!Array.isArray(stored)) return [];
       return [...new Set(stored
-        .map(email => String(email).toLowerCase())
+        .map(email => SiteAuth.normalizeEmail(email))
         .filter(email => Object.prototype.hasOwnProperty.call(authorizedSupportAgents, email))
       )];
     };
@@ -254,9 +252,10 @@
     const supportLoginForm = document.getElementById('supportLoginForm');
     supportLoginForm.addEventListener('submit', (event) => {
       event.preventDefault();
-      const email = document.getElementById('supportEmail').value.trim().toLowerCase();
+      const email = SiteAuth.normalizeEmail(document.getElementById('supportEmail').value);
       const password = document.getElementById('supportPassword').value.trim();
-      if (!authorizedSupportAgents[email]) {
+      const role = SiteAuth.getSupportRoleForEmail(email);
+      if (!role) {
         loginError.textContent = 'Access denied. This account does not have support portal permissions.';
         return;
       }
@@ -266,22 +265,14 @@
       }
       loginError.textContent = '';
       const name = email.split('@')[0].replace(/[^a-zA-Z0-9]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) || 'Support Agent';
-      localStorage.removeItem('portalCustomer');
-      const staff = { email, name, role: authorizedSupportAgents[email] };
-      localStorage.setItem('supportStaff', JSON.stringify(staff));
+      SiteAuth.setSupport({ email, name, role });
       addOnlineAgent(email);
       window.location.href = 'support-portal.html';
     });
 
-    const existing = localStorage.getItem('supportStaff');
-    if (existing) {
-      const existingStaff = JSON.parse(existing);
-      if (existingStaff?.email && authorizedSupportAgents[existingStaff.email.toLowerCase()]) {
-        window.location.href = 'support-portal.html';
-      } else {
-        localStorage.removeItem('supportStaff');
-      }
+    if (SiteAuth.redirectIfSupport('support-portal.html')) {
+      // Redirect handled.
     }
   </script>
 </body>
-</html>
+</html> 
