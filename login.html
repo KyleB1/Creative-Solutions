@@ -335,15 +335,17 @@
         </div>
 
         <button type="submit" class="primary-btn">Log In</button>
+        <p id="loginError" class="alt-link" style="margin-top:0.75rem; color:#b91c1c;"></p>
       </form>
       <p class="alt-link">Don’t have an account? <a href="signup.html">Create one</a></p>
     </main>
   </div>
-  <script src="auth.js"></script>
-  <script src="header.js"></script>
+  <script defer src="auth.js"></script>
+  <script defer src="header.js"></script>
   <script>
     const loginForm = document.querySelector('form');
     const themeToggle = document.getElementById('themeToggle');
+    const loginError = document.getElementById('loginError');
     const storedTheme = localStorage.getItem('siteTheme') || 'light';
 
     const applyTheme = (theme) => {
@@ -355,7 +357,24 @@
     loginForm.addEventListener('submit', (event) => {
       event.preventDefault();
       const email = SiteAuth.normalizeEmail(document.getElementById('email').value);
-      const displayName = email.split('@')[0].replace(/[^a-zA-Z0-9]+/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()) || 'Customer';
+      const password = document.getElementById('password').value;
+      const accounts = SiteAuth.safeParse(localStorage.getItem('registeredAccounts') || '{}', {});
+      const existing = accounts[email];
+
+      if (!existing) {
+        loginError.textContent = 'No account found for that email. Please sign up first.';
+        return;
+      }
+
+      if (existing.passwordHash !== password) {
+        loginError.textContent = 'Incorrect password. Please try again.';
+        return;
+      }
+
+      loginError.textContent = '';
+      const displayName = (existing.name || email.split('@')[0])
+        .replace(/[^a-zA-Z0-9]+/g, ' ')
+        .replace(/\b\w/g, (char) => char.toUpperCase()) || 'Customer';
       const customer = {
         email,
         name: displayName,

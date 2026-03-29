@@ -1,9 +1,0 @@
-Host creatvieweb
-    HostName YOUR_SERVER_HOSTNAME_OR_IP
-    User YOUR_SERVER_USERNAME
-    IdentityFile C:/Users/kyleb/.ssh/id_ed25519_creatvieweb
-    IdentitiesOnly yes
-    PubkeyAuthentication yes
-    AddKeysToAgent yes
-    ServerAliveInterval 60
-    ServerAliveCountMax 3

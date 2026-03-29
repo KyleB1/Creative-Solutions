@@ -1,3 +1,4 @@
+
 // header.js - shared global header for consistent site navigation
 (function () {
   function getCustomer() {

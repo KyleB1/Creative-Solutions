@@ -1,6 +1,22 @@
 // theme.js — shared dark/light mode toggle for Creative Web Solutions
 (function () {
   const STORAGE_KEY = 'siteTheme';
+
+  function readTheme() {
+    try {
+      return localStorage.getItem(STORAGE_KEY) || 'light';
+    } catch (error) {
+      return 'light';
+    }
+  }
+
+  function writeTheme(theme) {
+    try {
+      localStorage.setItem(STORAGE_KEY, theme);
+    } catch (error) {
+      // Ignore storage failures so theme toggle still works in restricted contexts.
+    }
+  }
  
   function applyTheme(theme) {
     document.body.classList.toggle('dark-mode', theme === 'dark');
@@ -9,11 +25,11 @@
       btn.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
       btn.setAttribute('aria-pressed', String(theme === 'dark'));
     }
-    localStorage.setItem(STORAGE_KEY, theme);
+    writeTheme(theme);
   }
  
   function initTheme() {
-    const saved = localStorage.getItem(STORAGE_KEY) || 'light';
+    const saved = readTheme();
     applyTheme(saved);
     const btn = document.getElementById('themeToggle');
     if (btn) {
