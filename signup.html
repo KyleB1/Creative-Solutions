@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up | Creative Web Solutions</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .wrap{max-width:780px;margin:0 auto;padding:1rem;}
+    .card{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--surface-contrast);border-radius:20px;padding:1.25rem;}
+    .card::before{content:"";position:absolute;inset:0;background:linear-gradient(130deg,rgba(15,111,255,0.13),rgba(255,122,24,0.1) 45%,transparent 70%);}
+    .card::after{content:"";position:absolute;width:280px;height:280px;left:-120px;top:-140px;border-radius:50%;background:radial-gradient(circle,rgba(15,111,255,0.28),transparent 70%);}
+    .grid{display:grid;gap:.9rem;grid-template-columns:repeat(2,minmax(0,1fr));}
+    .field{display:grid;gap:.35rem;}
+    input,select,button{min-height:2.65rem;border-radius:12px;border:1px solid #cbd5e1;padding:0 .75rem;font:inherit;}
+    .full{grid-column:1 / -1;}
+    .btn{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:700;cursor:pointer;}
+    .msg{min-height:1.25rem;font-weight:700;}
+    .card > *{position:relative;z-index:1;}
+    @media(max-width:760px){.grid{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+  <main class="wrap" id="main">
+    <section class="card panel">
+      <h1>Create your account</h1>
+      <p>Enhanced signup with client-side hashing and saved form drafts.</p>
+      <form id="signupForm" class="grid">
+        <label class="field"><span>Full name</span><input id="fullName" name="fullName" required></label>
+        <label class="field"><span>Company</span><input id="companyName" name="companyName"></label>
+        <label class="field full"><span>Email</span><input id="email" name="email" type="email" required></label>
+        <label class="field"><span>Password</span><input id="password" name="password" type="password" required minlength="8"></label>
+        <label class="field"><span>Plan</span><select id="plan" name="plan"><option>Growth plan</option><option>Scale plan</option><option>Enterprise plan</option></select></label>
+        <button class="btn full" type="submit">Create account</button>
+        <p id="signupMessage" class="msg full"></p>
+      </form>
+      <p>Already registered? <a href="login.html">Log in</a></p>
+    </section>
+  </main>
+  <script src="auth.js"></script>
+  <script src="header.js"></script>
+  <script src="site-enhancements.js"></script>
+  <script>
+    const form = document.getElementById('signupForm');
+    const msg = document.getElementById('signupMessage');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = SiteAuth.normalizeEmail(document.getElementById('email').value);
+      const password = document.getElementById('password').value;
+      if (password.length < 8) { msg.textContent = 'Password must be at least 8 characters.'; return; }
+      const accounts = SiteAuth.safeParse(localStorage.getItem('registeredAccounts') || '{}', {});
+      if (accounts[email]) { msg.textContent = 'Account already exists. Please log in.'; return; }
+      const salt = SiteAuth.generateSessionToken().slice(0, 16);
+      const hash = await SiteAuth.hashPasswordWithSalt(salt, password);
+      accounts[email] = {
+        email,
+        passwordHash: `${salt}:${hash}`,
+        name: document.getElementById('fullName').value.trim() || 'Customer',
+        company: document.getElementById('companyName').value.trim(),
+        plan: document.getElementById('plan').value,
+        createdAt: new Date().toISOString()
+      };
+      localStorage.setItem('registeredAccounts', JSON.stringify(accounts));
+      SiteAuth.setCustomer(SiteAuth.buildCustomerSession(accounts[email]));
+      msg.textContent = 'Account created. Redirecting...';
+      setTimeout(() => { window.location.href = 'customer-portal.html'; }, 700);
+    });
+  </script>
+</body>
+</html>

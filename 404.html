@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 | Creative Web Solutions</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .wrap { min-height: 80vh; display:grid; place-items:center; padding: 1rem; }
+    .card { position: relative; overflow: hidden; max-width: 640px; background: var(--surface); border: 1px solid var(--surface-contrast); border-radius: 18px; padding: 2rem; text-align:center; }
+    .card::before { content: ""; position: absolute; left: 50%; top: -180px; width: 360px; height: 360px; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(circle, rgba(15, 111, 255, 0.22), transparent 72%); }
+    .card::after { content: ""; position: absolute; right: -70px; bottom: -70px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 122, 24, 0.28), transparent 68%); }
+    .card > * { position: relative; z-index: 1; }
+    a { color: #2563eb; font-weight: 700; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <main class="wrap" id="main">
+    <section class="card panel">
+      <h1>Page Not Found</h1>
+      <p>The page you requested could not be found. Use navigation to continue browsing.</p>
+      <p><a href="index.htm">Return Home</a></p>
+    </section>
+  </main>
+  <script src="auth.js"></script>
+  <script src="header.js"></script>
+  <script src="site-enhancements.js"></script>
+</body>
+</html>

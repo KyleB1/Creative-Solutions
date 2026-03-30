@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Creative Web Solutions</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .wrap{max-width:640px;margin:0 auto;padding:1rem;}
+    .card{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--surface-contrast);border-radius:20px;padding:1.25rem;}
+    .card::before{content:"";position:absolute;left:-30px;right:-30px;top:-90px;height:180px;border-radius:0 0 120px 120px;background:linear-gradient(140deg,rgba(15,111,255,0.2),rgba(15,111,255,0.02));}
+    .card::after{content:"";position:absolute;width:180px;height:180px;right:-60px;bottom:-70px;border-radius:50%;background:radial-gradient(circle,rgba(255,122,24,0.28),transparent 72%);}
+    .field{display:grid;gap:.35rem;margin-bottom:.85rem;}
+    input,button{min-height:2.65rem;border-radius:12px;border:1px solid #cbd5e1;padding:0 .75rem;font:inherit;}
+    .btn{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:700;cursor:pointer;width:100%;}
+    .msg{min-height:1.25rem;font-weight:700;}
+    .card > *{position:relative;z-index:1;}
+  </style>
+</head>
+<body>
+  <main class="wrap" id="main">
+    <section class="card panel">
+      <h1>Customer Login</h1>
+      <p>Secure sign in to view your project and billing portal.</p>
+      <form id="loginForm">
+        <label class="field"><span>Email</span><input id="email" name="email" type="email" required></label>
+        <label class="field"><span>Password</span><input id="password" name="password" type="password" required></label>
+        <button class="btn" type="submit">Sign in</button>
+      </form>
+      <p id="loginMessage" class="msg"></p>
+      <p>No account? <a href="signup.html">Create one</a></p>
+    </section>
+  </main>
+  <script src="auth.js"></script>
+  <script src="header.js"></script>
+  <script src="site-enhancements.js"></script>
+  <script>
+    if (SiteAuth.redirectIfCustomer('customer-portal.html')) {}
+    const form = document.getElementById('loginForm');
+    const msg = document.getElementById('loginMessage');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = SiteAuth.normalizeEmail(document.getElementById('email').value);
+      const password = document.getElementById('password').value;
+      const accounts = SiteAuth.safeParse(localStorage.getItem('registeredAccounts') || '{}', {});
+      const account = accounts[email];
+      if (!account) { msg.textContent = 'No account found for that email.'; return; }
+      const ok = await SiteAuth.verifyPassword(account.passwordHash || '', password);
+      if (!ok) { msg.textContent = 'Invalid credentials.'; return; }
+      const session = SiteAuth.buildCustomerSession({ email, name: account.name, plan: account.plan || 'Growth plan' });
+      SiteAuth.setCustomer(session);
+      window.location.href = 'customer-portal.html';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layout Lab | Creative Web Solutions</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 1rem; }
+    .panel { position: relative; overflow: hidden; background: var(--surface); border: 1px solid var(--surface-contrast); border-radius: 20px; padding: 1rem; }
+    .panel::before { content: ""; position: absolute; width: 420px; height: 420px; right: -150px; top: -170px; border-radius: 50%; background: repeating-radial-gradient(circle at center, rgba(15, 111, 255, 0.26) 0 2px, transparent 2px 18px); opacity: .55; }
+    .panel::after { content: ""; position: absolute; width: 180px; height: 180px; right: 26px; top: 20px; border-radius: 16px; transform: rotate(18deg); background: linear-gradient(140deg, rgba(255, 122, 24, 0.26), rgba(15, 111, 255, 0.12)); }
+    .controls { display:flex; gap:.75rem; flex-wrap: wrap; }
+    .controls select, .controls button { min-height: 2.4rem; border-radius: 12px; border: 1px solid #cbd5e1; padding: 0 .8rem; }
+    .preview { margin-top: 1rem; display:grid; gap:1rem; }
+    .preview.grid-2 { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    .preview.grid-3 { grid-template-columns: repeat(3,minmax(0,1fr)); }
+    .tile { background: var(--surface-alt); border:1px solid var(--surface-contrast); border-radius: 14px; padding: 1rem; }
+    .panel > * { position: relative; z-index: 1; }
+    @media (max-width: 900px){ .preview.grid-2,.preview.grid-3{ grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main class="wrap" id="main">
+    <section class="panel">
+      <h1>Layout Lab</h1>
+      <p>Prototype page sections and persist your preferred layout choices across sessions.</p>
+      <div class="controls">
+        <label>Columns
+          <select id="columns">
+            <option value="2">2 Columns</option>
+            <option value="3">3 Columns</option>
+          </select>
+        </label>
+        <button id="saveLayout" type="button">Save Preference</button>
+      </div>
+      <div id="preview" class="preview grid-2">
+        <article class="tile">Hero Block</article>
+        <article class="tile">Feature Block</article>
+        <article class="tile">Testimonial Block</article>
+        <article class="tile">CTA Block</article>
+      </div>
+    </section>
+  </main>
+  <script src="auth.js"></script>
+  <script src="header.js"></script>
+  <script src="site-enhancements.js"></script>
+  <script>
+    const key = 'layoutLab:columns';
+    const columns = document.getElementById('columns');
+    const preview = document.getElementById('preview');
+    const saved = localStorage.getItem(key) || '2';
+    columns.value = saved;
+    preview.className = 'preview grid-' + saved;
+    columns.addEventListener('change', () => { preview.className = 'preview grid-' + columns.value; });
+    document.getElementById('saveLayout').addEventListener('click', () => { localStorage.setItem(key, columns.value); });
+  </script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Portal | Creative Web Solutions</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .wrap{max-width:1100px;margin:0 auto;padding:1rem;display:grid;gap:1rem;}
+    .top{position:relative;overflow:hidden;display:flex;justify-content:space-between;gap:.75rem;flex-wrap:wrap;align-items:center;background:var(--surface);border:1px solid var(--surface-contrast);border-radius:18px;padding:1rem;}
+    .top::before{content:"";position:absolute;inset:0;background:linear-gradient(125deg,rgba(15,111,255,0.18),transparent 45%);}
+    .top::after{content:"";position:absolute;width:240px;height:130px;right:20px;top:-38px;border-radius:999px;background:linear-gradient(160deg,rgba(255,122,24,0.26),rgba(255,122,24,0.05));transform:rotate(-14deg);}
+    .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;}
+    .card{background:var(--surface);border:1px solid var(--surface-contrast);border-radius:16px;padding:1rem;}
+    .muted{color:var(--muted)}
+    .btn{border:1px solid #cbd5e1;border-radius:999px;padding:.55rem .8rem;background:#fff;cursor:pointer;font-weight:700;}
+    @media(max-width:980px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    .top > *{position:relative;z-index:1;}
+    @media(max-width:640px){.grid{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+  <main class="wrap" id="main">
+    <section class="top panel">
+      <div>
+        <h1 id="hello">Welcome</h1>
+        <p class="muted">Track projects, leads, support activity, and billing in one place.</p>
+      </div>
+      <button id="logoutBtn" class="btn" type="button">Log out</button>
+    </section>
+
+    <section class="grid">
+      <article class="card project-card"><h3>Active Projects</h3><p id="activeProjects">0</p></article>
+      <article class="card invoice-card"><h3>New Leads</h3><p id="newLeads">0</p></article>
+      <article class="card message-card"><h3>Open Tickets</h3><p id="openTickets">0</p></article>
+      <article class="card setting-card"><h3>Monthly Spend</h3><p id="monthlySpend">$0</p></article>
+    </section>
+  </main>
+  <script src="auth.js"></script>
+  <script src="header.js"></script>
+  <script src="site-enhancements.js"></script>
+  <script>
+    const customer = SiteAuth.requireCustomer('login.html');
+    if (!customer) throw new Error('Unauthorized');
+    document.getElementById('hello').textContent = `Welcome, ${customer.name || 'Customer'}`;
+    document.getElementById('activeProjects').textContent = customer.activeProjects ?? 8;
+    document.getElementById('newLeads').textContent = customer.newLeads ?? 24;
+    document.getElementById('openTickets').textContent = customer.supportTickets ?? 3;
+    document.getElementById('monthlySpend').textContent = customer.monthlySpend || '$2.4K';
+    document.getElementById('logoutBtn').addEventListener('click', () => SiteAuth.logoutCustomer('login.html'));
+  </script>
+</body>
+</html>

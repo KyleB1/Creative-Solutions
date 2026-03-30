@@ -1,0 +1,289 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap');
+
+:root {
+  color-scheme: light;
+  --bg: #f4f8ff;
+  --surface: #ffffff;
+  --surface-alt: #ecf4ff;
+  --text: #10213b;
+  --muted: #526581;
+  --primary: #0f6fff;
+  --primary-soft: #dbeafe;
+  --accent: #ff7a18;
+  --surface-contrast: rgba(15, 111, 255, 0.14);
+  --ring: rgba(15, 111, 255, 0.24);
+  --shadow-soft: 0 12px 35px rgba(15, 23, 42, 0.08);
+  --shadow-lift: 0 20px 45px rgba(15, 23, 42, 0.12);
+  --radius-card: 18px;
+  --radius-pill: 999px;
+}
+
+body.dark-mode {
+  color-scheme: dark;
+  --bg: #091222;
+  --surface: #0f1b2f;
+  --surface-alt: #14233b;
+  --text: #e7efff;
+  --muted: #9bb0cf;
+  --primary: #63a4ff;
+  --primary-soft: #1a2f4d;
+  --accent: #ff9b4a;
+  --surface-contrast: rgba(99, 164, 255, 0.2);
+  --ring: rgba(99, 164, 255, 0.26);
+  --shadow-soft: 0 12px 28px rgba(3, 7, 18, 0.4);
+  --shadow-lift: 0 22px 50px rgba(3, 7, 18, 0.55);
+}
+
+body.dark-mode .navbar,
+body.dark-mode .hero-section,
+body.dark-mode .section-bg,
+body.dark-mode .service-card,
+body.dark-mode .portfolio-card,
+body.dark-mode .contact-form,
+body.dark-mode .hero-card,
+body.dark-mode .feature-box,
+body.dark-mode footer.footer {
+  background: var(--surface) !important;
+}
+
+body.dark-mode .hero-section {
+  background: radial-gradient(circle at top left, rgba(130, 170, 255, 0.14), transparent 48%),
+              linear-gradient(180deg, #111827 0%, #0f172a 100%);
+}
+
+body.dark-mode .section-bg {
+  background: var(--bg);
+}
+
+body.dark-mode .feature-box {
+  background: var(--surface-alt);
+  border-color: rgba(148, 163, 184, 0.25);
+}
+
+body.dark-mode .navbar-brand,
+body.dark-mode .nav-link,
+body.dark-mode .navbar-toggler-icon,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode p,
+body.dark-mode a,
+body.dark-mode span,
+body.dark-mode label,
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select,
+body.dark-mode button,
+body.dark-mode .form-label,
+body.dark-mode .form-control,
+body.dark-mode .form-control::placeholder,
+body.dark-mode .btn,
+body.dark-mode .btn-outline-secondary,
+body.dark-mode .btn-outline-primary,
+body.dark-mode .list-unstyled,
+body.dark-mode .list-unstyled li,
+body.dark-mode .card,
+body.dark-mode .panel,
+body.dark-mode section,
+body.dark-mode article,
+body.dark-mode .service-card,
+body.dark-mode .feature-box,
+body.dark-mode .hero-card,
+body.dark-mode .contact-form {
+  color: var(--text) !important;
+}
+
+body.dark-mode .text-muted {
+  color: var(--muted) !important;
+}
+
+body.dark-mode .navbar-light .navbar-toggler-icon {
+  filter: invert(1) brightness(1.5);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  background: #f2f5fb;
+  color: var(--text);
+}
+
+body {
+  padding-top: 0;
+  background:
+    radial-gradient(circle at 8% -10%, rgba(15, 111, 255, 0.16), transparent 32%),
+    radial-gradient(circle at 95% 12%, rgba(255, 122, 24, 0.12), transparent 34%),
+    linear-gradient(180deg, #f8fbff 0%, #edf4ff 48%, #e7f0ff 100%);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Sora", "Segoe UI", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+p {
+  color: var(--muted);
+}
+
+a {
+  color: var(--primary);
+}
+
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--ring);
+}
+
+header:not(.global-header) {
+  margin-bottom: 1rem;
+}
+
+.hero-section {
+  background:
+    radial-gradient(circle at 15% -5%, rgba(15, 111, 255, 0.18), transparent 40%),
+    linear-gradient(180deg, #f8fbff 0%, #edf4ff 42%, #e6f0ff 100%);
+}
+
+.hero-section .eyebrow {
+  letter-spacing: .24em;
+  color: var(--primary);
+}
+
+.hero-card {
+  background: var(--surface);
+}
+
+.navbar,
+footer.footer,
+.service-card,
+.portfolio-card,
+.contact-form,
+.hero-card {
+  transition: background .28s ease, color .28s ease, border-color .28s ease, box-shadow .28s ease, transform .28s ease;
+}
+
+.panel,
+.service-card,
+.portfolio-card,
+.contact-form,
+.hero-card,
+.project-card,
+.invoice-card,
+.message-card,
+.setting-card,
+.crm-card,
+.pipeline,
+.contacts {
+  border-radius: var(--radius-card);
+  border: 1px solid var(--surface-contrast);
+  box-shadow: var(--shadow-soft);
+}
+
+.panel:hover,
+.service-card:hover,
+.portfolio-card:hover,
+.contact-form:hover,
+.hero-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lift);
+}
+
+.feature-box {
+  background: var(--surface-alt);
+  border: 1px solid var(--surface-contrast);
+}
+
+.section-bg {
+  background: linear-gradient(180deg, #f8fbff 0%, #edf4ff 100%);
+}
+
+#services .service-card,
+#portfolio .portfolio-card,
+.contact-form {
+  background: var(--surface);
+}
+
+.service-card h3,
+.portfolio-card h3 {
+  margin-bottom: .75rem;
+}
+
+.service-card p,
+.portfolio-card p {
+  color: var(--muted);
+}
+
+.section-bg h2,
+#portfolio h2,
+#contact h2 {
+  color: var(--text);
+}
+
+.contact-form {
+  border: 1px solid var(--surface-contrast);
+}
+
+footer.footer {
+  background: transparent;
+}
+
+footer.footer p {
+  margin: 0;
+  font-size: .95rem;
+}
+
+@media (max-width: 992px) {
+  .hero-section {
+    padding-top: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .service-card,
+  .portfolio-card,
+  .contact-form,
+  .hero-card {
+    padding: 1.5rem;
+  }
+
+  .hero-section {
+    padding-top: 2rem;
+  }
+}
+
+.btn,
+button,
+.gh-btn {
+  border-radius: var(--radius-pill);
+}
+
+body.dark-mode {
+  background:
+    radial-gradient(circle at 12% -10%, rgba(99, 164, 255, 0.18), transparent 32%),
+    radial-gradient(circle at 92% 10%, rgba(255, 155, 74, 0.14), transparent 34%),
+    linear-gradient(180deg, #0a1427 0%, #0a1323 52%, #09101e 100%);
+}
+
+body.dark-mode .hero-section {
+  background:
+    radial-gradient(circle at 10% -8%, rgba(99, 164, 255, 0.18), transparent 42%),
+    linear-gradient(180deg, #0f1b2f 0%, #0a1427 100%);
+}

@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRM | Creative Web Solutions</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .wrap{max-width:1100px;margin:0 auto;padding:1rem;display:grid;gap:1rem;}
+    .head,.pipeline,.contacts{background:var(--surface);border:1px solid var(--surface-contrast);border-radius:18px;padding:1rem;}
+    .head{position:relative;overflow:hidden;}
+    .head::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(15,111,255,0.18),transparent 40%);} 
+    .head::after{content:"";position:absolute;right:-70px;top:-45px;width:300px;height:140px;border-radius:999px;background:conic-gradient(from 180deg at 50% 50%, rgba(255,122,24,0.22), rgba(15,111,255,0.22), rgba(255,122,24,0.08));transform:rotate(-8deg);} 
+    .cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;}
+    .col{background:var(--surface-alt);border:1px solid var(--surface-contrast);border-radius:12px;padding:.75rem;min-height:180px;}
+    .lead{background:#fff;border:1px solid #cbd5e1;border-radius:10px;padding:.55rem;margin-bottom:.5rem;}
+    table{width:100%;border-collapse:collapse;} th,td{border-bottom:1px solid #e5e7eb;padding:.55rem;text-align:left;}
+    .head > *{position:relative;z-index:1;}
+    @media(max-width:980px){.cols{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media(max-width:620px){.cols{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+  <main class="wrap" id="main">
+    <section class="head panel"><h1>CRM Dashboard</h1><p>Enhanced operational view of leads and pipeline health.</p></section>
+    <section class="pipeline panel">
+      <h2>Pipeline</h2>
+      <div class="cols">
+        <article class="col"><h3>New</h3><div class="lead">Northwind - Website Redesign</div></article>
+        <article class="col"><h3>Qualified</h3><div class="lead">Lakeview Dental - SEO Retainer</div></article>
+        <article class="col"><h3>Proposal</h3><div class="lead">Arc Labs - Client Portal</div></article>
+        <article class="col"><h3>Won</h3><div class="lead">Bright Oak - E-commerce Build</div></article>
+      </div>
+    </section>
+    <section class="contacts panel">
+      <h2>Top Contacts</h2>
+      <table>
+        <thead><tr><th>Company</th><th>Owner</th><th>Status</th><th>Next Step</th></tr></thead>
+        <tbody>
+          <tr><td>Northwind</td><td>Kyle</td><td>Qualified</td><td>Discovery Call</td></tr>
+          <tr><td>Arc Labs</td><td>Support</td><td>Proposal</td><td>Pricing Review</td></tr>
+          <tr><td>Bright Oak</td><td>Kyle</td><td>Won</td><td>Kickoff</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+  <script src="auth.js"></script>
+  <script src="header.js"></script>
+  <script src="site-enhancements.js"></script>
+</body>
+</html>

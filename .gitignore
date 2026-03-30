@@ -1,0 +1,91 @@
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+coverage/
+.nyc_output/
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-workspace
+*.sublime-project
+
+# Build outputs
+dist/
+build/
+out/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+database.backup
+*.sql.bak
+
+# Testing
+.jest_cache/
+test-results/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Credentials & Private Keys
+*.pem
+*.key
+private/
+secrets/
+credentials/
+
+# Payment Processor Test Data
+*.stripe_test_data
+stripe_test_cards.json
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Production build
+dist/
+build/
+*.tgz
+
+# Temporary files
+tmp/
+temp/
+
+# SSL Certificates (store elsewhere)
+*.crt
+*.cer
+*.cert
+
+# CRITICAL: Never commit API keys, tokens, or secrets
+# These should always be in environment variables or secure vaults

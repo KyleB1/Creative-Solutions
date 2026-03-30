@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support Login | Creative Web Solutions</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .wrap{max-width:680px;margin:0 auto;padding:1rem;}
+    .card{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--surface-contrast);border-radius:20px;padding:1.25rem;}
+    .card::before{content:"";position:absolute;inset:0;background:linear-gradient(145deg,rgba(124,58,237,0.2),transparent 56%);}
+    .card::after{content:"";position:absolute;width:220px;height:220px;right:-70px;top:-70px;border-radius:36px;transform:rotate(28deg);background:linear-gradient(140deg,rgba(124,58,237,0.28),rgba(15,111,255,0.1));}
+    .field{display:grid;gap:.35rem;margin-bottom:.85rem;}
+    input,button{min-height:2.65rem;border-radius:12px;border:1px solid #cbd5e1;padding:0 .75rem;font:inherit;}
+    .btn{background:#7c3aed;color:#fff;border-color:#7c3aed;font-weight:700;cursor:pointer;width:100%;}
+    .msg{min-height:1.25rem;font-weight:700;}
+    .card > *{position:relative;z-index:1;}
+  </style>
+</head>
+<body>
+  <main class="wrap" id="main">
+    <section class="card panel">
+      <h1>Support Team Login</h1>
+      <p>Authorized support staff only.</p>
+      <form id="supportLoginForm">
+        <label class="field"><span>Work email</span><input id="supportEmail" type="email" required></label>
+        <label class="field"><span>Password</span><input id="supportPassword" type="password" required></label>
+        <button class="btn" type="submit">Sign in</button>
+      </form>
+      <p id="loginError" class="msg"></p>
+    </section>
+  </main>
+  <script src="auth.js"></script>
+  <script src="header.js"></script>
+  <script src="site-enhancements.js"></script>
+  <script>
+    if (!SiteAuth.isSupportLoggedIn() && SiteAuth.isCustomerLoggedIn()) SiteAuth.redirectIfCustomer('index.htm');
+    const defaults = {
+      'support@creativewebsolutions.com': 'Support#2026!',
+      'helpdesk@creativewebsolutions.com': 'Helpdesk#2026!',
+      'kyle.creativesolutions@gmail.com': 'Admin#2026!'
+    };
+    if (!localStorage.getItem('supportCredentials')) localStorage.setItem('supportCredentials', JSON.stringify(defaults));
+    const creds = SiteAuth.safeParse(localStorage.getItem('supportCredentials'), defaults);
+    const form = document.getElementById('supportLoginForm');
+    const err = document.getElementById('loginError');
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = SiteAuth.normalizeEmail(document.getElementById('supportEmail').value);
+      const password = document.getElementById('supportPassword').value.trim();
+      const role = SiteAuth.getSupportRoleForEmail(email);
+      if (!role) { err.textContent = 'Access denied for this email.'; return; }
+      if (!Object.prototype.hasOwnProperty.call(creds, email) || creds[email] !== password) { err.textContent = 'Invalid credentials.'; return; }
+      const name = email.split('@')[0].replace(/[^a-zA-Z0-9]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Support Agent';
+      SiteAuth.setSupport({ email, name, role });
+      window.location.href = 'support-portal.html';
+    });
+    SiteAuth.redirectIfSupport('support-portal.html');
+  </script>
+</body>
+</html>

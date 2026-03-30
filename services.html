@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services | Creative Web Solutions</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 1rem; }
+    .head { position: relative; overflow: hidden; background: var(--surface); border: 1px solid var(--surface-contrast); border-radius: 22px; padding: 1.5rem; }
+    .head::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(15, 111, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(15, 111, 255, 0.1) 1px, transparent 1px); background-size: 22px 22px; mask-image: linear-gradient(110deg, transparent 8%, black 48%, black 92%, transparent 100%); }
+    .head::after { content: ""; position: absolute; width: 210px; height: 210px; right: -70px; top: -70px; border-radius: 42px; transform: rotate(35deg); background: linear-gradient(150deg, rgba(255, 122, 24, 0.3), rgba(15, 111, 255, 0.12)); }
+    .head h1 { margin: 0 0 .4rem; }
+    .head p { margin: 0; color: var(--muted); }
+    .grid { margin-top: 1rem; display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1rem; }
+    .card { background: var(--surface); border: 1px solid var(--surface-contrast); border-radius: 16px; padding: 1rem; }
+    .tag { display: inline-flex; padding: .25rem .6rem; border-radius: 999px; background: #ede9fe; color: #5b21b6; font-size: .78rem; font-weight: 700; }
+    .head > * { position: relative; z-index: 1; }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main class="wrap" id="main">
+    <section class="head panel">
+      <h1>Services</h1>
+      <p>Enhanced service pages with streamlined scannability and better interactions across all devices.</p>
+    </section>
+    <section class="grid">
+      <article class="card service-card"><span class="tag">Web</span><h3>Custom Website Builds</h3><p>Brand-first websites with measurable conversion goals.</p></article>
+      <article class="card service-card"><span class="tag">Commerce</span><h3>E-commerce Platforms</h3><p>Secure checkout flows and optimized product experiences.</p></article>
+      <article class="card service-card"><span class="tag">Growth</span><h3>SEO + Performance</h3><p>Faster pages and stronger search visibility.</p></article>
+      <article class="card service-card"><span class="tag">CRM</span><h3>Workflow Automation</h3><p>Lead routing, follow-up automation, and sales pipeline clarity.</p></article>
+      <article class="card service-card"><span class="tag">Support</span><h3>Portal Integration</h3><p>Customer and support portals with role-based access.</p></article>
+      <article class="card service-card"><span class="tag">Ops</span><h3>Maintenance Plans</h3><p>Ongoing optimization, updates, and support ops.</p></article>
+    </section>
+  </main>
+  <script src="auth.js"></script>
+  <script src="header.js"></script>
+  <script src="site-enhancements.js"></script>
+</body>
+</html>
