@@ -10,50 +10,433 @@
     .panel { position: relative; overflow: hidden; background: var(--surface); border: 1px solid var(--surface-contrast); border-radius: 20px; padding: 1rem; }
     .panel::before { content: ""; position: absolute; width: 420px; height: 420px; right: -150px; top: -170px; border-radius: 50%; background: repeating-radial-gradient(circle at center, rgba(15, 111, 255, 0.26) 0 2px, transparent 2px 18px); opacity: .55; }
     .panel::after { content: ""; position: absolute; width: 180px; height: 180px; right: 26px; top: 20px; border-radius: 16px; transform: rotate(18deg); background: linear-gradient(140deg, rgba(255, 122, 24, 0.26), rgba(15, 111, 255, 0.12)); }
-    .controls { display:flex; gap:.75rem; flex-wrap: wrap; }
+    .controls { display:grid; gap:.75rem; margin-top: .75rem; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+    .controls label { display: flex; flex-direction: column; gap: .35rem; font-size: .9rem; }
     .controls select, .controls button { min-height: 2.4rem; border-radius: 12px; border: 1px solid #cbd5e1; padding: 0 .8rem; }
-    .preview { margin-top: 1rem; display:grid; gap:1rem; }
+    .actions { display: flex; gap: .5rem; flex-wrap: wrap; align-items: end; }
+    .preview-shell { margin-top: 1rem; background: #0b172f; border-radius: 16px; padding: .8rem; border: 1px solid #314570; }
+    .preview-meta { display:flex; justify-content: space-between; color: #dbeafe; font-size: .85rem; margin-bottom: .6rem; }
+    .preview { display:grid; gap: var(--preview-gap, 1rem); min-height: 230px; transition: all .2s ease; }
+    .preview.grid-1 { grid-template-columns: repeat(1,minmax(0,1fr)); }
     .preview.grid-2 { grid-template-columns: repeat(2,minmax(0,1fr)); }
     .preview.grid-3 { grid-template-columns: repeat(3,minmax(0,1fr)); }
-    .tile { background: var(--surface-alt); border:1px solid var(--surface-contrast); border-radius: 14px; padding: 1rem; }
+    .preview.grid-4 { grid-template-columns: repeat(4,minmax(0,1fr)); }
+    .tile { background: var(--surface-alt); border:1px solid var(--surface-contrast); border-radius: 14px; padding: 1rem; min-height: 90px; display: flex; flex-direction: column; justify-content: space-between; }
+    .tile h3 { margin: 0 0 .35rem; font-size: 1rem; }
+    .tile p { margin: 0; font-size: .85rem; opacity: .8; }
+    .tile.compact { min-height: 62px; padding: .65rem; }
+    .tile.spacious { min-height: 120px; padding: 1.25rem; }
+    .tile.shadow { box-shadow: 0 10px 28px rgba(10, 29, 67, 0.16); }
+    .tile.outline { border-width: 2px; }
+    .tile.glass { background: linear-gradient(130deg, rgba(255,255,255,.85), rgba(228,239,255,.55)); backdrop-filter: blur(4px); }
+    .metrics { margin-top: 1rem; display: grid; gap: .6rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .metric-card { background: #f8fafc; border:1px solid #dbe3ef; border-radius: 12px; padding: .7rem .8rem; }
+    .metric-card h4 { margin: 0 0 .25rem; font-size: .95rem; }
+    .metric-card p { margin: 0; font-size: .88rem; color: #334155; }
+    .diagnostics { margin-top: .85rem; border: 1px dashed #b8c5db; border-radius: 12px; padding: .65rem .75rem; background: #fbfdff; }
+    .diagnostics ul { margin: .3rem 0 0; padding-left: 1rem; }
+    .diagnostics li { margin: .2rem 0; }
+    .ok { color: #166534; }
+    .warn { color: #92400e; }
+    .fail { color: #991b1b; }
+    .legend { margin-top: .6rem; font-size: .82rem; color: #475569; }
+
+    /* ── Dark mode overrides for hardcoded light-coloured components ── */
+    body.dark-mode .metric-card {
+      background: var(--surface-alt);
+      border-color: var(--surface-contrast);
+    }
+    body.dark-mode .metric-card p { color: var(--text) !important; }
+    body.dark-mode .diagnostics {
+      background: var(--surface);
+      border-color: var(--surface-contrast);
+      border-style: dashed;
+    }
+    body.dark-mode .stress-bar {
+      background: rgba(220, 38, 38, 0.12);
+      border-color: rgba(220, 38, 38, 0.35);
+    }
+    body.dark-mode .stress-bar strong { color: #fca5a5 !important; }
+    body.dark-mode .stress-bar p { color: #fed7aa !important; }
+    body.dark-mode .legend { color: var(--muted); }
+    body.dark-mode .tile.glass {
+      background: linear-gradient(130deg, rgba(255,255,255,.08), rgba(99,164,255,.12));
+    }
+    body.dark-mode .btn-stress.on { background: #16a34a; }
+
+    .stress-bar { display: flex; align-items: center; gap: .5rem; margin-top: .9rem; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 12px; padding: .55rem .75rem; }
+    .stress-bar strong { color: #9a3412; font-size: .92rem; }
+    .stress-bar p { margin: 0; color: #78350f; font-size: .85rem; }
+    .stress-badge { background: #dc2626; color: #fff; border-radius: 6px; padding: .15rem .5rem; font-size: .78rem; font-weight: 700; letter-spacing: .03em; display: none; flex-shrink: 0; }
+    .stress-badge.active { display: inline-block; }
+    .btn-stress { background: #dc2626; color: #fff; border: none; cursor: pointer; }
+    .btn-stress.on { background: #166534; }
+    .tile-img { height: 76px; border-radius: 8px; margin-bottom: .5rem; background: linear-gradient(135deg, #c7d2fe 0%, #a5b4fc 50%, #818cf8 100%); flex-shrink: 0; }
+    .tile-actions { margin-top: .55rem; }
+    .btn-mock { display: inline-block; background: #2563eb; color: #fff; border-radius: 8px; padding: .32rem .6rem; font-size: .8rem; word-break: break-word; line-height: 1.3; }
     .panel > * { position: relative; z-index: 1; }
-    @media (max-width: 900px){ .preview.grid-2,.preview.grid-3{ grid-template-columns: 1fr; } }
+    @media (max-width: 900px){ .preview.grid-2,.preview.grid-3,.preview.grid-4{ grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
   <main class="wrap" id="main">
     <section class="panel">
       <h1>Layout Lab</h1>
-      <p>Prototype page sections and persist your preferred layout choices across sessions.</p>
+      <p>Test combinations before implementation. Toggle layout constraints and instantly see whether each setup is likely to work well.</p>
       <div class="controls">
         <label>Columns
           <select id="columns">
+            <option value="1">1 Column</option>
             <option value="2">2 Columns</option>
             <option value="3">3 Columns</option>
+            <option value="4">4 Columns</option>
           </select>
         </label>
-        <button id="saveLayout" type="button">Save Preference</button>
+        <label>Preview Width
+          <select id="viewport">
+            <option value="1200">Desktop (1200px)</option>
+            <option value="960">Laptop (960px)</option>
+            <option value="768">Tablet (768px)</option>
+            <option value="420">Mobile (420px)</option>
+          </select>
+        </label>
+        <label>Gap
+          <select id="gap">
+            <option value="0.5rem">Tight</option>
+            <option value="1rem">Balanced</option>
+            <option value="1.5rem">Spacious</option>
+          </select>
+        </label>
+        <label>Density
+          <select id="density">
+            <option value="compact">Compact</option>
+            <option value="balanced">Balanced</option>
+            <option value="spacious">Spacious</option>
+          </select>
+        </label>
+        <label>Card Style
+          <select id="cardStyle">
+            <option value="default">Default</option>
+            <option value="shadow">Shadow</option>
+            <option value="outline">Outline</option>
+            <option value="glass">Glass</option>
+          </select>
+        </label>
+        <div class="actions">
+          <button id="saveLayout" type="button">Save Preferences</button>
+          <button id="resetLayout" type="button">Reset</button>
+          <button id="stressToggle" type="button" class="btn-stress">Stress Test: OFF</button>
+        </div>
       </div>
-      <div id="preview" class="preview grid-2">
-        <article class="tile">Hero Block</article>
-        <article class="tile">Feature Block</article>
-        <article class="tile">Testimonial Block</article>
-        <article class="tile">CTA Block</article>
+
+      <div class="preview-shell">
+        <div class="preview-meta">
+          <span id="scenarioName">Scenario: Balanced Marketing Page</span>
+          <span style="display:flex;align-items:center;gap:.5rem">
+            <span id="stressBadge" class="stress-badge">STRESS MODE</span>
+            <span id="estimatedCardWidth">Card width estimate: --</span>
+          </span>
+        </div>
+        <div id="preview" class="preview grid-2">
+          <article class="tile"><h3>Hero Block</h3><p>Intro messaging and lead CTA</p></article>
+          <article class="tile"><h3>Feature Block</h3><p>Core value proposition tiles</p></article>
+          <article class="tile"><h3>Testimonial Block</h3><p>Customer trust proof</p></article>
+          <article class="tile"><h3>CTA Block</h3><p>Closing action area</p></article>
+          <article class="tile"><h3>FAQ Block</h3><p>Objection handling and clarity</p></article>
+          <article class="tile"><h3>Footer Utility</h3><p>Secondary actions and links</p></article>
+        </div>
       </div>
+
+      <div class="metrics">
+        <article class="metric-card">
+          <h4>Current Setup</h4>
+          <p id="setupSummary">--</p>
+        </article>
+        <article class="metric-card">
+          <h4>Verdict</h4>
+          <p id="verdictText">--</p>
+        </article>
+      </div>
+
+      <div class="diagnostics">
+        <strong>Compatibility Checks</strong>
+        <ul id="checks"></ul>
+      </div>
+      <div class="stress-bar">
+        <strong>Stress Test</strong>
+        <p id="stressBarText">Toggle stress mode to fill cards with worst-case content: long headlines, dense copy, long button labels, and image placeholders. See exactly what breaks before your users do.</p>
+      </div>
+      <div class="legend">Green = likely safe, amber = may need tuning, red = likely to break usability on the selected width.</div>
     </section>
   </main>
   <script src="auth.js"></script>
   <script src="header.js"></script>
   <script src="site-enhancements.js"></script>
   <script>
-    const key = 'layoutLab:columns';
-    const columns = document.getElementById('columns');
+    const key = 'layoutLab:settings';
+    let stressMode = false;
+
+    const tileContent = {
+      normal: [
+        { h: 'Hero Block',        p: 'Intro messaging and lead CTA' },
+        { h: 'Feature Block',     p: 'Core value proposition tiles' },
+        { h: 'Testimonial Block', p: 'Customer trust proof' },
+        { h: 'CTA Block',         p: 'Closing action area' },
+        { h: 'FAQ Block',         p: 'Objection handling and clarity' },
+        { h: 'Footer Utility',    p: 'Secondary actions and links' }
+      ],
+      stress: [
+        { img: true, h: 'Transform Your Business With Our Award-Winning Enterprise Solutions Today',
+          p: 'Unlock unprecedented growth and operational efficiency with our comprehensive platform designed for forward-thinking organizations that demand results and scale reliably.',
+          btn: 'Start Your Free 30-Day Unlimited-Access Trial — No Credit Card Required' },
+        { img: true, h: 'Everything You Need To Grow Faster Than You Ever Thought Possible',
+          p: 'Real-time analytics, AI-driven automation, seamless third-party integrations, dedicated 24/7 support, and a 99.999% uptime SLA backed by financial guarantees.',
+          btn: 'Explore All Features, Integrations & Pricing Options' },
+        { h: '"This completely changed how we\u2019ve operated for the past decade \u2014 I can\u2019t imagine going back to the old way of doing things"',
+          p: '\u2014 Sarah J., VP of Operations at GlobalTech Industries Inc. (15,000+ employees across 42 countries on 6 continents)',
+          btn: 'Read 200+ Verified Customer Success Stories' },
+        { h: 'Limited-Time Offer: Save Up To 40% When You Upgrade Before the End of This Quarter',
+          p: 'Don\u2019t miss this exclusive opportunity to lock in legacy pricing before our platform-wide rate adjustment takes effect. Available to new and existing customers.',
+          btn: 'Claim My Discount & Upgrade Now \u2014 Offer Ends Soon' },
+        { h: 'Frequently Asked Questions About Pricing, Contracts, Data Portability & Enterprise Terms',
+          p: 'We believe in full transparency. Find plain-language answers to the questions our customers ask most before making a purchasing commitment.',
+          btn: 'Browse the Full FAQ & Knowledge Base' },
+        { h: 'Connect With Us On Any Channel \u2014 We\u2019re Always Here Whenever You Need Us',
+          p: 'Live chat, email, phone, Slack community, documentation portal, video tutorials, and dedicated account managers available for all Enterprise-tier subscribers.',
+          btn: 'Contact Our Support Team' }
+      ]
+    };
+
+    const defaults = {
+      columns: '2',
+      viewport: '1200',
+      gap: '1rem',
+      density: 'balanced',
+      cardStyle: 'default'
+    };
+
+    const controls = {
+      columns: document.getElementById('columns'),
+      viewport: document.getElementById('viewport'),
+      gap: document.getElementById('gap'),
+      density: document.getElementById('density'),
+      cardStyle: document.getElementById('cardStyle')
+    };
+
     const preview = document.getElementById('preview');
-    const saved = localStorage.getItem(key) || '2';
-    columns.value = saved;
-    preview.className = 'preview grid-' + saved;
-    columns.addEventListener('change', () => { preview.className = 'preview grid-' + columns.value; });
-    document.getElementById('saveLayout').addEventListener('click', () => { localStorage.setItem(key, columns.value); });
+    const checks = document.getElementById('checks');
+    const setupSummary = document.getElementById('setupSummary');
+    const verdictText = document.getElementById('verdictText');
+    const estimatedCardWidth = document.getElementById('estimatedCardWidth');
+    const scenarioName = document.getElementById('scenarioName');
+
+    function readSettings() {
+      const saved = localStorage.getItem(key);
+      if (!saved) return { ...defaults };
+      try {
+        const parsed = JSON.parse(saved);
+        return { ...defaults, ...parsed };
+      } catch (error) {
+        return { ...defaults };
+      }
+    }
+
+    function applySettings(settings) {
+      Object.keys(controls).forEach((field) => {
+        controls[field].value = settings[field];
+      });
+      render();
+    }
+
+    function estimateCardWidth(viewport, columns, gapRem) {
+      const pxGap = gapRem * 16;
+      const totalGap = (columns - 1) * pxGap;
+      const width = Math.floor((viewport - totalGap) / columns);
+      return width;
+    }
+
+    function buildTiles(stress) {
+      const set = stress ? tileContent.stress : tileContent.normal;
+      const tiles = preview.querySelectorAll('.tile');
+      tiles.forEach((tile, i) => {
+        const data = set[i] || set[set.length - 1];
+        let html = '';
+        if (data.img) html += '<div class="tile-img" aria-hidden="true"></div>';
+        html += '<div>';
+        html += '<h3>' + data.h + '</h3>';
+        html += '<p>' + data.p + '</p>';
+        if (data.btn) html += '<div class="tile-actions"><span class="btn-mock">' + data.btn + '</span></div>';
+        html += '</div>';
+        tile.innerHTML = html;
+      });
+    }
+
+    function updateTileClasses(density, cardStyle) {
+      preview.querySelectorAll('.tile').forEach((tile) => {
+        const currentClasses = Array.from(tile.classList).filter((c) => ['compact','spacious','shadow','outline','glass'].includes(c));
+        currentClasses.forEach((c) => tile.classList.remove(c));
+        if (density === 'compact') tile.classList.add('compact');
+        if (density === 'spacious') tile.classList.add('spacious');
+        if (cardStyle !== 'default') tile.classList.add(cardStyle);
+      });
+    }
+
+    function createCheckItem(type, text) {
+      const li = document.createElement('li');
+      li.className = type;
+      li.textContent = text;
+      return li;
+    }
+
+    function renderChecks(width, columns, viewport, density) {
+      checks.innerHTML = '';
+
+      if (width >= 240) {
+        checks.appendChild(createCheckItem('ok', 'Card width is comfortable for most content blocks.'));
+      } else if (width >= 180) {
+        checks.appendChild(createCheckItem('warn', 'Card width is usable but may require shorter headings and tighter copy.'));
+      } else {
+        checks.appendChild(createCheckItem('fail', 'Cards are very narrow. This layout is likely to feel cramped.'));
+      }
+
+      if (viewport <= 420 && columns >= 2) {
+        checks.appendChild(createCheckItem('fail', 'Multiple columns on mobile are high-risk for readability and tap targets.'));
+      } else if (viewport <= 768 && columns >= 3) {
+        checks.appendChild(createCheckItem('warn', 'Three or more columns on tablet may need responsive fallbacks.'));
+      } else {
+        checks.appendChild(createCheckItem('ok', 'Column count aligns with selected viewport size.'));
+      }
+
+      if (density === 'compact' && width < 210) {
+        checks.appendChild(createCheckItem('warn', 'Compact density plus narrow cards can cause content crowding.'));
+      } else {
+        checks.appendChild(createCheckItem('ok', 'Content density is reasonable for this card width.'));
+      }
+
+      if (stressMode) {
+        if (width < 300) {
+          checks.appendChild(createCheckItem('fail', 'Stress: Long headlines will wrap to 4+ lines in cards this narrow.'));
+        } else if (width < 400) {
+          checks.appendChild(createCheckItem('warn', 'Stress: Headlines may wrap 2\u20133 lines \u2014 verify with real typography.'));
+        } else {
+          checks.appendChild(createCheckItem('ok', 'Stress: Card is wide enough to handle long headlines without excessive wrapping.'));
+        }
+
+        if (width < 220) {
+          checks.appendChild(createCheckItem('fail', 'Stress: CTA button labels will overflow or be truncated at this width.'));
+        } else if (width < 320) {
+          checks.appendChild(createCheckItem('warn', 'Stress: Long button text will wrap inside cards \u2014 consider shorter labels.'));
+        } else {
+          checks.appendChild(createCheckItem('ok', 'Stress: Button labels have adequate space to render without forced wrapping.'));
+        }
+
+        if (width < 260) {
+          checks.appendChild(createCheckItem('fail', 'Stress: Image placeholders in narrow cards will compress and lose visual impact.'));
+        } else {
+          checks.appendChild(createCheckItem('ok', 'Stress: Image placeholder areas are wide enough to remain visually effective.'));
+        }
+
+        const charsPerLine = Math.floor(width / 8);
+        if (charsPerLine < 30) {
+          checks.appendChild(createCheckItem('fail', 'Stress: Dense body copy will produce very short line lengths (< 30 chars). Readability is poor.'));
+        } else if (charsPerLine < 45) {
+          checks.appendChild(createCheckItem('warn', 'Stress: Body copy line length is short. Use concise sentences or reduce font size slightly.'));
+        } else {
+          checks.appendChild(createCheckItem('ok', 'Stress: Body copy line length is within comfortable reading range.'));
+        }
+      }
+    }
+
+    function renderVerdict(width, viewport, columns) {
+      if (viewport <= 420 && columns >= 2) {
+        verdictText.textContent = 'Likely to fail on mobile. Reduce columns or increase responsive stacking.';
+        verdictText.className = 'fail';
+      } else if (width < 180) {
+        verdictText.textContent = 'High risk configuration. Test with realistic content before rollout.';
+        verdictText.className = 'fail';
+      } else if (width < 240) {
+        verdictText.textContent = 'Usable with constraints. Keep copy concise and validate with users.';
+        verdictText.className = 'warn';
+      } else {
+        verdictText.textContent = 'Strong candidate. This setup should work for most content types.';
+        verdictText.className = 'ok';
+      }
+    }
+
+    function updateScenario(columns, viewport) {
+      if (viewport <= 420) {
+        scenarioName.textContent = 'Scenario: Mobile-First Experience';
+      } else if (columns >= 4) {
+        scenarioName.textContent = 'Scenario: Data-Dense Dashboard';
+      } else if (columns === 1) {
+        scenarioName.textContent = 'Scenario: Storytelling Landing Flow';
+      } else {
+        scenarioName.textContent = 'Scenario: Balanced Marketing Page';
+      }
+    }
+
+    function render() {
+      const columns = Number(controls.columns.value);
+      const viewport = Number(controls.viewport.value);
+      const gap = controls.gap.value;
+      const density = controls.density.value;
+      const cardStyle = controls.cardStyle.value;
+
+      preview.className = 'preview grid-' + columns;
+      preview.style.maxWidth = viewport + 'px';
+      preview.style.setProperty('--preview-gap', gap);
+      buildTiles(stressMode);
+      updateTileClasses(density, cardStyle);
+
+      const gapRem = Number.parseFloat(gap);
+      const width = estimateCardWidth(viewport, columns, gapRem);
+
+      estimatedCardWidth.textContent = 'Card width estimate: ' + width + 'px';
+      setupSummary.textContent = columns + ' column(s), ' + viewport + 'px viewport, ' + gap + ' gap, ' + density + ' density, ' + cardStyle + ' style.';
+
+      renderChecks(width, columns, viewport, density);
+      renderVerdict(width, viewport, columns);
+      updateScenario(columns, viewport);
+    }
+
+    Object.values(controls).forEach((control) => {
+      control.addEventListener('change', render);
+    });
+
+    document.getElementById('saveLayout').addEventListener('click', () => {
+      const current = {
+        columns: controls.columns.value,
+        viewport: controls.viewport.value,
+        gap: controls.gap.value,
+        density: controls.density.value,
+        cardStyle: controls.cardStyle.value
+      };
+      localStorage.setItem(key, JSON.stringify(current));
+      render();
+    });
+
+    document.getElementById('resetLayout').addEventListener('click', () => {
+      localStorage.removeItem(key);
+      applySettings({ ...defaults });
+    });
+
+    document.getElementById('stressToggle').addEventListener('click', () => {
+      stressMode = !stressMode;
+      const btn = document.getElementById('stressToggle');
+      const badge = document.getElementById('stressBadge');
+      const barText = document.getElementById('stressBarText');
+      btn.textContent = 'Stress Test: ' + (stressMode ? 'ON' : 'OFF');
+      btn.classList.toggle('on', stressMode);
+      badge.classList.toggle('active', stressMode);
+      if (stressMode) {
+        barText.textContent = 'ACTIVE \u2014 Tiles now show the worst-case scenario: maximum-length headlines, dense body copy, long CTA labels, and image placeholders. Review the checks below to see what breaks.';
+      } else {
+        barText.textContent = 'Toggle stress mode to fill cards with worst-case content: long headlines, dense copy, long button labels, and image placeholders. See exactly what breaks before your users do.';
+      }
+      render();
+    });
+
+    applySettings(readSettings());
   </script>
 </body>
 </html>

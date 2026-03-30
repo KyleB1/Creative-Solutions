@@ -287,3 +287,32 @@ body.dark-mode .hero-section {
     radial-gradient(circle at 10% -8%, rgba(99, 164, 255, 0.18), transparent 42%),
     linear-gradient(180deg, #0f1b2f 0%, #0a1427 100%);
 }
+
+/* ── Dark mode: html root background ──────────────────────────── */
+html:has(body.dark-mode) {
+  background: #091222;
+  color-scheme: dark;
+}
+
+/* ── Dark mode: form inputs – color alone was set but not background,
+   causing near-white text on white browser-default bg = invisible ── */
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+  background-color: var(--surface-alt) !important;
+  border-color: var(--surface-contrast) !important;
+  color: var(--text) !important;
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+  color: var(--muted) !important;
+  opacity: 1;
+}
+
+/* ── Dark mode: semantic status colors
+   Light-mode values (#166534, #92400e, #991b1b) are near-black
+   on dark backgrounds — essentially invisible ── */
+body.dark-mode .ok  { color: #4ade80 !important; }
+body.dark-mode .warn { color: #fbbf24 !important; }
+body.dark-mode .fail { color: #f87171 !important; }
