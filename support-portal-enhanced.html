@@ -1,0 +1,184 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support Portal | Creative Web Solutions</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .wrap{max-width:1200px;margin:0 auto;padding:1rem;display:grid;gap:1rem;}
+    .top{position:relative;overflow:hidden;display:flex;justify-content:space-between;align-items:center;gap:.75rem;flex-wrap:wrap;background:var(--surface);border:1px solid var(--surface-contrast);border-radius:18px;padding:1rem;}
+    .top::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(15,111,255,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(15,111,255,0.12) 1px, transparent 1px);background-size:18px 18px;mask-image:linear-gradient(90deg, black 30%, transparent 100%);} 
+    .top::after{content:"";position:absolute;width:280px;height:160px;right:-48px;top:-68px;border-radius:30px;transform:rotate(21deg);background:linear-gradient(160deg,rgba(124,58,237,0.28),rgba(15,111,255,0.12));}
+    .channel{min-height:2.4rem;border-radius:12px;border:1px solid #cbd5e1;padding:0 .75rem;background:#fff;}
+    .kanban{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;}
+    .col{background:var(--surface);border:1px solid var(--surface-contrast);border-radius:14px;padding:.75rem;min-height:280px;}
+    .ticket{background:var(--surface-alt);border:1px solid var(--surface-contrast);border-radius:12px;padding:.6rem;cursor:grab;margin-bottom:.6rem;}
+    .detail{background:var(--surface);border:1px solid var(--surface-contrast);border-radius:14px;padding:1rem;display:grid;gap:.75rem;}
+    .chat{background:var(--surface);border:1px solid var(--surface-contrast);border-radius:14px;padding:1rem;display:grid;gap:.6rem;}
+    .chat-list{max-height:220px;overflow:auto;display:grid;gap:.5rem;}
+    .chat-item{background:var(--surface-alt);border:1px solid var(--surface-contrast);border-radius:10px;padding:.55rem;}
+    .row{display:flex;gap:.6rem;flex-wrap:wrap;}
+    textarea,input,button{font:inherit;}
+    textarea{width:100%;min-height:95px;border-radius:12px;border:1px solid #cbd5e1;padding:.65rem;}
+    .btn{border:1px solid #cbd5e1;background:#fff;border-radius:999px;padding:.5rem .8rem;font-weight:700;cursor:pointer;}
+    .btn.primary{background:#7c3aed;border-color:#7c3aed;color:#fff;}
+    .badge{display:inline-flex;padding:.2rem .55rem;border-radius:999px;font-size:.78rem;font-weight:700;background:#ede9fe;color:#5b21b6;}
+    .mention{background:#fde68a;padding:0 .25rem;border-radius:4px;font-weight:700;}
+    .top > *{position:relative;z-index:1;}
+    @media(max-width:1020px){.kanban{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media(max-width:700px){.kanban{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+  <main class="wrap" id="main">
+    <section class="top panel">
+      <div>
+        <h1 id="staffName">Support Portal</h1>
+        <p>Enhanced with channels, kanban workflow, quick actions, and mentions.</p>
+      </div>
+      <div class="row">
+        <select id="channel" class="channel">
+          <option value="general">General</option>
+          <option value="frontend">Frontend</option>
+          <option value="backend">Backend</option>
+          <option value="billing">Billing</option>
+        </select>
+        <button id="logoutBtn" class="btn" type="button">Log out</button>
+      </div>
+    </section>
+
+    <section class="kanban" id="kanban"></section>
+
+    <section class="detail panel" id="detail">
+      <h2 id="subject">Select a ticket</h2>
+      <p id="description">Choose a ticket from the board.</p>
+      <div class="row">
+        <button class="btn" data-status="open" type="button">Mark Open</button>
+        <button class="btn" data-status="inprogress" type="button">In Progress</button>
+        <button class="btn" data-status="waiting" type="button">Waiting</button>
+        <button class="btn primary" data-status="resolved" type="button">Resolve</button>
+      </div>
+      <textarea id="internalNote" placeholder="Add internal note (supports @mentions)..."></textarea>
+      <button id="addNoteBtn" class="btn" type="button">Add note</button>
+      <div id="history"></div>
+    </section>
+
+    <section class="chat panel">
+      <h2>Team chat <span class="badge" id="channelLabel">general</span></h2>
+      <div id="chatList" class="chat-list"></div>
+      <textarea id="chatInput" placeholder="Message your team, use @mentions or /resolve, /assign"></textarea>
+      <button id="sendChat" class="btn primary" type="button">Send</button>
+    </section>
+  </main>
+  <script src="auth.js"></script>
+  <script src="header.js"></script>
+  <script src="site-enhancements.js"></script>
+  <script>
+    const support = SiteAuth.requireSupport('support-login.html');
+    if (!support) throw new Error('Unauthorized');
+    document.getElementById('staffName').textContent = `${support.name} - ${support.role}`;
+
+    const statuses = ['open','inprogress','waiting','resolved'];
+    const statusLabels = { open:'Open', inprogress:'In Progress', waiting:'Waiting', resolved:'Resolved' };
+    const tickets = [
+      { id:'TCK-1012', subject:'Login not working', status:'open', customer:'Avery Francis', description:'Customer cannot login after reset.', history:[{author:'Customer', content:'Reset link keeps failing.'}] },
+      { id:'TCK-1009', subject:'Invoice mismatch', status:'waiting', customer:'Mason Lee', description:'Invoice total does not match contract.', history:[{author:'Agent', content:'Awaiting finance confirmation.'}] },
+      { id:'TCK-1015', subject:'Broken form submission', status:'inprogress', customer:'Harper Wells', description:'Contact form returns 500.', history:[{author:'Agent', content:'Investigating API logs.'}] }
+    ];
+
+    let selected = tickets[0];
+    let channel = localStorage.getItem('support:channel') || 'general';
+    const kanbanEl = document.getElementById('kanban');
+    const chatList = document.getElementById('chatList');
+    const channelInput = document.getElementById('channel');
+    channelInput.value = channel;
+
+    function renderKanban(){
+      kanbanEl.innerHTML = '';
+      statuses.forEach(s => {
+        const col = document.createElement('div');
+        col.className = 'col';
+        col.innerHTML = `<h3>${statusLabels[s]}</h3>`;
+        tickets.filter(t => t.status === s).forEach(t => {
+          const card = document.createElement('button');
+          card.type='button';
+          card.className='ticket';
+          card.innerHTML = `<strong>${t.subject}</strong><br><small>${t.customer}</small>`;
+          card.addEventListener('click', () => { selected = t; renderDetail(); });
+          col.appendChild(card);
+        });
+        kanbanEl.appendChild(col);
+      });
+    }
+
+    function renderDetail(){
+      document.getElementById('subject').textContent = `${selected.subject} (${selected.id})`;
+      document.getElementById('description').textContent = selected.description;
+      const history = document.getElementById('history');
+      history.innerHTML = selected.history.map(h => `<div class="chat-item"><strong>${h.author}</strong><p>${String(h.content).replace(/@(\w+)/g,'<span class="mention">@$1</span>')}</p></div>`).join('');
+    }
+
+    function chatKey(){ return `support:chat:${channel}`; }
+    function getChat(){ const v = SiteAuth.safeParse(localStorage.getItem(chatKey()) || '[]', []); return Array.isArray(v)?v:[]; }
+    function saveChat(v){ localStorage.setItem(chatKey(), JSON.stringify(v)); }
+
+    function runSlashCommand(text){
+      const cmd = text.trim().toLowerCase();
+      if (cmd === '/resolve' && selected) { selected.status = 'resolved'; selected.history.push({author:support.name, content:'Status changed to Resolved via command.'}); renderKanban(); renderDetail(); return true; }
+      if (cmd.startsWith('/assign')) { selected.history.push({author:'System', content:`Assigned by command: ${text}`}); renderDetail(); return true; }
+      return false;
+    }
+
+    function renderChat(){
+      document.getElementById('channelLabel').textContent = channel;
+      chatList.innerHTML = getChat().slice(-40).map(m => `<div class="chat-item"><strong>${m.author}</strong><p>${String(m.content).replace(/@(\w+)/g,'<span class="mention">@$1</span>')}</p></div>`).join('');
+      chatList.scrollTop = chatList.scrollHeight;
+    }
+
+    document.querySelectorAll('[data-status]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (!selected) return;
+        selected.status = btn.getAttribute('data-status');
+        selected.history.push({ author: support.name, content: `Status changed to ${statusLabels[selected.status]}.` });
+        renderKanban(); renderDetail();
+      });
+    });
+
+    document.getElementById('addNoteBtn').addEventListener('click', () => {
+      const noteEl = document.getElementById('internalNote');
+      const text = noteEl.value.trim();
+      if (!text) return;
+      selected.history.push({author:support.name, content:text});
+      noteEl.value='';
+      renderDetail();
+    });
+
+    document.getElementById('sendChat').addEventListener('click', () => {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      if (!runSlashCommand(text)) {
+        const list = getChat();
+        list.push({ author: support.name, content: text, ts: Date.now() });
+        saveChat(list);
+      }
+      input.value='';
+      renderChat();
+    });
+
+    channelInput.addEventListener('change', () => {
+      channel = channelInput.value;
+      localStorage.setItem('support:channel', channel);
+      renderChat();
+    });
+
+    window.addEventListener('storage', e => { if (e.key === chatKey()) renderChat(); });
+    document.getElementById('logoutBtn').addEventListener('click', () => SiteAuth.logoutSupport('support-login.html'));
+
+    renderKanban();
+    renderDetail();
+    renderChat();
+  </script>
+</body>
+</html>
