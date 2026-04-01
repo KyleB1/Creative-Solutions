@@ -26,19 +26,32 @@ app.set('trust proxy', 1);
 function getConfiguredOrigins() {
   return String(process.env.CORS_ALLOWED_ORIGINS || '')
     .split(',')
-    .map((origin) => origin.trim())
+    .map((origin) => normalizeOrigin(origin))
     .filter(Boolean);
+}
+
+function normalizeOrigin(origin) {
+  if (!origin) return '';
+  const value = String(origin).trim();
+  if (!value) return '';
+
+  try {
+    return new URL(value).origin;
+  } catch (_error) {
+    return value.replace(/\/+$/, '');
+  }
 }
 
 function buildCorsOptions(req) {
   const configuredOrigins = getConfiguredOrigins();
-  const inferredOrigin = `${req.protocol}://${req.get('host')}`;
+  const inferredOrigin = normalizeOrigin(`${req.protocol}://${req.get('host')}`);
   const allowedOrigins = new Set([
     inferredOrigin,
     'http://localhost:3000',
+    'https://kyleb1.github.io',
     ...configuredOrigins
   ]);
-  const requestOrigin = req.get('origin');
+  const requestOrigin = normalizeOrigin(req.get('origin'));
 
   return {
     origin: !requestOrigin || allowedOrigins.has(requestOrigin),

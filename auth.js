@@ -13,6 +13,29 @@
     loadingPromise: null
   };
 
+  function getApiBase() {
+    const explicitBase = typeof window !== 'undefined' ? window.CWS_API_BASE : '';
+    if (explicitBase) {
+      return String(explicitBase).replace(/\/+$/, '');
+    }
+
+    if (typeof window !== 'undefined' && window.location && window.location.hostname === 'kyleb1.github.io') {
+      return 'https://creative-solutions.onrender.com';
+    }
+
+    return '';
+  }
+
+  function getRequestCredentials() {
+    return getApiBase() ? 'include' : 'same-origin';
+  }
+
+  function buildApiUrl(path) {
+    const normalizedPath = String(path || '').startsWith('/') ? path : `/${path || ''}`;
+    const base = getApiBase();
+    return base ? `${base}${normalizedPath}` : normalizedPath;
+  }
+
   function safeParse(value, fallback) {
     try {
       const parsed = JSON.parse(value);
@@ -83,7 +106,7 @@
 
   async function apiRequest(path, options) {
     const requestOptions = Object.assign({
-      credentials: 'same-origin',
+      credentials: getRequestCredentials(),
       headers: {
         Accept: 'application/json'
       }
@@ -93,7 +116,7 @@
       requestOptions.headers['Content-Type'] = 'application/json';
     }
 
-    const response = await fetch(path, requestOptions);
+    const response = await fetch(buildApiUrl(path), requestOptions);
     const payload = response.status === 204 ? null : await response.json().catch(() => ({}));
 
     if (!response.ok) {
