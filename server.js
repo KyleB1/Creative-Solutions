@@ -26,8 +26,24 @@ app.use(helmet({
 }));
 
 // CORS configuration
+// CORS_ALLOWED_ORIGINS accepts a comma-separated list of origins.
+// GitHub Pages origin is always included so static-hosted pages can
+// reach the Render backend even when the env var isn't set yet.
+const ALWAYS_ALLOWED = ['http://localhost:3000', 'https://kyleb1.github.io'];
+const configuredOrigins = (process.env.CORS_ALLOWED_ORIGINS || '')
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+const ALLOWED_ORIGINS = [...new Set([...ALWAYS_ALLOWED, ...configuredOrigins])];
+
 app.use(cors({
-  origin: (process.env.CORS_ALLOWED_ORIGINS || 'http://localhost:3000').split(','),
+  origin: (origin, callback) => {
+    // Allow server-to-server requests (no Origin header) and listed origins.
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+      return callback(null, true);
+    }
+    callback(new Error(`CORS: origin ${origin} not allowed`));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Admin-Token', 'X-Customer-Id']

@@ -1,5 +1,23 @@
 // auth.js - shared auth helpers backed by the server-side session API
 (function () {
+  // Resolve the API base URL so this file works whether the page is served
+  // from the Node backend (localhost / Render) OR from GitHub Pages.
+  // Set window.CWS_API_BASE before loading this script to override.
+  const API_BASE = (function () {
+    if (typeof window !== 'undefined' && window.CWS_API_BASE) {
+      return window.CWS_API_BASE.replace(/\/$/, '');
+    }
+    const hostname = (typeof location !== 'undefined' && location.hostname) || '';
+    // Running on GitHub Pages — point at the hosted Render backend.
+    if (hostname === 'kyleb1.github.io') {
+      return 'https://creative-solutions.onrender.com';
+    }
+    // Running from the Node server or localhost — use relative paths.
+    return '';
+  }());
+
+  const CROSS_ORIGIN = API_BASE !== '';
+
   const SUPPORT_ROLES = Object.freeze({
     'support@creativewebsolutions.com': 'Support Agent',
     'helpdesk@creativewebsolutions.com': 'Support Agent',
@@ -83,7 +101,9 @@
 
   async function apiRequest(path, options) {
     const requestOptions = Object.assign({
-      credentials: 'same-origin',
+      // Use 'include' for cross-origin (GitHub Pages → Render) so the
+      // session cookie is sent and received correctly.
+      credentials: CROSS_ORIGIN ? 'include' : 'same-origin',
       headers: {
         Accept: 'application/json'
       }
@@ -93,7 +113,9 @@
       requestOptions.headers['Content-Type'] = 'application/json';
     }
 
-    const response = await fetch(path, requestOptions);
+    // Prepend API_BASE so GitHub Pages requests go to the Render backend.
+    const url = API_BASE + path;
+    const response = await fetch(url, requestOptions);
     const payload = response.status === 204 ? null : await response.json().catch(() => ({}));
 
     if (!response.ok) {

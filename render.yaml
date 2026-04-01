@@ -25,5 +25,7 @@ services:
         sync: false
       - key: STRIPE_WEBHOOK_SECRET
         sync: false
+      # Comma-separated list of allowed origins. GitHub Pages is included
+      # automatically in code; add your custom domain here if you have one.
       - key: CORS_ALLOWED_ORIGINS
-        sync: false
+        value: https://kyleb1.github.io
