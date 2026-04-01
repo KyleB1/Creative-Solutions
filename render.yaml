@@ -1,6 +1,7 @@
 services:
   - type: web
     name: creative-solutions
+    rootDir: .
     runtime: node
     plan: starter
     buildCommand: npm install
