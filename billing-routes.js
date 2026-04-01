@@ -16,6 +16,7 @@ const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
 const { stripe, formatAmountForStripe, translateStripeError } = require('./stripe-config');
+const { getActiveSession } = require('./auth-routes');
 
 function parseJwtClaims(token) {
   if (!token || token.split('.').length < 2) return null;
@@ -113,6 +114,12 @@ const requireAdmin = (req, res, next) => {
   // Fallback: static admin token from environment
   const adminToken = req.get('X-Admin-Token');
   if (process.env.ADMIN_TOKEN && adminToken === process.env.ADMIN_TOKEN) {
+    return next();
+  }
+
+  // Fallback: active session with admin role (System Administrator via support login)
+  const session = getActiveSession(req);
+  if (session && session.user && session.user.role === 'admin') {
     return next();
   }
 

