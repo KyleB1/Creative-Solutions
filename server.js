@@ -37,7 +37,7 @@ app.use(cors({
 const paymentLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,  // 15 minutes
   max: 5,  // 5 attempts
-  message: 'Too many payment attempts, please try again later',
+  message: { error: 'Too many payment attempts, please try again later.' },
   standardHeaders: true,
   legacyHeaders: false
 });
@@ -45,7 +45,7 @@ const paymentLimiter = rateLimit({
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
-  message: 'Too many authentication attempts, please try again later',
+  message: { error: 'Too many authentication attempts, please try again later.' },
   standardHeaders: true,
   legacyHeaders: false
 });
