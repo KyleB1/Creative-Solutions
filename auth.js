@@ -3,7 +3,8 @@
   const SUPPORT_ROLES = Object.freeze({
     'support@creativewebsolutions.com': 'Support Agent',
     'helpdesk@creativewebsolutions.com': 'Support Agent',
-    'kyle.creativesolutions@gmail.com': 'Support Administrator'
+    'kyle.creativesolutions@gmail.com': 'Support Administrator',
+    'kyle.creativesolutins@gmail.com': 'System Administrator'
   });
 
   const state = {
@@ -23,6 +24,14 @@
 
   function normalizeEmail(value) {
     return String(value || '').trim().toLowerCase();
+  }
+
+  function isSupportSession(user) {
+    return Boolean(
+      user
+      && (user.role === 'support' || user.role === 'admin')
+      && (user.supportRole || getSupportRoleForEmail(user.email))
+    );
   }
 
   function getAuthorizedSupportEmails() {
@@ -121,7 +130,7 @@
   }
 
   function getSupport() {
-    return state.currentUser && state.currentUser.role === 'support'
+    return isSupportSession(state.currentUser)
       ? {
           email: state.currentUser.email,
           name: state.currentUser.name,
@@ -148,7 +157,7 @@
     }
     addOnlineAgent(email);
     return setCurrentUser({
-      role: 'support',
+      role: staff.role === 'admin' ? 'admin' : 'support',
       email,
       name: staff.name || 'Support Agent',
       supportRole: role
@@ -166,7 +175,7 @@
     if (support && support.email) {
       removeOnlineAgent(support.email);
     }
-    if (state.currentUser && state.currentUser.role === 'support') {
+    if (isSupportSession(state.currentUser)) {
       setCurrentUser(null);
     }
   }
@@ -196,7 +205,7 @@
 
   async function requireSupport(redirectTo) {
     const support = await init();
-    if (!support || support.role !== 'support') {
+    if (!isSupportSession(support)) {
       clearSupport();
       if (redirectTo) window.location.href = redirectTo;
       return null;
@@ -216,7 +225,7 @@
 
   async function redirectIfSupport(redirectTo) {
     const user = await init();
-    if (user && user.role === 'support' && redirectTo) {
+    if (isSupportSession(user) && redirectTo) {
       window.location.href = redirectTo;
       return true;
     }
