@@ -1,10 +1,16 @@
-// auth.js - shared client-side auth and role utilities for Creative Web Solutions
+// auth.js - shared auth helpers backed by the server-side session API
 (function () {
   const SUPPORT_ROLES = Object.freeze({
     'support@creativewebsolutions.com': 'Support Agent',
     'helpdesk@creativewebsolutions.com': 'Support Agent',
     'kyle.creativesolutions@gmail.com': 'Support Administrator'
   });
+
+  const state = {
+    currentUser: null,
+    loaded: false,
+    loadingPromise: null
+  };
 
   function safeParse(value, fallback) {
     try {
@@ -31,9 +37,10 @@
     const stored = safeParse(localStorage.getItem('supportOnlineAgents') || '[]', []);
     if (!Array.isArray(stored)) return [];
     const authorized = getAuthorizedSupportEmails();
-    return [...new Set(stored
-      .map(normalizeEmail)
-      .filter((email) => authorized.includes(email))
+    return [...new Set(
+      stored
+        .map(normalizeEmail)
+        .filter((email) => authorized.includes(email))
     )];
   }
 
@@ -59,69 +66,114 @@
     }
   }
 
-  function getCustomer() {
-    const customer = safeParse(localStorage.getItem('portalCustomer') || 'null', null);
-    if (!customer || !customer.email) return null;
-    if (!customer.role) customer.role = 'customer';
-    if (customer.role !== 'customer') return null;
-    customer.email = normalizeEmail(customer.email);
-    return customer;
+  function setCurrentUser(user) {
+    state.currentUser = user || null;
+    state.loaded = true;
+    return state.currentUser;
   }
 
-  function getSupport() {
-    const support = safeParse(localStorage.getItem('supportStaff') || 'null', null);
-    if (!support || !support.email) return null;
-    const email = normalizeEmail(support.email);
-    const role = getSupportRoleForEmail(email);
-    if (!role) return null;
-    return {
-      email,
-      name: support.name || 'Support Agent',
-      role
-    };
-  }
+  async function apiRequest(path, options) {
+    const requestOptions = Object.assign({
+      credentials: 'same-origin',
+      headers: {
+        Accept: 'application/json'
+      }
+    }, options || {});
 
-  function setCustomer(customer) {
-    const payload = Object.assign({}, customer || {});
-    if (!payload.email) return null;
-    payload.email = normalizeEmail(payload.email);
-    payload.role = 'customer';
-    clearSupport();
-    localStorage.setItem('portalCustomer', JSON.stringify(payload));
+    if (requestOptions.body && !requestOptions.headers['Content-Type']) {
+      requestOptions.headers['Content-Type'] = 'application/json';
+    }
+
+    const response = await fetch(path, requestOptions);
+    const payload = response.status === 204 ? null : await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      const error = new Error((payload && payload.error) || 'Request failed');
+      error.response = response;
+      error.payload = payload;
+      throw error;
+    }
+
     return payload;
   }
 
+  async function init(forceRefresh) {
+    if (!forceRefresh && state.loaded) {
+      return state.currentUser;
+    }
+
+    if (!forceRefresh && state.loadingPromise) {
+      return state.loadingPromise;
+    }
+
+    state.loadingPromise = apiRequest('/api/auth/session', { method: 'GET' })
+      .then((payload) => setCurrentUser(payload && payload.authenticated ? payload.user : null))
+      .catch(() => setCurrentUser(null))
+      .finally(() => {
+        state.loadingPromise = null;
+      });
+
+    return state.loadingPromise;
+  }
+
+  function getCustomer() {
+    return state.currentUser && state.currentUser.role === 'customer' ? state.currentUser : null;
+  }
+
+  function getSupport() {
+    return state.currentUser && state.currentUser.role === 'support'
+      ? {
+          email: state.currentUser.email,
+          name: state.currentUser.name,
+          role: state.currentUser.supportRole || getSupportRoleForEmail(state.currentUser.email)
+        }
+      : null;
+  }
+
+  function setCustomer(customer) {
+    if (!customer || !customer.email) {
+      return null;
+    }
+    return setCurrentUser(Object.assign({}, customer, { role: 'customer', email: normalizeEmail(customer.email) }));
+  }
+
   function setSupport(staff) {
-    const payload = Object.assign({}, staff || {});
-    const email = normalizeEmail(payload.email);
-    const role = getSupportRoleForEmail(email);
-    if (!email || !role) return null;
-    clearCustomer();
-    const normalized = {
-      email,
-      name: payload.name || 'Support Agent',
-      role
-    };
-    localStorage.setItem('supportStaff', JSON.stringify(normalized));
+    if (!staff || !staff.email) {
+      return null;
+    }
+    const email = normalizeEmail(staff.email);
+    const role = staff.supportRole || staff.role || getSupportRoleForEmail(email);
+    if (!role) {
+      return null;
+    }
     addOnlineAgent(email);
-    return normalized;
+    return setCurrentUser({
+      role: 'support',
+      email,
+      name: staff.name || 'Support Agent',
+      supportRole: role
+    });
   }
 
   function clearCustomer() {
-    localStorage.removeItem('portalCustomer');
+    if (state.currentUser && state.currentUser.role === 'customer') {
+      setCurrentUser(null);
+    }
   }
 
   function clearSupport() {
-    const existing = getSupport();
-    if (existing && existing.email) {
-      removeOnlineAgent(existing.email);
+    const support = getSupport();
+    if (support && support.email) {
+      removeOnlineAgent(support.email);
     }
-    localStorage.removeItem('supportStaff');
+    if (state.currentUser && state.currentUser.role === 'support') {
+      setCurrentUser(null);
+    }
   }
 
-  function hasRegisteredAccounts() {
-    const accounts = safeParse(localStorage.getItem('registeredAccounts') || '{}', {});
-    return accounts && typeof accounts === 'object' && Object.keys(accounts).length > 0;
+  async function hasRegisteredAccounts() {
+    const payload = await apiRequest('/api/auth/meta', { method: 'GET' });
+    return Boolean(payload && payload.hasCustomerAccounts);
   }
 
   function isCustomerLoggedIn() {
@@ -132,58 +184,122 @@
     return Boolean(getSupport());
   }
 
-  function requireCustomer(redirectTo) {
-    const customer = getCustomer();
-    if (!customer) {
+  async function requireCustomer(redirectTo) {
+    const customer = await init();
+    if (!customer || customer.role !== 'customer') {
       clearCustomer();
       if (redirectTo) window.location.href = redirectTo;
       return null;
     }
-    if (isSupportLoggedIn()) {
-      clearSupport();
-    }
-    localStorage.setItem('portalCustomer', JSON.stringify(customer));
     return customer;
   }
 
-  function requireSupport(redirectTo) {
-    const support = getSupport();
-    if (!support) {
+  async function requireSupport(redirectTo) {
+    const support = await init();
+    if (!support || support.role !== 'support') {
       clearSupport();
       if (redirectTo) window.location.href = redirectTo;
       return null;
     }
-    if (isCustomerLoggedIn()) {
-      clearCustomer();
-    }
-    localStorage.setItem('supportStaff', JSON.stringify(support));
-    return support;
+    addOnlineAgent(support.email);
+    return getSupport();
   }
 
-  function redirectIfCustomer(redirectTo) {
-    if (isCustomerLoggedIn() && redirectTo) {
+  async function redirectIfCustomer(redirectTo) {
+    const user = await init();
+    if (user && user.role === 'customer' && redirectTo) {
       window.location.href = redirectTo;
       return true;
     }
     return false;
   }
 
-  function redirectIfSupport(redirectTo) {
-    if (isSupportLoggedIn() && redirectTo) {
+  async function redirectIfSupport(redirectTo) {
+    const user = await init();
+    if (user && user.role === 'support' && redirectTo) {
       window.location.href = redirectTo;
       return true;
     }
     return false;
   }
 
-  function logoutCustomer(redirectTo) {
-    clearCustomer();
-    if (redirectTo) window.location.href = redirectTo;
-  }
-
-  function logoutSupport(redirectTo) {
+  async function signupCustomer(payload) {
+    const result = await apiRequest('/api/auth/signup', {
+      method: 'POST',
+      body: JSON.stringify({
+        name: payload.name,
+        email: normalizeEmail(payload.email),
+        password: payload.password
+      })
+    });
     clearSupport();
-    if (redirectTo) window.location.href = redirectTo;
+    setCustomer(result && result.user);
+    return result && result.user;
+  }
+
+  async function loginCustomer(payload) {
+    const result = await apiRequest('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: normalizeEmail(payload.email),
+        password: payload.password
+      })
+    });
+    clearSupport();
+    setCustomer(result && result.user);
+    return result && result.user;
+  }
+
+  async function loginSupport(payload) {
+    const result = await apiRequest('/api/auth/support-login', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: normalizeEmail(payload.email),
+        password: payload.password
+      })
+    });
+    setSupport(result && result.user);
+    return result && result.user;
+  }
+
+  async function updateCustomerProfile(payload) {
+    const result = await apiRequest('/api/auth/customer-profile', {
+      method: 'PATCH',
+      body: JSON.stringify({
+        name: payload.name,
+        email: normalizeEmail(payload.email),
+        plan: payload.plan,
+        notifications: Boolean(payload.notifications)
+      })
+    });
+    setCustomer(result && result.user);
+    return result && result.user;
+  }
+
+  async function logout(redirectTo) {
+    const support = getSupport();
+    try {
+      await apiRequest('/api/auth/logout', {
+        method: 'POST'
+      });
+    } catch (error) {
+      // Ignore logout network errors and clear local state anyway.
+    }
+    if (support && support.email) {
+      removeOnlineAgent(support.email);
+    }
+    setCurrentUser(null);
+    if (redirectTo) {
+      window.location.href = redirectTo;
+    }
+  }
+
+  async function logoutCustomer(redirectTo) {
+    await logout(redirectTo);
+  }
+
+  async function logoutSupport(redirectTo) {
+    await logout(redirectTo);
   }
 
   window.SiteAuth = {
@@ -196,6 +312,7 @@
     saveSupportOnlineAgents,
     addOnlineAgent,
     removeOnlineAgent,
+    init,
     getCustomer,
     getSupport,
     setCustomer,
@@ -209,6 +326,10 @@
     requireSupport,
     redirectIfCustomer,
     redirectIfSupport,
+    signupCustomer,
+    loginCustomer,
+    loginSupport,
+    updateCustomerProfile,
     logoutCustomer,
     logoutSupport
   };

@@ -75,7 +75,8 @@
   <script src="header.js"></script>
   <script src="site-enhancements.js"></script>
   <script>
-    const support = SiteAuth.requireSupport('support-login.html');
+    (async () => {
+    const support = await SiteAuth.requireSupport('support-login.html');
     if (!support) throw new Error('Unauthorized');
     document.getElementById('staffName').textContent = `${support.name} - ${support.role}`;
 
@@ -174,11 +175,14 @@
     });
 
     window.addEventListener('storage', e => { if (e.key === chatKey()) renderChat(); });
-    document.getElementById('logoutBtn').addEventListener('click', () => SiteAuth.logoutSupport('support-login.html'));
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await SiteAuth.logoutSupport('support-login.html');
+    });
 
     renderKanban();
     renderDetail();
     renderChat();
+    })();
   </script>
 </body>
 </html>

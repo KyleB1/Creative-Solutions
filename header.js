@@ -2,27 +2,15 @@
 // header.js - shared global header for consistent site navigation
 (function () {
   function getCustomer() {
-    if (window.SiteAuth && typeof window.SiteAuth.getCustomer === 'function') {
-      return window.SiteAuth.getCustomer();
-    }
-    try {
-      const customer = JSON.parse(localStorage.getItem('portalCustomer') || 'null');
-      return customer && customer.email ? customer : null;
-    } catch (error) {
-      return null;
-    }
+    return window.SiteAuth && typeof window.SiteAuth.getCustomer === 'function'
+      ? window.SiteAuth.getCustomer()
+      : null;
   }
 
   function getSupport() {
-    if (window.SiteAuth && typeof window.SiteAuth.getSupport === 'function') {
-      return window.SiteAuth.getSupport();
-    }
-    try {
-      const support = JSON.parse(localStorage.getItem('supportStaff') || 'null');
-      return support && support.email ? support : null;
-    } catch (error) {
-      return null;
-    }
+    return window.SiteAuth && typeof window.SiteAuth.getSupport === 'function'
+      ? window.SiteAuth.getSupport()
+      : null;
   }
 
   function activePage(pathname) {
@@ -132,9 +120,12 @@
     document.head.appendChild(style);
   }
 
-  function init() {
+  async function init() {
     if (!document.body) return;
     if (document.querySelector('.global-header')) return;
+    if (window.SiteAuth && typeof window.SiteAuth.init === 'function') {
+      await window.SiteAuth.init();
+    }
     injectStyles();
     const header = buildHeader();
     document.body.prepend(header);

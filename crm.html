@@ -235,7 +235,7 @@
     <p class="crm-footer">A modern CRM option for smarter customer tracking and clearer sales flow.</p>
   </div>
 
-  <script defer src="auth.js"></script>
+  <script src="auth.js"></script>
   <script defer src="header.js"></script>
   <script>
     const themeToggle = document.getElementById('themeToggle');
@@ -251,11 +251,14 @@
     });
     if (savedTheme === 'dark') applyTheme('dark'); else applyTheme('light');
 
-    if (SiteAuth.isCustomerLoggedIn()) {
-      window.location.href = 'index.htm';
-    } else if (!SiteAuth.getSupport()) {
-      window.location.href = 'support-login.html';
-    }
+    (async () => {
+      await SiteAuth.init();
+      if (SiteAuth.isCustomerLoggedIn()) {
+        window.location.href = 'index.htm';
+      } else if (!SiteAuth.getSupport()) {
+        window.location.href = 'support-login.html';
+      }
+    })();
   </script>
 </body>
 </html>

@@ -614,14 +614,14 @@
       </main>
     </div>
   </div>
-  <script defer src="auth.js"></script>
+  <script src="auth.js"></script>
   <script defer src="header.js"></script>
   <script>
-    const customerData = SiteAuth.requireCustomer('login.html');
+    (async () => {
+    const customerData = await SiteAuth.requireCustomer('login.html');
     if (!customerData) {
       throw new Error('Unauthorized customer session.');
     }
-    SiteAuth.clearSupport();
     const settingsNameInput = document.getElementById('settingsName');
     const settingsEmailInput = document.getElementById('settingsEmailInput');
     const settingsPlanSelect = document.getElementById('settingsPlanSelect');
@@ -826,11 +826,11 @@
     });
 
     const logoutBtn = document.getElementById('logoutBtn');
-    logoutBtn.addEventListener('click', () => {
-      SiteAuth.logoutCustomer('login.html');
+    logoutBtn.addEventListener('click', async () => {
+      await SiteAuth.logoutCustomer('login.html');
     });
 
-    settingsSaveBtn.addEventListener('click', () => {
+    settingsSaveBtn.addEventListener('click', async () => {
       const updatedName = settingsNameInput.value.trim();
       const updatedEmail = settingsEmailInput.value.trim();
       const updatedPlan = settingsPlanSelect.value;
@@ -840,18 +840,26 @@
         settingsStatusMsg.style.color = '#dc2626';
         return;
       }
-      customerData.name = updatedName;
-      customerData.email = updatedEmail;
-      customerData.plan = updatedPlan;
-      customerData.notifications = updatedNotifications;
-      localStorage.setItem('portalCustomer', JSON.stringify(customerData));
-      document.getElementById('profilePill').textContent = `Hi, ${customerData.name}`;
-      document.getElementById('welcomeName').textContent = customerData.name;
-      document.getElementById('planName').textContent = customerData.plan;
-      document.getElementById('settingsEmail').textContent = customerData.email;
-      document.getElementById('settingsPlan').textContent = customerData.plan;
-      settingsStatusMsg.textContent = 'Account settings updated successfully.';
-      settingsStatusMsg.style.color = '#16a34a';
+
+      try {
+        const updatedCustomer = await SiteAuth.updateCustomerProfile({
+          name: updatedName,
+          email: updatedEmail,
+          plan: updatedPlan,
+          notifications: updatedNotifications
+        });
+        Object.assign(customerData, updatedCustomer);
+        document.getElementById('profilePill').textContent = `Hi, ${customerData.name}`;
+        document.getElementById('welcomeName').textContent = customerData.name;
+        document.getElementById('planName').textContent = customerData.plan;
+        document.getElementById('settingsEmail').textContent = customerData.email;
+        document.getElementById('settingsPlan').textContent = customerData.plan;
+        settingsStatusMsg.textContent = 'Account settings updated successfully.';
+        settingsStatusMsg.style.color = '#16a34a';
+      } catch (error) {
+        settingsStatusMsg.textContent = error.message || 'Unable to save your account settings.';
+        settingsStatusMsg.style.color = '#dc2626';
+      }
     });
 
     paymentForm.addEventListener('submit', (event) => {
@@ -896,6 +904,7 @@
 
     renderPaymentSummary();
     applyTheme(storedTheme);
+    })();
   </script>
 </body>
 </html>

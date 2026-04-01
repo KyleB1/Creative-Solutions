@@ -545,7 +545,7 @@
     </main>
 
     <script defer src="theme.js"></script>
-    <script defer src="auth.js"></script>
+    <script src="auth.js"></script>
     <script defer src="header.js"></script>
     <script>
         const industrySelect = document.getElementById('industrySelect');
@@ -563,12 +563,12 @@
         const authOptionBtn = document.getElementById('authOptionBtn');
         const actionButtons = document.getElementById('actionButtons');
 
-        function hasRegisteredAccounts() {
+        async function hasRegisteredAccounts() {
             return SiteAuth.hasRegisteredAccounts();
         }
 
-        function syncAuthOptions() {
-            const hasAccounts = hasRegisteredAccounts();
+        async function syncAuthOptions() {
+            const hasAccounts = await hasRegisteredAccounts();
             if (hasAccounts) {
                 authOptionBtn.style.display = 'inline-flex';
                 actionButtons.classList.add('with-auth');

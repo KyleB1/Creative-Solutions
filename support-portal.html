@@ -709,12 +709,13 @@
     </div>
   </div>
 
-  <script defer src="auth.js"></script>
+  <script src="auth.js"></script>
   <script defer src="header.js"></script>
   <script>
+    (async () => {
     const authorizedSupportAgents = SiteAuth.getAuthorizedSupportEmails();
 
-    const staffData = SiteAuth.requireSupport('support-login.html');
+    const staffData = await SiteAuth.requireSupport('support-login.html');
     if (!staffData) {
       throw new Error('Unauthorized support session.');
     }
@@ -1057,8 +1058,8 @@
       if (event.key === 'supportOnlineAgents') renderCounts();
     });
 
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-      SiteAuth.logoutSupport('support-login.html');
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await SiteAuth.logoutSupport('support-login.html');
     });
 
     const themeToggle = document.getElementById('themeToggle');
@@ -1078,6 +1079,7 @@
     renderTickets();
     renderAgentChat();
     applyTheme(storedTheme);
+    })();
   </script>
 </body>
 </html>

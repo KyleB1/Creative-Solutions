@@ -1,0 +1,20 @@
+{
+  "customers": {
+    "authtest+1775031209@example.com": {
+      "role": "customer",
+      "plan": "Starter plan",
+      "renewal": "May 18",
+      "activeProjects": 8,
+      "newLeads": 24,
+      "supportTickets": 3,
+      "monthlySpend": "$2.4K",
+      "notifications": true,
+      "customerId": "c29cc128-578e-4449-9046-78e73052bc3f",
+      "name": "Auth Test Updated",
+      "email": "authtest+1775031209@example.com",
+      "passwordSalt": "71cd03617b89a88db0e094ea683587bd",
+      "passwordHash": "bca229656ca1c4c0daf0dc60469b9ff08b071036967804f1c8b5072075f7509a70d7cee6f7e63ed3baf2290b100642bc386b7dff40a9671701ef988510859f62",
+      "createdAt": "2026-04-01T08:13:29.376Z"
+    }
+  }
+}

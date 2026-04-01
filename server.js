@@ -14,6 +14,7 @@ const express = require('express');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const path = require('path');
 
 // Initialize Express
 const app = express();
@@ -37,6 +38,14 @@ const paymentLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,  // 15 minutes
   max: 5,  // 5 attempts
   message: 'Too many payment attempts, please try again later',
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: 'Too many authentication attempts, please try again later',
   standardHeaders: true,
   legacyHeaders: false
 });
@@ -76,11 +85,46 @@ app.get('/health', (req, res) => {
 // This is handled in billing-routes.js with express.raw()
 
 // API routes
+const authRoutes = require('./auth-routes');
 const billingRoutes = require('./billing-routes');
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/billing', paymentLimiter, billingRoutes);
 
 // Static files (if serving frontend from same server)
-app.use(express.static('public'));
+app.use((req, res, next) => {
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    return next();
+  }
+
+  const normalizedPath = path.posix.normalize(req.path || '/');
+  const fileName = path.posix.basename(normalizedPath);
+  const blockedNames = new Set([
+    'server.js',
+    'auth-routes.js',
+    'billing-routes.js',
+    'billing-backend.js',
+    'stripe-config.js',
+    'package.json',
+    '.env'
+  ]);
+  const blockedExtensions = new Set(['.sql', '.md', '.sh', '.cjs']);
+
+  if (
+    normalizedPath.startsWith('/api/') ||
+    normalizedPath.startsWith('/data/') ||
+    normalizedPath.startsWith('/scripts/') ||
+    blockedNames.has(fileName) ||
+    blockedExtensions.has(path.extname(fileName).toLowerCase())
+  ) {
+    return res.status(404).end();
+  }
+
+  next();
+});
+
+app.use(express.static(path.join(__dirname), {
+  index: ['index.htm', 'index.html']
+}));
 
 // 404 handler
 app.use((req, res) => {
@@ -111,6 +155,9 @@ const server = app.listen(PORT, async () => {
   console.log(`Server running on http://localhost:${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`Mode: ${process.env.STRIPE_SECRET_KEY?.startsWith('sk_test') ? 'TEST' : 'LIVE'}\n`);
+  if (!process.env.SUPPORT_PORTAL_PASSWORD) {
+    console.warn('Support login disabled until SUPPORT_PORTAL_PASSWORD is configured.');
+  }
 
   // Test Stripe connection
   try {

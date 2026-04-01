@@ -189,7 +189,7 @@
     </main>
   </div>
 
-  <script defer src="auth.js"></script>
+  <script src="auth.js"></script>
   <script defer src="header.js"></script>
   <script>
     const themeToggle = document.getElementById('themeToggle');
@@ -250,7 +250,7 @@
     const loginError = document.getElementById('loginError');
     updateAgentCounts();
     const supportLoginForm = document.getElementById('supportLoginForm');
-    supportLoginForm.addEventListener('submit', (event) => {
+    supportLoginForm.addEventListener('submit', async (event) => {
       event.preventDefault();
       const email = SiteAuth.normalizeEmail(document.getElementById('supportEmail').value);
       const password = document.getElementById('supportPassword').value.trim();
@@ -263,16 +263,20 @@
         loginError.textContent = 'Please enter your password.';
         return;
       }
-      loginError.textContent = '';
-      const name = email.split('@')[0].replace(/[^a-zA-Z0-9]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) || 'Support Agent';
-      SiteAuth.setSupport({ email, name, role });
-      addOnlineAgent(email);
-      window.location.href = 'support-portal.html';
+
+      try {
+        loginError.textContent = '';
+        await SiteAuth.loginSupport({ email, password });
+        addOnlineAgent(email);
+        window.location.href = 'support-portal.html';
+      } catch (error) {
+        loginError.textContent = error.message || 'Unable to access the support portal.';
+      }
     });
 
-    if (SiteAuth.redirectIfSupport('support-portal.html')) {
-      // Redirect handled.
-    }
+    (async () => {
+      await SiteAuth.redirectIfSupport('support-portal.html');
+    })();
   </script>
 </body>
 </html> 

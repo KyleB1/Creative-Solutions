@@ -152,7 +152,7 @@
 
         renderLayoutSelection();
  
-        signupForm.addEventListener('submit', function (e) {
+        signupForm.addEventListener('submit', async function (e) {
             e.preventDefault();
             const name = document.getElementById('username').value.trim();
             const email = document.getElementById('email').value.trim().toLowerCase();
@@ -172,23 +172,18 @@
                 return;
             }
             confirmPasswordError.textContent = '';
- 
-            // Save account so they can log in immediately
-            const accounts = JSON.parse(localStorage.getItem('registeredAccounts') || '{}');
-            if (accounts[email]) {
+
+            try {
+                await SiteAuth.signupCustomer({ name, email, password });
+                message.className = 'message success';
+                message.textContent = 'Account created! Redirecting to your portal…';
+                signupForm.reset();
+                updateStrengthBar('');
+                setTimeout(() => { window.location.href = 'customer-portal.html'; }, 900);
+            } catch (error) {
                 message.className = 'message error';
-                message.textContent = 'An account with that email already exists.';
-                return;
+                message.textContent = error.message || 'Unable to create your account right now.';
             }
-            // NOTE: In production, send credentials to your server — never store passwords client-side
-            accounts[email] = { name, email, passwordHash: password };
-            localStorage.setItem('registeredAccounts', JSON.stringify(accounts));
- 
-            message.className = 'message success';
-            message.textContent = 'Account created! Redirecting to login…';
-            signupForm.reset();
-            updateStrengthBar('');
-            setTimeout(() => { window.location.href = 'login.html'; }, 1200);
         });
  
         passwordInput.addEventListener('input', () => {

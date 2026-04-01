@@ -437,7 +437,9 @@
       try {
         let customerId = null;
         try {
-          const customer = JSON.parse(localStorage.getItem('portalCustomer') || 'null');
+          const customer = window.SiteAuth && typeof window.SiteAuth.getCustomer === 'function'
+            ? window.SiteAuth.getCustomer()
+            : null;
           customerId = customer && customer.customerId ? customer.customerId : null;
         } catch {
           customerId = null;
@@ -490,14 +492,7 @@
      * Get current session token from auth system
      */
     getSessionToken: function () {
-      // Implementation depends on your auth system
-      // Typically stored in localStorage or session storage
-      try {
-        const customer = JSON.parse(localStorage.getItem('portalCustomer') || 'null');
-        return customer?.sessionToken || null;
-      } catch {
-        return null;
-      }
+      return null;
     },
 
     /**
