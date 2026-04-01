@@ -10,7 +10,9 @@ const SESSION_TTL_MS = 1000 * 60 * 60 * 12;
 const PBKDF2_ITERATIONS = 210000;
 const PBKDF2_KEY_LENGTH = 64;
 const PBKDF2_DIGEST = 'sha512';
-const CUSTOMER_STORE_PATH = path.join(__dirname, 'data', 'customer-accounts.json');
+const CUSTOMER_STORE_PATH = path.resolve(
+  process.env.CUSTOMER_STORE_PATH || path.join(__dirname, 'data', 'customer-accounts.json')
+);
 const sessions = new Map();
 
 const SUPPORT_ROLES = Object.freeze({

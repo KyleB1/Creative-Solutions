@@ -20,17 +20,42 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.disable('x-powered-by');
+app.set('trust proxy', 1);
+
+function getConfiguredOrigins() {
+  return String(process.env.CORS_ALLOWED_ORIGINS || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+}
+
+function buildCorsOptions(req) {
+  const configuredOrigins = getConfiguredOrigins();
+  const inferredOrigin = `${req.protocol}://${req.get('host')}`;
+  const allowedOrigins = new Set([
+    inferredOrigin,
+    'http://localhost:3000',
+    ...configuredOrigins
+  ]);
+  const requestOrigin = req.get('origin');
+
+  return {
+    origin: !requestOrigin || allowedOrigins.has(requestOrigin),
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Admin-Token', 'X-Customer-Id']
+  };
+}
+
 // Security middleware
 app.use(helmet({
   crossOriginResourcePolicy: { policy: 'same-site' }
 }));
 
 // CORS configuration
-app.use(cors({
-  origin: (process.env.CORS_ALLOWED_ORIGINS || 'http://localhost:3000').split(','),
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Admin-Token', 'X-Customer-Id']
+app.use(cors((req, callback) => {
+  callback(null, buildCorsOptions(req));
 }));
 
 // Rate limiting for payment endpoints
@@ -56,9 +81,6 @@ app.use('/api/billing/webhook', express.raw({ type: 'application/json' }));
 // Body parsing
 app.use(express.json({ limit: '200kb' }));
 app.use(express.urlencoded({ extended: true }));
-
-// Trust proxy for rate limiting behind reverse proxy
-app.set('trust proxy', 1);
 
 // Request logging middleware
 app.use((req, res, next) => {
@@ -155,6 +177,7 @@ const server = app.listen(PORT, async () => {
   console.log(`Server running on http://localhost:${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`Mode: ${process.env.STRIPE_SECRET_KEY?.startsWith('sk_test') ? 'TEST' : 'LIVE'}\n`);
+  console.log(`Customer store: ${process.env.CUSTOMER_STORE_PATH || path.join(__dirname, 'data', 'customer-accounts.json')}`);
   if (!process.env.SUPPORT_PORTAL_PASSWORD) {
     console.warn('Support login disabled until SUPPORT_PORTAL_PASSWORD is configured.');
   }
