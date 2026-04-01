@@ -5,8 +5,7 @@
 -- Optional one-time database creation:
 -- createdb -h localhost -U postgres creative_web_solutions
 
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-
+-- CREATE EXTENSION IF NOT EXISTS pgcrypto;
 -- Drop objects in dependency order so this script can be re-run safely.
 DROP VIEW IF EXISTS customer_portal_summary;
 DROP TABLE IF EXISTS audit_logs;
@@ -30,7 +29,7 @@ CREATE TABLE customers (
     status TEXT NOT NULL DEFAULT 'active',
     plan_name TEXT NOT NULL DEFAULT 'growth',
     role_name TEXT NOT NULL DEFAULT 'customer',
-    metadata JSONB NOT NULL DEFAULT '{}'::JSONB
+    metadata JSONB NOT NULL DEFAULT CAST('{}' AS JSONB)
 );
 
 -- Store application sessions and tokens securely.
@@ -57,7 +56,7 @@ CREATE TABLE projects (
     starts_at TIMESTAMPTZ,
     ends_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    metadata JSONB NOT NULL DEFAULT '{}'::JSONB
+    metadata JSONB NOT NULL DEFAULT CAST('{}' AS JSONB)
 );
 CREATE INDEX idx_projects_customer_id ON projects(customer_id);
 
@@ -89,7 +88,7 @@ CREATE TABLE payment_methods (
     is_default BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    metadata JSONB NOT NULL DEFAULT '{}'::JSONB
+    metadata JSONB NOT NULL DEFAULT CAST('{}' AS JSONB)
 );
 CREATE INDEX idx_payment_methods_customer_id ON payment_methods(customer_id);
 
@@ -102,7 +101,7 @@ CREATE TABLE payments (
     status TEXT NOT NULL DEFAULT 'completed',
     transaction_reference TEXT NOT NULL UNIQUE,
     processed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    metadata JSONB NOT NULL DEFAULT '{}'::JSONB
+    metadata JSONB NOT NULL DEFAULT CAST('{}' AS JSONB)
 );
 CREATE INDEX idx_payments_customer_id ON payments(customer_id);
 
@@ -111,7 +110,7 @@ CREATE TABLE audit_logs (
     audit_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     customer_id UUID REFERENCES customers(customer_id) ON DELETE SET NULL,
     event_type TEXT NOT NULL,
-    event_data JSONB NOT NULL DEFAULT '{}'::JSONB,
+    event_data JSONB NOT NULL DEFAULT CAST('{}' AS JSONB),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -135,6 +134,7 @@ GROUP BY c.customer_id, c.email, c.full_name, c.plan_name, c.status, c.role_name
 
 -- Example admin accounts.
 -- Replace placeholder hashes with strong bcrypt hashes from your backend.
+
 INSERT INTO customers (email, password_hash, full_name, company_name, status, plan_name, role_name)
 VALUES
     ('admin@creativewebsolutions.com', crypt('AdminPassword123!', gen_salt('bf', 12)), 'Admin User', 'Creative Web Solutions', 'active', 'enterprise', 'admin'),
