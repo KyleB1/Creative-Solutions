@@ -71,6 +71,11 @@
       <button id="sendChat" class="btn primary" type="button">Send</button>
     </section>
   </main>
+  <script>
+    if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      window.CWS_API_BASE = 'http://localhost:3100';
+    }
+  </script>
   <script src="auth.js"></script>
   <script src="header.js"></script>
   <script src="site-enhancements.js"></script>
