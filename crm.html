@@ -6,33 +6,314 @@
   <title>CRM Dashboard | Creative Web Solutions</title>
   <link rel="stylesheet" type="text/css" href="style.css">
   <style>
-    body { background: linear-gradient(180deg, #f4efff 0%, #eef2ff 100%); color: #111827; }
-    .crm-shell { max-width: 1300px; margin: 0 auto; padding: 1.5rem; }
-    .crm-topbar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; align-items: center; margin-bottom: 1.5rem; }
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(124, 58, 237, 0.16), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.12), transparent 22%),
+        linear-gradient(180deg, #f4efff 0%, #eef2ff 100%);
+      color: #111827;
+    }
+    .crm-shell { max-width: 1320px; margin: 0 auto; padding: 1.75rem; }
+    .crm-topbar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; align-items: center; margin-bottom: 1.75rem; }
     .crm-brand { display: inline-flex; align-items: center; gap: 0.75rem; font-weight: 800; font-size: 1.15rem; }
     .crm-brand::before { content: ''; width: 12px; height: 12px; border-radius: 999px; background: #7c3aed; box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.14); }
     .crm-nav { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
     .crm-nav a, .crm-nav button { font-weight: 600; text-decoration: none; color: #4b5563; background: rgba(255,255,255,0.9); border: 1px solid #dbeafe; padding: 0.75rem 1rem; border-radius: 999px; transition: all 0.2s ease; }
     .crm-nav a:hover, .crm-nav button:hover { background: #eef2ff; color: #4338ca; }
-    .crm-hero { display: grid; gap: 1rem; background: #fff; border: 1px solid #e5e7eb; border-radius: 24px; padding: 2rem; box-shadow: 0 25px 60px rgba(15, 23, 42, 0.08); }
+    .crm-session {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.75rem 1rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid #dbeafe;
+      color: #4b5563;
+      font-weight: 600;
+    }
+    .crm-session strong {
+      color: #111827;
+      font-size: 0.92rem;
+    }
+    .crm-session span {
+      color: #6b7280;
+      font-size: 0.84rem;
+    }
+    .crm-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.95fr);
+      gap: 1.25rem;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid #e5e7eb;
+      border-radius: 28px;
+      padding: 2rem;
+      box-shadow: 0 25px 60px rgba(15, 23, 42, 0.08);
+      backdrop-filter: blur(8px);
+    }
+    .crm-hero-copy { display: grid; align-content: start; gap: 1rem; }
+    .crm-kicker {
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 0.75rem;
+      color: #7c3aed;
+      font-weight: 700;
+    }
     .crm-hero h1 { margin: 0; font-size: clamp(2rem, 3vw, 2.8rem); }
     .crm-hero p { margin: 0; color: #6b7280; font-size: 1.05rem; line-height: 1.8; }
-    .crm-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin-top: 1.5rem; }
-    .crm-card { background: #f8f6ff; border-radius: 22px; padding: 1.35rem; display: grid; gap: 0.75rem; border: 1px solid #e5e7eb; }
+    .crm-summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+      align-content: start;
+    }
+    .crm-card {
+      background: linear-gradient(180deg, #ffffff 0%, #f8f6ff 100%);
+      border-radius: 22px;
+      padding: 1.35rem;
+      display: grid;
+      gap: 0.75rem;
+      border: 1px solid #e5e7eb;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+    .crm-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(124, 58, 237, 0.28);
+      box-shadow: 0 14px 30px rgba(124, 58, 237, 0.12), inset 0 1px 0 rgba(255,255,255,0.65);
+    }
     .crm-card span { color: #6b7280; font-size: 0.95rem; }
     .crm-card strong { font-size: 1.9rem; color: #111827; }
-    .crm-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
-    .pipeline, .contacts { background: #fff; border: 1px solid #e5e7eb; border-radius: 24px; padding: 1.5rem; box-shadow: 0 20px 45px rgba(15, 23, 42, 0.06); }
-    .pipeline h2, .contacts h2 { margin-top: 0; font-size: 1.2rem; }
-    .pipeline-board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin-top: 1rem; }
-    .pipeline-column { display: grid; gap: 0.85rem; padding: 1rem; border-radius: 22px; background: #f8f6ff; }
-    .pipeline-column strong { display: block; margin-bottom: 1rem; color: #4338ca; }
-    .deal-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 18px; padding: 1rem; display: grid; gap: 0.5rem; }
+    .crm-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(320px, 1fr); gap: 1.5rem; margin-top: 1.5rem; }
+    .pipeline, .contacts {
+      background: rgba(255,255,255,0.92);
+      border: 1px solid #e5e7eb;
+      border-radius: 28px;
+      padding: 1.5rem;
+      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.06);
+      backdrop-filter: blur(8px);
+    }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .section-head h2 { margin: 0; font-size: 1.2rem; }
+    .section-head p { margin: 0.25rem 0 0; color: #6b7280; font-size: 0.95rem; }
+    .section-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.45rem 0.8rem;
+      border-radius: 999px;
+      background: #ede9fe;
+      color: #5b21b6;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .pipeline-board { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin-top: 0.5rem; }
+    .pipeline-column {
+      display: grid;
+      gap: 0.85rem;
+      padding: 1rem;
+      border-radius: 24px;
+      background: linear-gradient(180deg, #fbf8ff 0%, #f5f3ff 100%);
+      border: 1px solid rgba(124,58,237,0.08);
+      align-content: start;
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+    }
+    .pipeline-column[data-drop-active='true'] {
+      border-color: rgba(124, 58, 237, 0.34);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12), 0 18px 34px rgba(124, 58, 237, 0.12);
+      transform: translateY(-2px);
+    }
+    .pipeline-column:hover {
+      transform: translateY(-2px);
+      border-color: rgba(124, 58, 237, 0.18);
+      box-shadow: 0 16px 28px rgba(124, 58, 237, 0.08);
+    }
+    .pipeline-column strong {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.15rem;
+      color: #4338ca;
+      font-size: 0.98rem;
+    }
+    .deal-card {
+      position: relative;
+      background: rgba(255,255,255,0.94);
+      border: 1px solid #e5e7eb;
+      border-radius: 20px;
+      padding: 1rem;
+      display: grid;
+      gap: 0.5rem;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+      user-select: none;
+    }
+    .deal-card[draggable='true'] {
+      cursor: grab;
+    }
+    .deal-card.dragging {
+      opacity: 0.52;
+      transform: rotate(1deg) scale(0.99);
+      box-shadow: 0 22px 36px rgba(15, 23, 42, 0.18);
+    }
+    .deal-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(124, 58, 237, 0.24);
+      box-shadow: 0 18px 32px rgba(15, 23, 42, 0.1);
+    }
+    .deal-card,
+    .contact-row {
+      cursor: pointer;
+    }
+    .deal-card.selected,
+    .contact-row.selected {
+      border-color: rgba(124, 58, 237, 0.38);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12), 0 18px 32px rgba(15, 23, 42, 0.1);
+    }
+    .deal-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 16px;
+      bottom: 16px;
+      width: 4px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #a78bfa 0%, #7c3aed 100%);
+      opacity: 0.9;
+    }
+    .deal-card::after {
+      content: '';
+      position: absolute;
+      right: 14px;
+      top: 14px;
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle, rgba(124, 58, 237, 0.85) 0 3px, transparent 4px),
+        radial-gradient(circle, rgba(124, 58, 237, 0.45) 0 1.5px, transparent 2.5px);
+      background-size: 8px 8px;
+      background-position: 0 0, 4px 4px;
+      cursor: grab;
+      opacity: 0.65;
+    }
+    .deal-card.stage-contacted::before {
+      background: linear-gradient(180deg, #60a5fa 0%, #2563eb 100%);
+    }
+    .deal-card.stage-proposal::before {
+      background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+    }
+    .deal-card.stage-closed::before {
+      background: linear-gradient(180deg, #34d399 0%, #059669 100%);
+    }
+    .deal-topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding-left: 0.35rem;
+    }
+    .deal-topline h3 {
+      flex: 1;
+    }
+    .deal-health {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #475569;
+      white-space: nowrap;
+    }
+    .deal-health::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.14);
+    }
+    .deal-health.warm::before {
+      background: #f59e0b;
+      box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.14);
+    }
+    .deal-health.cool::before {
+      background: #60a5fa;
+      box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.14);
+    }
+    .deal-progress {
+      display: grid;
+      gap: 0.45rem;
+      margin-top: 0.2rem;
+      padding-left: 0.35rem;
+    }
+    .deal-progress-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      font-size: 0.78rem;
+      color: #6b7280;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .deal-progress-bar {
+      height: 8px;
+      border-radius: 999px;
+      background: #ede9fe;
+      overflow: hidden;
+    }
+    .deal-progress-bar span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #a78bfa 0%, #7c3aed 100%);
+    }
+    .deal-card.stage-contacted .deal-progress-bar span {
+      background: linear-gradient(90deg, #93c5fd 0%, #2563eb 100%);
+    }
+    .deal-card.stage-proposal .deal-progress-bar span {
+      background: linear-gradient(90deg, #fbbf24 0%, #d97706 100%);
+    }
+    .deal-card.stage-closed .deal-progress-bar span {
+      background: linear-gradient(90deg, #6ee7b7 0%, #059669 100%);
+    }
     .deal-card h3 { margin: 0; font-size: 1rem; }
     .deal-card p { margin: 0; color: #6b7280; font-size: 0.95rem; }
     .deal-card .meta { display: flex; justify-content: space-between; gap: 0.5rem; font-size: 0.85rem; color: #6b7280; }
-    .contacts-list { display: grid; gap: 1rem; margin-top: 1rem; }
-    .contact-row { display: grid; grid-template-columns: 1fr auto; gap: 1rem; padding: 1rem; background: #f8f6ff; border-radius: 18px; border: 1px solid #e5e7eb; }
+    .contacts-list { display: grid; gap: 1rem; margin-top: 0.75rem; }
+    .contact-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      padding: 1rem;
+      background: linear-gradient(180deg, #fbf8ff 0%, #f8f6ff 100%);
+      border-radius: 20px;
+      border: 1px solid #e5e7eb;
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+    }
+    .contact-row:hover {
+      transform: translateY(-2px);
+      border-color: rgba(124, 58, 237, 0.22);
+      box-shadow: 0 14px 28px rgba(124, 58, 237, 0.09);
+    }
+    .contact-avatar {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: #ede9fe;
+      color: #5b21b6;
+      font-weight: 800;
+      font-size: 0.95rem;
+      transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+    .contact-row:hover .contact-avatar {
+      transform: scale(1.04);
+      box-shadow: 0 10px 18px rgba(124, 58, 237, 0.18);
+    }
     .contact-info strong { display: block; font-size: 1rem; color: #111827; }
     .contact-info span { color: #6b7280; font-size: 0.95rem; }
     .contact-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
@@ -41,31 +322,210 @@
     .pill.proposal { background: #dbeafe; color: #3730a3; }
     .pill.won { background: #dcfce7; color: #166534; }
     .pill.lost { background: #fee2e7; color: #991b1b; }
+    .focus-panel {
+      display: grid;
+      gap: 0.9rem;
+      margin-top: 0.75rem;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border-radius: 20px;
+      border: 1px solid rgba(124, 58, 237, 0.14);
+      background: linear-gradient(180deg, #ffffff 0%, #f8f6ff 100%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.65);
+    }
+    .focus-panel h3 {
+      margin: 0;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+    }
+    .focus-panel p {
+      margin: 0;
+      color: #6b7280;
+      line-height: 1.65;
+      font-size: 0.95rem;
+    }
+    .focus-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+    .focus-meta-item {
+      padding: 0.8rem 0.9rem;
+      border-radius: 16px;
+      background: rgba(124, 58, 237, 0.06);
+      border: 1px solid rgba(124, 58, 237, 0.08);
+    }
+    .focus-meta-item span {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #6b7280;
+      font-weight: 700;
+    }
+    .focus-meta-item strong {
+      color: #111827;
+      font-size: 0.96rem;
+    }
+    .focus-next-step {
+      padding: 0.9rem 1rem;
+      border-radius: 18px;
+      background: #ede9fe;
+      color: #4c1d95;
+      font-weight: 700;
+      line-height: 1.55;
+    }
     .crm-footer { margin-top: 2rem; text-align: center; color: #6b7280; }
 
+    @keyframes crmFadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .crm-hero,
+    .pipeline,
+    .contacts {
+      animation: crmFadeSlideUp 420ms ease both;
+    }
+
+    .crm-summary .crm-card:nth-child(1) { animation: crmFadeSlideUp 420ms 40ms ease both; }
+    .crm-summary .crm-card:nth-child(2) { animation: crmFadeSlideUp 420ms 80ms ease both; }
+    .crm-summary .crm-card:nth-child(3) { animation: crmFadeSlideUp 420ms 120ms ease both; }
+    .crm-summary .crm-card:nth-child(4) { animation: crmFadeSlideUp 420ms 160ms ease both; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .crm-hero,
+      .pipeline,
+      .contacts,
+      .crm-summary .crm-card,
+      .crm-card,
+      .pipeline-column,
+      .deal-card,
+      .contact-row,
+      .contact-avatar {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+
     body.dark-mode {
-      background: #0b1222;
-      color: #e2e8f0;
+      background:
+        radial-gradient(circle at top left, rgba(124, 58, 237, 0.18), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.08), transparent 24%),
+        #0b1222;
+      color: #f1f5f9;
     }
 
     body.dark-mode .crm-topbar,
     body.dark-mode .crm-hero,
-    body.dark-mode .crm-card,
     body.dark-mode .pipeline,
     body.dark-mode .contacts,
-    body.dark-mode .pipeline-column,
-    body.dark-mode .deal-card,
     body.dark-mode .contact-row {
       background: #111827;
       border-color: #334155;
       color: #e5e7eb;
     }
 
+    body.dark-mode .pipeline-column {
+      background: #172034;
+      border: 1px solid #334155;
+    }
+
+    body.dark-mode .deal-card,
+    body.dark-mode .contact-row,
+    body.dark-mode .crm-card {
+      background: #182235;
+    }
+    body.dark-mode .focus-panel {
+      background: #182235;
+      border-color: #334155;
+      box-shadow: none;
+    }
+    body.dark-mode .focus-panel p,
+    body.dark-mode .focus-meta-item span {
+      color: #c2cffd;
+    }
+    body.dark-mode .focus-meta-item {
+      background: #111827;
+      border-color: #334155;
+    }
+    body.dark-mode .focus-meta-item strong {
+      color: #f1f5f9;
+    }
+    body.dark-mode .focus-next-step {
+      background: #312e81;
+      color: #cbd5ff;
+    }
+
+    body.dark-mode .deal-card::after {
+      background:
+        radial-gradient(circle, rgba(199, 210, 254, 0.85) 0 3px, transparent 4px),
+        radial-gradient(circle, rgba(199, 210, 254, 0.45) 0 1.5px, transparent 2.5px);
+      background-size: 8px 8px;
+      background-position: 0 0, 4px 4px;
+    }
+
+    body.dark-mode .deal-health {
+      color: #cbd5e1;
+    }
+
+    body.dark-mode .deal-progress-label {
+      color: #c2cffd;
+    }
+
+    body.dark-mode .deal-progress-bar {
+      background: #1f2937;
+    }
+
+    body.dark-mode .crm-card:hover,
+    body.dark-mode .pipeline-column:hover,
+    body.dark-mode .deal-card:hover,
+    body.dark-mode .contact-row:hover {
+      border-color: rgba(139, 92, 246, 0.3);
+      box-shadow: 0 16px 30px rgba(0, 0, 0, 0.22);
+    }
+    body.dark-mode .deal-card.selected,
+    body.dark-mode .contact-row.selected {
+      border-color: rgba(167, 139, 250, 0.45);
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2), 0 16px 30px rgba(0, 0, 0, 0.24);
+    }
+
+    body.dark-mode .contact-avatar {
+      background: #312e81;
+      color: #cbd5ff;
+    }
+
+    body.dark-mode .section-head p,
+    body.dark-mode .crm-hero p,
+    body.dark-mode .crm-card span,
+    body.dark-mode .deal-card p,
+    body.dark-mode .deal-card .meta,
+    body.dark-mode .contact-info span,
+    body.dark-mode .crm-footer {
+      color: #c2cffd;
+    }
+
     body.dark-mode .crm-nav a,
-    body.dark-mode .crm-nav button {
+    body.dark-mode .crm-nav button,
+    body.dark-mode .crm-session {
       background: #1f2937;
       color: #e5e7eb;
       border-color: #4b5563;
+    }
+
+    body.dark-mode .crm-session strong {
+      color: #f1f5f9;
+    }
+
+    body.dark-mode .crm-session span {
+      color: #c2cffd;
     }
 
     body.dark-mode .crm-nav a:hover,
@@ -74,26 +534,23 @@
       color: #ffffff;
     }
 
-    body.dark-mode .crm-hero p,
-    body.dark-mode .crm-card span,
-    body.dark-mode .deal-card p,
-    body.dark-mode .deal-card .meta,
-    body.dark-mode .contact-info span,
-    body.dark-mode .crm-footer {
-      color: #94a3b8;
-    }
-
     body.dark-mode .crm-brand::before {
       background: #8b5cf6;
       box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.14);
     }
 
-    body.dark-mode .pill.lead { background: #312e81; color: #c7d2fe; }
-    body.dark-mode .pill.proposal { background: #1e3a8a; color: #dbeafe; }
+    body.dark-mode .section-chip {
+      background: #312e81;
+      color: #cbd5ff;
+    }
+
+    body.dark-mode .pill.lead { background: #312e81; color: #cbd5ff; }
+    body.dark-mode .pill.proposal { background: #1e3a8a; color: #cbd5ff; }
     body.dark-mode .pill.won { background: #14532d; color: #dcfce7; }
     body.dark-mode .pill.lost { background: #7f1d1d; color: #fee2e7; }
 
     @media (max-width: 1020px) {
+      .crm-hero { grid-template-columns: 1fr; }
       .crm-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .crm-grid { grid-template-columns: 1fr; }
       .pipeline-board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -103,6 +560,7 @@
       .crm-nav { justify-content: center; }
       .crm-summary { grid-template-columns: 1fr; }
       .pipeline-board { grid-template-columns: 1fr; }
+      .contact-row { grid-template-columns: 1fr; align-items: start; }
     }
   </style>
 </head>
@@ -115,13 +573,19 @@
         <a href="index.htm">Home</a>
         <a href="services.html">Services</a>
         <a href="support-login.html">Support Login</a>
+        <a id="crmAdminLink" href="system-admin.html" hidden>Admin Console</a>
+        <div class="crm-session" id="crmSession" hidden>
+          <strong id="crmSessionName">Support Agent</strong>
+          <span id="crmSessionRole">Session active</span>
+        </div>
+        <button id="crmLogoutButton" type="button" hidden>Log Out</button>
         <button id="themeToggle" type="button">Dark Mode</button>
       </div>
     </div>
 
     <section class="crm-hero">
-      <div>
-        <p style="margin:0; text-transform:uppercase; letter-spacing:0.2em; font-size:0.75rem; color:#7c3aed;">CRM Dashboard</p>
+      <div class="crm-hero-copy">
+        <p class="crm-kicker">CRM Dashboard</p>
         <h1>Modern customer relationship management made simple.</h1>
         <p>Track leads, manage opportunities, and keep every customer conversation organized in one clean dashboard.</p>
       </div>
@@ -147,45 +611,86 @@
 
     <div class="crm-grid">
       <section class="pipeline">
-        <h2>Sales pipeline</h2>
+        <div class="section-head">
+          <div>
+            <h2>Sales pipeline</h2>
+            <p>Move from fresh leads to closed work with a clearer lane-by-lane view.</p>
+          </div>
+          <span class="section-chip">4 active stages</span>
+        </div>
         <div class="pipeline-board">
-          <div class="pipeline-column">
-            <strong>New leads</strong>
-            <div class="deal-card">
-              <h3>BrightWave Media</h3>
+          <div class="pipeline-column" data-stage="stage-new" data-stage-label="New leads">
+            <strong><span>New leads</span><span class="stage-count">2</span></strong>
+            <div class="deal-card selected" draggable="true" role="button" tabindex="0" aria-pressed="true" data-focus-title="BrightWave Media" data-focus-summary="Intro call scheduled. Needs a website rebuild, visual refresh, and launch timeline alignment before proposal week." data-focus-owner="Chloe Harper" data-focus-stage="Discovery" data-focus-next="Prepare the discovery brief and lock the April 1 scoping call.">
+              <div class="deal-topline">
+                <h3>BrightWave Media</h3>
+                <span class="deal-health warm">High fit</span>
+              </div>
               <p>Intro call scheduled. Needs new website and brand refresh.</p>
+              <div class="deal-progress">
+                <div class="deal-progress-label"><span>Discovery</span><span>28%</span></div>
+                <div class="deal-progress-bar"><span style="width: 28%;"></span></div>
+              </div>
               <div class="meta"><span>High value</span><span>Due: Apr 1</span></div>
             </div>
-            <div class="deal-card">
-              <h3>Urban Grocery</h3>
+            <div class="deal-card" draggable="true" role="button" tabindex="0" aria-pressed="false" data-focus-title="Urban Grocery" data-focus-summary="Proposal requested for an e-commerce platform with delivery support and inventory sync." data-focus-owner="Marcus Lee" data-focus-stage="Qualification" data-focus-next="Send pricing options and confirm launch priorities before April 4.">
+              <div class="deal-topline">
+                <h3>Urban Grocery</h3>
+                <span class="deal-health cool">Early</span>
+              </div>
               <p>Proposal requested for e-commerce platform.</p>
+              <div class="deal-progress">
+                <div class="deal-progress-label"><span>Qualification</span><span>18%</span></div>
+                <div class="deal-progress-bar"><span style="width: 18%;"></span></div>
+              </div>
               <div class="meta"><span>Medium value</span><span>Due: Apr 4</span></div>
             </div>
           </div>
 
-          <div class="pipeline-column">
-            <strong>Contacted</strong>
-            <div class="deal-card">
-              <h3>Blue Ridge Co.</h3>
+          <div class="pipeline-column" data-stage="stage-contacted" data-stage-label="Contacted">
+            <strong><span>Contacted</span><span class="stage-count">1</span></strong>
+            <div class="deal-card stage-contacted" draggable="true" role="button" tabindex="0" aria-pressed="false" data-focus-title="Blue Ridge Co." data-focus-summary="Service package follow-up is out. Buyer engagement is strong but timing depends on next quarter planning." data-focus-owner="Operations team" data-focus-stage="Outreach" data-focus-next="Call on Mar 30 to answer scope questions and surface decision blockers.">
+              <div class="deal-topline">
+                <h3>Blue Ridge Co.</h3>
+                <span class="deal-health warm">Engaged</span>
+              </div>
               <p>Follow-up on service package sent.</p>
+              <div class="deal-progress">
+                <div class="deal-progress-label"><span>Outreach</span><span>46%</span></div>
+                <div class="deal-progress-bar"><span style="width: 46%;"></span></div>
+              </div>
               <div class="meta"><span>High priority</span><span>Due: Mar 30</span></div>
             </div>
           </div>
 
-          <div class="pipeline-column">
-            <strong>Proposal</strong>
-            <div class="deal-card">
-              <h3>Altura Fitness</h3>
+          <div class="pipeline-column" data-stage="stage-proposal" data-stage-label="Proposal">
+            <strong><span>Proposal</span><span class="stage-count">1</span></strong>
+            <div class="deal-card stage-proposal" draggable="true" role="button" tabindex="0" aria-pressed="false" data-focus-title="Altura Fitness" data-focus-summary="Proposal is under review for a full digital package with web, ads, and member onboarding flows." data-focus-owner="Sofia Kim" data-focus-stage="Proposal" data-focus-next="Follow up on Apr 2 with a trimmed premium option and kickoff calendar.">
+              <div class="deal-topline">
+                <h3>Altura Fitness</h3>
+                <span class="deal-health warm">Hot</span>
+              </div>
               <p>Proposal reviewed, awaiting approval.</p>
+              <div class="deal-progress">
+                <div class="deal-progress-label"><span>Proposal</span><span>74%</span></div>
+                <div class="deal-progress-bar"><span style="width: 74%;"></span></div>
+              </div>
               <div class="meta"><span>Potential $32k</span><span>Due: Apr 2</span></div>
             </div>
           </div>
 
-          <div class="pipeline-column">
-            <strong>Closed</strong>
-            <div class="deal-card">
-              <h3>Sunrise Studio</h3>
+          <div class="pipeline-column" data-stage="stage-closed" data-stage-label="Closed">
+            <strong><span>Closed</span><span class="stage-count">1</span></strong>
+            <div class="deal-card stage-closed" draggable="true" role="button" tabindex="0" aria-pressed="false" data-focus-title="Sunrise Studio" data-focus-summary="Project is won and handed into kickoff. Remaining work is onboarding and production alignment." data-focus-owner="Client success" data-focus-stage="Handoff" data-focus-next="Share kickoff packet and confirm stakeholder approvals this week.">
+              <div class="deal-topline">
+                <h3>Sunrise Studio</h3>
+                <span class="deal-health">Won</span>
+              </div>
               <p>Project won and kickoff scheduled.</p>
+              <div class="deal-progress">
+                <div class="deal-progress-label"><span>Handoff</span><span>100%</span></div>
+                <div class="deal-progress-bar"><span style="width: 100%;"></span></div>
+              </div>
               <div class="meta"><span class="pill won">Won</span><span>Closed</span></div>
             </div>
           </div>
@@ -193,9 +698,31 @@
       </section>
 
       <section class="contacts">
-        <h2>Key customer accounts</h2>
+        <div class="section-head">
+          <div>
+            <h2>Key customer accounts</h2>
+            <p>High-value relationships and current deal posture at a glance.</p>
+          </div>
+          <span class="section-chip">3 priority accounts</span>
+        </div>
+        <div class="focus-panel" id="focusPanel">
+          <h3 id="focusTitle">BrightWave Media</h3>
+          <p id="focusSummary">Intro call scheduled. Needs a website rebuild, visual refresh, and launch timeline alignment before proposal week.</p>
+          <div class="focus-meta">
+            <div class="focus-meta-item">
+              <span>Primary owner</span>
+              <strong id="focusOwner">Chloe Harper</strong>
+            </div>
+            <div class="focus-meta-item">
+              <span>Current stage</span>
+              <strong id="focusStage">Discovery</strong>
+            </div>
+          </div>
+          <div class="focus-next-step" id="focusNext">Prepare the discovery brief and lock the April 1 scoping call.</div>
+        </div>
         <div class="contacts-list">
-          <div class="contact-row">
+          <div class="contact-row" role="button" tabindex="0" aria-pressed="false" data-focus-title="Chloe Harper" data-focus-summary="Primary contact for BrightWave Media. Strong fit, fast-moving timeline, and proposal momentum is improving each touchpoint." data-focus-owner="Account lead" data-focus-stage="Lead and proposal" data-focus-next="Send moodboard concepts and prep the proposal walkthrough.">
+            <div class="contact-avatar">CH</div>
             <div class="contact-info">
               <strong>Chloe Harper</strong>
               <span>Marketing Director, BrightWave Media</span>
@@ -206,7 +733,8 @@
               <span class="pill proposal">Proposal</span>
             </div>
           </div>
-          <div class="contact-row">
+          <div class="contact-row" role="button" tabindex="0" aria-pressed="false" data-focus-title="Marcus Lee" data-focus-summary="Owner at Urban Grocery. Interested in modern commerce tooling but still balancing rollout scope and budget." data-focus-owner="Business development" data-focus-stage="Lead follow-up" data-focus-next="Confirm inventory requirements and send phased delivery options.">
+            <div class="contact-avatar">ML</div>
             <div class="contact-info">
               <strong>Marcus Lee</strong>
               <span>Owner, Urban Grocery</span>
@@ -217,7 +745,8 @@
               <span class="pill lost">Follow-up</span>
             </div>
           </div>
-          <div class="contact-row">
+          <div class="contact-row" role="button" tabindex="0" aria-pressed="false" data-focus-title="Sofia Kim" data-focus-summary="Founder at Altura Fitness. Proposal stage is active and budget appetite remains high if timing stays tight." data-focus-owner="Strategy lead" data-focus-stage="Proposal" data-focus-next="Review open questions and offer kickoff dates for the first build sprint.">
+            <div class="contact-avatar">SK</div>
             <div class="contact-info">
               <strong>Sofia Kim</strong>
               <span>Founder, Altura Fitness</span>
@@ -235,10 +764,27 @@
     <p class="crm-footer">A modern CRM option for smarter customer tracking and clearer sales flow.</p>
   </div>
 
+  <script>
+    if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      window.CWS_API_BASE = 'http://localhost:3100';
+    }
+  </script>
   <script src="auth.js"></script>
   <script defer src="header.js"></script>
   <script>
     const themeToggle = document.getElementById('themeToggle');
+    const crmSession = document.getElementById('crmSession');
+    const crmSessionName = document.getElementById('crmSessionName');
+    const crmSessionRole = document.getElementById('crmSessionRole');
+    const crmLogoutButton = document.getElementById('crmLogoutButton');
+    const focusTitle = document.getElementById('focusTitle');
+    const focusSummary = document.getElementById('focusSummary');
+    const focusOwner = document.getElementById('focusOwner');
+    const focusStage = document.getElementById('focusStage');
+    const focusNext = document.getElementById('focusNext');
+    const interactiveCards = Array.from(document.querySelectorAll('.deal-card, .contact-row'));
+    const pipelineColumns = Array.from(document.querySelectorAll('.pipeline-column'));
+    const dealCards = Array.from(document.querySelectorAll('.deal-card'));
     const savedTheme = localStorage.getItem('siteTheme');
     const applyTheme = (theme) => {
       document.body.classList.toggle('dark-mode', theme === 'dark');
@@ -251,12 +797,168 @@
     });
     if (savedTheme === 'dark') applyTheme('dark'); else applyTheme('light');
 
+    crmLogoutButton.addEventListener('click', async () => {
+      crmLogoutButton.disabled = true;
+      crmLogoutButton.textContent = 'Logging out...';
+      await SiteAuth.logoutSupport('support-login.html');
+    });
+
+    const setSelectedCard = (card) => {
+      interactiveCards.forEach((item) => {
+        const isSelected = item === card;
+        item.classList.toggle('selected', isSelected);
+        item.setAttribute('aria-pressed', String(isSelected));
+      });
+    };
+
+    const updateFocusPanel = (card) => {
+      if (!card) {
+        return;
+      }
+
+      focusTitle.textContent = card.dataset.focusTitle || 'Account focus';
+      focusSummary.textContent = card.dataset.focusSummary || '';
+      focusOwner.textContent = card.dataset.focusOwner || 'Unassigned';
+      focusStage.textContent = card.dataset.focusStage || 'Unspecified';
+      focusNext.textContent = card.dataset.focusNext || 'No next step defined.';
+      setSelectedCard(card);
+    };
+
+    const setDealStageAppearance = (card, stageClass, stageLabel) => {
+      card.classList.remove('stage-contacted', 'stage-proposal', 'stage-closed');
+      if (stageClass && stageClass !== 'stage-new') {
+        card.classList.add(stageClass);
+      }
+
+      const progressLabel = card.querySelector('.deal-progress-label span');
+      if (progressLabel && stageLabel) {
+        progressLabel.textContent = stageLabel;
+      }
+
+      if (card.classList.contains('selected') && stageLabel) {
+        focusStage.textContent = stageLabel;
+      }
+    };
+
+    const updateStageCounts = () => {
+      pipelineColumns.forEach((column) => {
+        const counter = column.querySelector('.stage-count');
+        if (counter) {
+          counter.textContent = String(column.querySelectorAll('.deal-card').length);
+        }
+      });
+    };
+
+    const getDragAfterElement = (column, y) => {
+      const candidates = Array.from(column.querySelectorAll('.deal-card:not(.dragging)'));
+      let closest = { offset: Number.NEGATIVE_INFINITY, element: null };
+
+      candidates.forEach((candidate) => {
+        const box = candidate.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+          closest = { offset, element: candidate };
+        }
+      });
+
+      return closest.element;
+    };
+
+    const clearDropTargets = () => {
+      pipelineColumns.forEach((column) => {
+        column.dataset.dropActive = 'false';
+      });
+    };
+
+    dealCards.forEach((card) => {
+      card.addEventListener('dragstart', (event) => {
+        card.classList.add('dragging');
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData('text/plain', card.dataset.focusTitle || 'deal-card');
+        updateFocusPanel(card);
+      });
+
+      card.addEventListener('dragend', () => {
+        card.classList.remove('dragging');
+        clearDropTargets();
+        updateStageCounts();
+      });
+    });
+
+    pipelineColumns.forEach((column) => {
+      column.dataset.dropActive = 'false';
+
+      column.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        column.dataset.dropActive = 'true';
+        const draggingCard = document.querySelector('.deal-card.dragging');
+        if (!draggingCard) {
+          return;
+        }
+
+        const afterElement = getDragAfterElement(column, event.clientY);
+        if (afterElement) {
+          column.insertBefore(draggingCard, afterElement);
+        } else {
+          column.appendChild(draggingCard);
+        }
+      });
+
+      column.addEventListener('dragenter', (event) => {
+        event.preventDefault();
+        column.dataset.dropActive = 'true';
+      });
+
+      column.addEventListener('dragleave', (event) => {
+        if (!column.contains(event.relatedTarget)) {
+          column.dataset.dropActive = 'false';
+        }
+      });
+
+      column.addEventListener('drop', (event) => {
+        event.preventDefault();
+        const draggingCard = document.querySelector('.deal-card.dragging');
+        if (!draggingCard) {
+          return;
+        }
+
+        setDealStageAppearance(draggingCard, column.dataset.stage, column.dataset.stageLabel);
+        draggingCard.dataset.focusStage = column.dataset.stageLabel || draggingCard.dataset.focusStage;
+        updateFocusPanel(draggingCard);
+        column.dataset.dropActive = 'false';
+        updateStageCounts();
+      });
+    });
+
+    interactiveCards.forEach((card) => {
+      card.addEventListener('click', () => updateFocusPanel(card));
+      card.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          updateFocusPanel(card);
+        }
+      });
+    });
+
+    updateStageCounts();
+    updateFocusPanel(document.querySelector('.deal-card.selected') || interactiveCards[0]);
+
     (async () => {
       await SiteAuth.init();
       if (SiteAuth.isCustomerLoggedIn()) {
-        window.location.href = 'index.htm';
+        window.location.href = SiteAuth.toAppUrl('index.htm');
       } else if (!SiteAuth.getSupport()) {
-        window.location.href = 'support-login.html';
+        window.location.href = SiteAuth.toAppUrl('support-login.html');
+      } else {
+        const supportUser = SiteAuth.getSupport();
+        crmSession.hidden = false;
+        crmLogoutButton.hidden = false;
+        crmSessionName.textContent = supportUser.name || supportUser.email || 'Support Agent';
+        crmSessionRole.textContent = supportUser.role || 'Session active';
+        if (SiteAuth.isSystemAdministrator(supportUser)) {
+          const crmAdminLink = document.getElementById('crmAdminLink');
+          if (crmAdminLink) crmAdminLink.hidden = false;
+        }
       }
     })();
   </script>

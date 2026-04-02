@@ -1,0 +1,13 @@
+{
+  "sessions": {
+    "74c48d874941e206a88867eb29de7af687d0d5f0368b83c7105f0765ed9c57a3": {
+      "user": {
+        "role": "admin",
+        "email": "kyle.creativesolutions@gmail.com",
+        "name": "Kyle Creativesolutions",
+        "supportRole": "System Administrator"
+      },
+      "expiresAt": 1775168314366
+    }
+  }
+}

@@ -14,9 +14,9 @@ body.dark-mode {
   color-scheme: dark;
   --bg: #0f172a;
   --surface: #111827;
-  --surface-alt: #1f2937;
-  --text: #e2e8f0;
-  --muted: #94a3b8;
+  --surface-alt: #182235;
+  --text: #f1f5f9;
+  --muted: #c2cffd;
   --primary: #82aaff;
   --primary-soft: #1e2a5b;
   --surface-contrast: rgba(148, 163, 184, 0.16);
@@ -45,7 +45,7 @@ body.dark-mode .section-bg {
 
 body.dark-mode .feature-box {
   background: var(--surface-alt);
-  border-color: rgba(148, 163, 184, 0.25);
+  border-color: rgba(148, 163, 184, 0.35);
 }
 
 body.dark-mode .navbar-brand,
@@ -83,6 +83,15 @@ body.dark-mode .contact-form {
 
 body.dark-mode .text-muted {
   color: var(--muted) !important;
+}
+
+body.dark-mode a:not(.btn):not(.gh-btn) {
+  color: #cbd5ff;
+}
+
+body.dark-mode a:not(.btn):not(.gh-btn):hover,
+body.dark-mode a:not(.btn):not(.gh-btn):focus {
+  color: #e2e8ff;
 }
 
 body.dark-mode .navbar-light .navbar-toggler-icon {
@@ -168,7 +177,7 @@ footer.footer,
 }
 
 .contact-form {
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(13, 44, 116, 0.08);
 }
 
 footer.footer {

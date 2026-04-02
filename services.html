@@ -20,6 +20,8 @@
         .services-grid { max-width: 960px; margin: 0 auto 3rem; padding: 0 2rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
         .service-card { background: #ffffff; border-radius: 24px; padding: 2rem; box-shadow: 0 20px 50px rgba(15,23,42,0.07); border: 1px solid rgba(124,58,237,0.1); transition: transform 0.2s ease, box-shadow 0.2s ease; }
         .service-card:hover { transform: translateY(-4px); box-shadow: 0 30px 60px rgba(124,58,237,0.12); }
+        .service-card-link { text-decoration: none; color: inherit; display: block; }
+        .service-card-link:focus-visible .service-card { outline: 3px solid rgba(124,58,237,0.45); outline-offset: 3px; }
         .service-icon { width: 48px; height: 48px; border-radius: 14px; background: #ede9ff; display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; font-size: 1.5rem; }
         .service-card h3 { margin: 0 0 0.75rem; font-size: 1.15rem; color: #111827; }
         .service-card p { margin: 0 0 1rem; color: #6b7280; font-size: 0.97rem; line-height: 1.7; }
@@ -36,20 +38,20 @@
         .pricing-card h3 { margin: 0; font-size: 1.1rem; color: #7c3aed; }
         .pricing-card ul { margin: 1.25rem 0 1.5rem; padding: 0; list-style: none; display: grid; gap: 0.6rem; }
         .pricing-card li { font-size: 0.95rem; color: #374151; padding-left: 1.25rem; position: relative; }
-        .pricing-card li::before { content: '✓'; position: absolute; left: 0; color: #7c3aed; font-weight: 700; }
+        .pricing-card li::before { content: '>'; position: absolute; left: 0; color: #7c3aed; font-weight: 700; }
         .cta-btn { display: block; text-align: center; padding: 0.85rem 1rem; border-radius: 16px; background: #7c3aed; color: #fff; font-weight: 700; text-decoration: none; transition: filter 0.2s ease, transform 0.2s ease; }
         .cta-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
         .cta-btn.outline { background: transparent; border: 2px solid #7c3aed; color: #7c3aed; }
         .cta-btn.outline:hover { background: rgba(124,58,237,0.06); }
  
-        body.dark-mode { background: #0b1222; color: #e2e8f0; }
+        body.dark-mode { background: #0b1222; color: #f1f5f9; }
         body.dark-mode .page-header, body.dark-mode .service-card, body.dark-mode .pricing-card { background: #111827; border-color: #374151; }
-        body.dark-mode .page-header p, body.dark-mode .service-card p, body.dark-mode .pricing-card li { color: #cbd5e1; }
+        body.dark-mode .page-header p, body.dark-mode .service-card p, body.dark-mode .pricing-card li { color: #c2cffd; }
         body.dark-mode .service-icon { background: #1f2937; }
-        body.dark-mode .service-tag { background: #312e81; color: #c7d2fe; }
+        body.dark-mode .service-tag { background: #312e81; color: #cbd5ff; }
         body.dark-mode .pricing-card.featured { background: #1a1030; border-color: #7c3aed; }
         body.dark-mode .pricing-card .price { color: #f3f4f6; }
-        body.dark-mode .pricing-section > p { color: #9ca3af; }
+        body.dark-mode .pricing-section > p { color: #c2cffd; }
         body.dark-mode .service-card h3, body.dark-mode .pricing-section h2 { color: #f3f4f6; }
  
         @media (max-width: 640px) {
@@ -62,64 +64,82 @@
 <div class="page-header">
     <h1>Our Services</h1>
     <p>Providing innovative web solutions for your business needs is at the heart of what we do. From custom website design to digital marketing strategies, we offer comprehensive services to elevate your online presence and drive success.</p>
-    <p>Our team of experts is dedicated to delivering high-quality solutions tailored to your unique requirements — whether you're building from scratch, optimizing what you have, or scaling for growth.</p>
+    <p>Our team of experts is dedicated to delivering high-quality solutions tailored to your unique requirements - whether you're building from scratch, optimizing what you have, or scaling for growth.</p>
 </div>
  
 <div class="services-grid">
-    <div class="service-card">
-        <div class="service-icon">🎨</div>
-        <h3>Custom Website Design</h3>
-        <p>Beautiful, responsive websites crafted to reflect your brand. Every pixel intentional, every interaction smooth.</p>
-        <span class="service-tag">Design</span>
-    </div>
-    <div class="service-card">
-        <div class="service-icon">🛒</div>
-        <h3>E-commerce Development</h3>
-        <p>Secure, scalable online stores with seamless checkout, inventory management, and payment integrations.</p>
-        <span class="service-tag">Commerce</span>
-    </div>
-    <div class="service-card">
-        <div class="service-icon">🔍</div>
-        <h3>SEO Optimization</h3>
-        <p>Get found by the right people. We handle technical SEO, on-page optimization, and keyword strategy.</p>
-        <span class="service-tag">Growth</span>
-    </div>
-    <div class="service-card">
-        <div class="service-icon">📝</div>
-        <h3>CMS Integration</h3>
-        <p>Take control of your content with flexible CMS setups — WordPress, Webflow, Sanity, and more.</p>
-        <span class="service-tag">Content</span>
-    </div>
-    <div class="service-card">
-        <div class="service-icon">📱</div>
-        <h3>App Development</h3>
-        <p>Mobile-first applications built for performance, usability, and long-term maintainability.</p>
-        <span class="service-tag">Development</span>
-    </div>
-    <div class="service-card">
-        <div class="service-icon">📣</div>
-        <h3>Digital Marketing</h3>
-        <p>Campaigns that move the needle — paid ads, email, social, and content strategies tied to real results.</p>
-        <span class="service-tag">Marketing</span>
-    </div>
-    <div class="service-card">
-        <div class="service-icon">⚙️</div>
-        <h3>Website Maintenance</h3>
-        <p>Ongoing updates, security patches, performance monitoring, and peace of mind after launch.</p>
-        <span class="service-tag">Support</span>
-    </div>
-    <div class="service-card">
-        <div class="service-icon">📊</div>
-        <h3>Analytics & Reporting</h3>
-        <p>Know what's working. We set up dashboards, track conversions, and translate data into decisions.</p>
-        <span class="service-tag">Insights</span>
-    </div>
-    <div class="service-card">
-        <div class="service-icon">🔒</div>
-        <h3>Security Audits</h3>
-        <p>Vulnerability assessments, SSL setup, and hardening recommendations to keep your site protected.</p>
-        <span class="service-tag">Security</span>
-    </div>
+    <a href="custom-web-design.html" class="service-card-link" aria-label="Open Custom Website Design details">
+        <div class="service-card">
+            <div class="service-icon">WD</div>
+            <h3>Custom Website Design</h3>
+            <p>Beautiful, responsive websites crafted to reflect your brand. Every pixel intentional, every interaction smooth.</p>
+            <span class="service-tag">Design</span>
+        </div>
+    </a>
+    <a href="ecommerce-development.html" class="service-card-link" aria-label="Open E-commerce Development details">
+        <div class="service-card">
+            <div class="service-icon">EC</div>
+            <h3>E-commerce Development</h3>
+            <p>Secure, scalable online stores with seamless checkout, inventory management, and payment integrations.</p>
+            <span class="service-tag">Commerce</span>
+        </div>
+    </a>
+    <a href="seo-optimization.html" class="service-card-link" aria-label="Open SEO Optimization details">
+        <div class="service-card">
+            <div class="service-icon">SEO</div>
+            <h3>SEO Optimization</h3>
+            <p>Get found by the right people. We handle technical SEO, on-page optimization, and keyword strategy.</p>
+            <span class="service-tag">Growth</span>
+        </div>
+    </a>
+    <a href="cms-integration.html" class="service-card-link" aria-label="Open CMS Integration details">
+        <div class="service-card">
+            <div class="service-icon">CMS</div>
+            <h3>CMS Integration</h3>
+            <p>Take control of your content with flexible CMS setups - WordPress, Webflow, Sanity, and more.</p>
+            <span class="service-tag">Content</span>
+        </div>
+    </a>
+    <a href="app-development.html" class="service-card-link" aria-label="Open App Development details">
+        <div class="service-card">
+            <div class="service-icon">APP</div>
+            <h3>App Development</h3>
+            <p>Mobile-first applications built for performance, usability, and long-term maintainability.</p>
+            <span class="service-tag">Development</span>
+        </div>
+    </a>
+    <a href="digital-marketing.html" class="service-card-link" aria-label="Open Digital Marketing details">
+        <div class="service-card">
+            <div class="service-icon">MKT</div>
+            <h3>Digital Marketing</h3>
+            <p>Campaigns that move the needle - paid ads, email, social, and content strategies tied to real results.</p>
+            <span class="service-tag">Marketing</span>
+        </div>
+    </a>
+    <a href="website-maintenance.html" class="service-card-link" aria-label="Open Website Maintenance details">
+        <div class="service-card">
+            <div class="service-icon">OPS</div>
+            <h3>Website Maintenance</h3>
+            <p>Ongoing updates, security patches, performance monitoring, and peace of mind after launch.</p>
+            <span class="service-tag">Support</span>
+        </div>
+    </a>
+    <a href="analytics-reporting.html" class="service-card-link" aria-label="Open Analytics and Reporting details">
+        <div class="service-card">
+            <div class="service-icon">ANL</div>
+            <h3>Analytics & Reporting</h3>
+            <p>Know what's working. We set up dashboards, track conversions, and translate data into decisions.</p>
+            <span class="service-tag">Insights</span>
+        </div>
+    </a>
+    <a href="security-audits.html" class="service-card-link" aria-label="Open Security Audits details">
+        <div class="service-card">
+            <div class="service-icon">SEC</div>
+            <h3>Security Audits</h3>
+            <p>Vulnerability assessments, SSL setup, and hardening recommendations to keep your site protected.</p>
+            <span class="service-tag">Security</span>
+        </div>
+    </a>
 </div>
  
 <div class="pricing-section">
@@ -175,7 +195,7 @@
 </div>
  
 <script defer src="theme.js"></script>
-<script defer src="auth.js"></script>
+<script src="auth.js"></script>
 <script defer src="header.js"></script>
 </body>
 </html>

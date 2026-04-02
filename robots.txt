@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /crm.html
+Disallow: /customer-portal.html
+Disallow: /support-portal.html
+Disallow: /support-portal-enhanced.html
+Disallow: /support-login.html
+Disallow: /system-admin.html
+Disallow: /layout-lab.html
+Allow: /

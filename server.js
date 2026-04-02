@@ -11,43 +11,121 @@
 require('dotenv').config();
 
 const express = require('express');
-const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const path = require('path');
 
 // Initialize Express
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
+
+app.disable('x-powered-by');
+app.set('trust proxy', 1);
+
+function getConfiguredOrigins() {
+  return String(process.env.CORS_ALLOWED_ORIGINS || '')
+    .split(',')
+    .map((origin) => normalizeOrigin(origin))
+    .filter(Boolean);
+}
+
+function normalizeOrigin(origin) {
+  if (!origin) return '';
+  const value = String(origin).trim();
+  if (!value) return '';
+
+  try {
+    return new URL(value).origin;
+  } catch (_error) {
+    return value.replace(/\/+$/, '');
+  }
+}
+
+function isLocalDevelopmentOrigin(origin) {
+  if (!origin) return false;
+
+  try {
+    const parsed = new URL(origin);
+    const hostname = String(parsed.hostname || '').toLowerCase();
+    return hostname === 'localhost' || hostname === '127.0.0.1';
+  } catch (_error) {
+    return false;
+  }
+}
+
+function buildCorsOptions(req) {
+  const configuredOrigins = getConfiguredOrigins();
+  const inferredOrigin = normalizeOrigin(`${req.protocol}://${req.get('host')}`);
+  const allowedOrigins = new Set([
+    inferredOrigin,
+    'http://localhost:3100',
+    'http://127.0.0.1:3100',
+    'http://localhost:3000',
+    'https://kyleb1.github.io',
+    ...configuredOrigins
+  ]);
+  const requestOrigin = normalizeOrigin(req.get('origin'));
+  const isAllowedOrigin = !requestOrigin
+    || requestOrigin === 'null'
+    || allowedOrigins.has(requestOrigin)
+    || isLocalDevelopmentOrigin(requestOrigin);
+
+  return {
+    origin: isAllowedOrigin ? (requestOrigin || true) : false,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Admin-Token', 'X-Customer-Id'],
+    optionsSuccessStatus: 204
+  };
+}
 
 // Security middleware
 app.use(helmet({
-  crossOriginResourcePolicy: { policy: 'same-site' }
+  crossOriginResourcePolicy: { policy: 'same-site' },
+  contentSecurityPolicy: {
+    useDefaults: true,
+    directives: {
+      // TODO: migrate all page inline <script> blocks to external files, then
+      // remove 'unsafe-inline' from scriptSrc to complete the CSP hardening.
+      scriptSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net'],
+      styleSrc: ["'self'", 'https:', "'unsafe-inline'"]
+    }
+  }
 }));
 
 // CORS configuration
-// CORS_ALLOWED_ORIGINS accepts a comma-separated list of origins.
-// GitHub Pages origin is always included so static-hosted pages can
-// reach the Render backend even when the env var isn't set yet.
-const ALWAYS_ALLOWED = ['http://localhost:3000', 'https://kyleb1.github.io'];
-const configuredOrigins = (process.env.CORS_ALLOWED_ORIGINS || '')
-  .split(',')
-  .map((o) => o.trim())
-  .filter(Boolean);
-const ALLOWED_ORIGINS = [...new Set([...ALWAYS_ALLOWED, ...configuredOrigins])];
+app.use((req, res, next) => {
+  const requestOrigin = normalizeOrigin(req.get('origin'));
+  const configuredOrigins = getConfiguredOrigins();
+  const inferredOrigin = normalizeOrigin(`${req.protocol}://${req.get('host')}`);
+  const allowedOrigins = new Set([
+    inferredOrigin,
+    'http://localhost:3100',
+    'http://127.0.0.1:3100',
+    'http://localhost:3000',
+    'https://kyleb1.github.io',
+    ...configuredOrigins
+  ]);
 
-app.use(cors({
-  origin: (origin, callback) => {
-    // Allow server-to-server requests (no Origin header) and listed origins.
-    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
-      return callback(null, true);
-    }
-    callback(new Error(`CORS: origin ${origin} not allowed`));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Admin-Token', 'X-Customer-Id']
-}));
+  const isAllowedOrigin = !requestOrigin
+    || requestOrigin === 'null'
+    || allowedOrigins.has(requestOrigin)
+    || isLocalDevelopmentOrigin(requestOrigin);
+
+  if (isAllowedOrigin && requestOrigin) {
+    res.setHeader('Access-Control-Allow-Origin', requestOrigin);
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,PATCH,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Admin-Token,X-Customer-Id');
+  }
+
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
 
 // Rate limiting for payment endpoints
 const paymentLimiter = rateLimit({
@@ -66,15 +144,20 @@ const authLimiter = rateLimit({
   legacyHeaders: false
 });
 
+const contactLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5,
+  message: { error: 'Too many contact submissions, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
 // Stripe webhook requires the raw request body for signature verification.
 app.use('/api/billing/webhook', express.raw({ type: 'application/json' }));
 
 // Body parsing
 app.use(express.json({ limit: '200kb' }));
 app.use(express.urlencoded({ extended: true }));
-
-// Trust proxy for rate limiting behind reverse proxy
-app.set('trust proxy', 1);
 
 // Request logging middleware
 app.use((req, res, next) => {
@@ -103,8 +186,17 @@ app.get('/health', (req, res) => {
 // API routes
 const authRoutes = require('./auth-routes');
 const billingRoutes = require('./billing-routes');
-app.use('/api/auth', authLimiter, authRoutes);
+const contactRoutes = require('./contact-routes');
+
+// Rate-limit only the mutating auth endpoints.
+// Do NOT apply to GET /api/auth/session or GET /api/auth/meta;
+// those are called on every page load and would exhaust the limit.
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/signup', authLimiter);
+app.use('/api/auth/support-login', authLimiter);
+app.use('/api/auth', authRoutes);
 app.use('/api/billing', paymentLimiter, billingRoutes);
+app.use('/api/contact', contactLimiter, contactRoutes);
 
 // Static files (if serving frontend from same server)
 app.use((req, res, next) => {
@@ -121,7 +213,8 @@ app.use((req, res, next) => {
     'billing-backend.js',
     'stripe-config.js',
     'package.json',
-    '.env'
+    '.env',
+    'contact-routes.js',
   ]);
   const blockedExtensions = new Set(['.sql', '.md', '.sh', '.cjs']);
 
@@ -144,33 +237,46 @@ app.use(express.static(path.join(__dirname), {
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({
-    error: 'Not found',
-    path: req.path,
-    method: req.method
-  });
+  res.status(404).json({ error: 'Not found' });
 });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Server error:', err);
-  
   res.status(err.status || 500).json({
-    error: err.message || 'Internal server error',
-    timestamp: new Date().toISOString(),
-    path: req.path
+    error: err.status ? (err.message || 'Request failed') : 'Internal server error',
+    timestamp: new Date().toISOString()
   });
 });
 
-// Start server
-const server = app.listen(PORT, async () => {
+// Track the active server instance so SIGTERM shutdown works correctly.
+let activeServer = null;
+
+// Start server — auto-increment port if the preferred one is already in use
+function startServer(port) {
+  const normalizedPort = Number(port);
+  const s = app.listen(normalizedPort, onListening.bind(null, normalizedPort));
+  s.on('error', err => {
+    if (err.code === 'EADDRINUSE') {
+      console.warn(`Port ${normalizedPort} in use, trying ${normalizedPort + 1}…`);
+      startServer(normalizedPort + 1);
+    } else {
+      throw err;
+    }
+  });
+  activeServer = s;
+  return s;
+}
+
+async function onListening(port) {
   console.log('\n╔════════════════════════════════════════════════════════════════╗');
   console.log('║                   STRIPE PAYMENT SERVER                        ║');
   console.log('╚════════════════════════════════════════════════════════════════╝\n');
   
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${port}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`Mode: ${process.env.STRIPE_SECRET_KEY?.startsWith('sk_test') ? 'TEST' : 'LIVE'}\n`);
+  console.log(`Customer store: ${process.env.CUSTOMER_STORE_PATH || path.join(__dirname, 'data', 'customer-accounts.json')}`);
   if (!process.env.SUPPORT_PORTAL_PASSWORD) {
     console.warn('Support login disabled until SUPPORT_PORTAL_PASSWORD is configured.');
   }
@@ -196,15 +302,21 @@ const server = app.listen(PORT, async () => {
   console.log('  GET    /api/billing/payments          - Payment history');
   console.log('  POST   /api/billing/refund            - Refund (admin only)');
   console.log('  POST   /api/billing/webhook           - Stripe webhook\n');
-});
+}
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
   console.log('SIGTERM received, shutting down gracefully...');
-  server.close(() => {
-    console.log('Server closed');
+  if (activeServer) {
+    activeServer.close(() => {
+      console.log('Server closed');
+      process.exit(0);
+    });
+  } else {
     process.exit(0);
-  });
+  }
 });
+
+startServer(PORT);
 
 module.exports = app;

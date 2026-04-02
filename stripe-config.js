@@ -18,18 +18,12 @@ const stripe = require('stripe')(
 );
 
 /**
- * Get Stripe configuration for billing
+ * Get Stripe configuration for billing — never includes secret keys.
  */
 const getStripeConfig = () => ({
-  secretKey: process.env.NODE_ENV === 'production' 
-    ? process.env.STRIPE_SECRET_KEY_LIVE 
-    : process.env.STRIPE_SECRET_KEY,
   publicKey: process.env.NODE_ENV === 'production' 
     ? process.env.STRIPE_PUBLIC_KEY_LIVE 
     : process.env.STRIPE_PUBLIC_KEY,
-  webhookSecret: process.env.NODE_ENV === 'production' 
-    ? process.env.STRIPE_WEBHOOK_SECRET_LIVE 
-    : process.env.STRIPE_WEBHOOK_SECRET,
   mode: process.env.NODE_ENV === 'production' ? 'live' : 'test',
   apiVersion: process.env.STRIPE_API_VERSION || '2023-10-16'
 });

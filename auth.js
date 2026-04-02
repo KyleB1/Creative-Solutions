@@ -1,28 +1,10 @@
 // auth.js - shared auth helpers backed by the server-side session API
 (function () {
-  // Resolve the API base URL so this file works whether the page is served
-  // from the Node backend (localhost / Render) OR from GitHub Pages.
-  // Set window.CWS_API_BASE before loading this script to override.
-  const API_BASE = (function () {
-    if (typeof window !== 'undefined' && window.CWS_API_BASE) {
-      return window.CWS_API_BASE.replace(/\/$/, '');
-    }
-    const hostname = (typeof location !== 'undefined' && location.hostname) || '';
-    // Running on GitHub Pages — point at the hosted Render backend.
-    if (hostname === 'kyleb1.github.io') {
-      return 'https://creative-solutions.onrender.com';
-    }
-    // Running from the Node server or localhost — use relative paths.
-    return '';
-  }());
-
-  const CROSS_ORIGIN = API_BASE !== '';
-
   const SUPPORT_ROLES = Object.freeze({
     'support@creativewebsolutions.com': 'Support Agent',
     'helpdesk@creativewebsolutions.com': 'Support Agent',
-    'kyle.creativesolutions@gmail.com': 'Support Administrator',
-    'kyle.creativesolutins@gmail.com': 'System Administrator'
+    'admin@creativewebsolutions.com': 'System Administrator',
+    'kyle.creativesolutions@gmail.com': 'System Administrator'
   });
 
   const state = {
@@ -30,6 +12,67 @@
     loaded: false,
     loadingPromise: null
   };
+
+  const DEFAULT_HOSTED_API_BASE = 'https://creative-solutions.onrender.com';
+  const DEFAULT_LOCAL_API_BASE = 'http://localhost:3000';
+
+  function isLocalHostName(hostname) {
+    const normalized = String(hostname || '').toLowerCase();
+    return normalized === 'localhost' || normalized === '127.0.0.1';
+  }
+
+  function getApiBase() {
+    const explicitBase = typeof window !== 'undefined' ? window.CWS_API_BASE : '';
+    if (explicitBase) {
+      return String(explicitBase).replace(/\/+$/, '');
+    }
+
+    if (typeof window === 'undefined' || !window.location) {
+      return '';
+    }
+
+    const { protocol, hostname, port } = window.location;
+    const normalizedHost = String(hostname || '').toLowerCase();
+
+    if (normalizedHost === 'kyleb1.github.io') {
+      return DEFAULT_HOSTED_API_BASE;
+    }
+
+    if (protocol === 'file:') {
+      return DEFAULT_LOCAL_API_BASE;
+    }
+
+    if (normalizedHost.endsWith('.github.io')) {
+      return DEFAULT_HOSTED_API_BASE;
+    }
+
+    // When the site is opened from a local static server, route auth calls to
+    // the Node backend on port 3000 by default (server.js default).
+    if (isLocalHostName(normalizedHost) && port && port !== '3000') {
+      return `http://${normalizedHost}:3000`;
+    }
+
+    return '';
+  }
+
+  function getRequestCredentials() {
+    const base = getApiBase();
+    if (!base || typeof window === 'undefined' || !window.location) {
+      return 'same-origin';
+    }
+
+    try {
+      return new URL(base).origin === window.location.origin ? 'same-origin' : 'include';
+    } catch (_error) {
+      return 'include';
+    }
+  }
+
+  function buildApiUrl(path) {
+    const normalizedPath = String(path || '').startsWith('/') ? path : `/${path || ''}`;
+    const base = getApiBase();
+    return base ? `${base}${normalizedPath}` : normalizedPath;
+  }
 
   function safeParse(value, fallback) {
     try {
@@ -58,6 +101,55 @@
 
   function getSupportRoleForEmail(email) {
     return SUPPORT_ROLES[normalizeEmail(email)] || null;
+  }
+
+  function toAppUrl(path) {
+    const target = String(path || '').trim();
+    if (!target) return '';
+    if (/^(?:[a-z]+:)?\/\//i.test(target) || target.startsWith('#')) {
+      return target;
+    }
+
+    const normalizedPath = target.replace(/^\/+/, '');
+    if (typeof window === 'undefined' || !window.location) {
+      return normalizedPath;
+    }
+
+    if (window.location.protocol === 'file:' && window.CWS_API_BASE) {
+      const base = String(window.CWS_API_BASE).replace(/\/+$/, '');
+      return `${base}/${normalizedPath}`;
+    }
+
+    return normalizedPath;
+  }
+
+  function isSystemAdministrator(value) {
+    if (!value) return false;
+    if (typeof value === 'string') {
+      return value === 'System Administrator';
+    }
+
+    if (value.supportRole) {
+      return value.supportRole === 'System Administrator';
+    }
+
+    if (value.role === 'admin' || value.role === 'System Administrator') {
+      return true;
+    }
+
+    if (value.email) {
+      return getSupportRoleForEmail(value.email) === 'System Administrator';
+    }
+
+    return false;
+  }
+
+  function getSupportLandingPage(value) {
+    return isSystemAdministrator(value) ? 'system-admin.html' : 'support-portal.html';
+  }
+
+  function getSupportLandingUrl(value) {
+    return toAppUrl(getSupportLandingPage(value));
   }
 
   function getSupportOnlineAgents() {
@@ -101,9 +193,7 @@
 
   async function apiRequest(path, options) {
     const requestOptions = Object.assign({
-      // Use 'include' for cross-origin (GitHub Pages → Render) so the
-      // session cookie is sent and received correctly.
-      credentials: CROSS_ORIGIN ? 'include' : 'same-origin',
+      credentials: getRequestCredentials(),
       headers: {
         Accept: 'application/json'
       }
@@ -113,10 +203,50 @@
       requestOptions.headers['Content-Type'] = 'application/json';
     }
 
-    // Prepend API_BASE so GitHub Pages requests go to the Render backend.
-    const url = API_BASE + path;
-    const response = await fetch(url, requestOptions);
-    const payload = response.status === 204 ? null : await response.json().catch(() => ({}));
+    const requestUrl = buildApiUrl(path);
+    const alternateUrl = (() => {
+      if (typeof window === 'undefined' || !window.location) return null;
+      const host = String(window.location.hostname || '').toLowerCase();
+      if (!isLocalHostName(host)) return null;
+      if (requestUrl.includes(':3000/')) return requestUrl.replace(':3000/', ':3100/');
+      if (requestUrl.includes(':3100/')) return requestUrl.replace(':3100/', ':3000/');
+      return null;
+    })();
+
+    let response;
+    try {
+      response = await fetch(requestUrl, requestOptions);
+    } catch (_networkError) {
+      if (alternateUrl) {
+        try {
+          response = await fetch(alternateUrl, requestOptions);
+        } catch (_alternateError) {
+          const configuredBase = getApiBase();
+          const target = configuredBase || 'same-origin backend';
+          throw new Error(`Unable to reach the login server (${target}). If you are running the site locally, start the Node backend on port 3000 or set window.CWS_API_BASE to your API URL.`);
+        }
+      } else {
+        const configuredBase = getApiBase();
+        const target = configuredBase || 'same-origin backend';
+        throw new Error(`Unable to reach the login server (${target}). If you are running the site locally, start the Node backend on port 3000 or set window.CWS_API_BASE to your API URL.`);
+      }
+    }
+    let payload = response.status === 204 ? null : await response.json().catch(() => ({}));
+
+    // If the first local port responds but is not the auth server (e.g. 404),
+    // try the alternate local port before surfacing a connectivity/banner error.
+    if (!response.ok && alternateUrl) {
+      try {
+        const fallbackResponse = await fetch(alternateUrl, requestOptions);
+        const fallbackPayload = fallbackResponse.status === 204 ? null : await fallbackResponse.json().catch(() => ({}));
+        if (fallbackResponse.ok) {
+          response = fallbackResponse;
+          payload = fallbackPayload;
+        }
+      } catch (_fallbackError) {
+        // Keep original response/payload and error handling below.
+      }
+    }
 
     if (!response.ok) {
       const error = new Error((payload && payload.error) || 'Request failed');
@@ -219,7 +349,7 @@
     const customer = await init();
     if (!customer || customer.role !== 'customer') {
       clearCustomer();
-      if (redirectTo) window.location.href = redirectTo;
+      if (redirectTo) window.location.href = toAppUrl(redirectTo);
       return null;
     }
     return customer;
@@ -229,7 +359,7 @@
     const support = await init();
     if (!isSupportSession(support)) {
       clearSupport();
-      if (redirectTo) window.location.href = redirectTo;
+      if (redirectTo) window.location.href = toAppUrl(redirectTo);
       return null;
     }
     addOnlineAgent(support.email);
@@ -239,7 +369,7 @@
   async function redirectIfCustomer(redirectTo) {
     const user = await init();
     if (user && user.role === 'customer' && redirectTo) {
-      window.location.href = redirectTo;
+      window.location.href = toAppUrl(redirectTo);
       return true;
     }
     return false;
@@ -248,7 +378,7 @@
   async function redirectIfSupport(redirectTo) {
     const user = await init();
     if (isSupportSession(user) && redirectTo) {
-      window.location.href = redirectTo;
+      window.location.href = toAppUrl(redirectTo);
       return true;
     }
     return false;
@@ -264,8 +394,10 @@
       })
     });
     clearSupport();
-    setCustomer(result && result.user);
-    return result && result.user;
+    if (result && result.user) {
+      setCustomer(result.user);
+    }
+    return result;
   }
 
   async function loginCustomer(payload) {
@@ -307,6 +439,27 @@
     return result && result.user;
   }
 
+  async function requestPasswordReset(email) {
+    return apiRequest('/api/auth/password-reset/request', {
+      method: 'POST',
+      body: JSON.stringify({ email: normalizeEmail(email) })
+    });
+  }
+
+  async function confirmPasswordReset(token, password) {
+    return apiRequest('/api/auth/password-reset/confirm', {
+      method: 'POST',
+      body: JSON.stringify({ token: String(token || '').trim(), password })
+    });
+  }
+
+  async function verifyEmail(token) {
+    return apiRequest('/api/auth/verify-email', {
+      method: 'POST',
+      body: JSON.stringify({ token: String(token || '').trim() })
+    });
+  }
+
   async function logout(redirectTo) {
     const support = getSupport();
     try {
@@ -321,7 +474,7 @@
     }
     setCurrentUser(null);
     if (redirectTo) {
-      window.location.href = redirectTo;
+      window.location.href = toAppUrl(redirectTo);
     }
   }
 
@@ -334,11 +487,16 @@
   }
 
   window.SiteAuth = {
-    SUPPORT_ROLES,
     safeParse,
     normalizeEmail,
+    buildApiUrl,
+    toAppUrl,
+    apiRequest,
     getAuthorizedSupportEmails,
     getSupportRoleForEmail,
+    isSystemAdministrator,
+    getSupportLandingPage,
+    getSupportLandingUrl,
     getSupportOnlineAgents,
     saveSupportOnlineAgents,
     addOnlineAgent,
@@ -361,6 +519,9 @@
     loginCustomer,
     loginSupport,
     updateCustomerProfile,
+    requestPasswordReset,
+    confirmPasswordReset,
+    verifyEmail,
     logoutCustomer,
     logoutSupport
   };

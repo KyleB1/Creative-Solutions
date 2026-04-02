@@ -378,7 +378,7 @@
             --bg-dark: #0f172a;
             --panel-dark: #111827;
             --text-dark: #e2e8f0;
-            --muted-dark: #94a3b8;
+            --muted-dark: #c2cffd;
             --border-dark: #334155;
         }
 
@@ -409,13 +409,17 @@
         body.dark-mode .template p,
         body.dark-mode .demo-card p,
         body.dark-mode .nav-links a {
-            color: #cbd5e1;
+            color: #c2cffd;
+        }
+
+        body.dark-mode input[type="text"]::placeholder {
+            color: #b8c7ea;
         }
 
         body.dark-mode .nav-links a.active,
         body.dark-mode .device-tabs button.active {
             background: #1e293b;
-            color: #bfdbfe;
+            color: #cbd5ff;
         }
 
         body.dark-mode .topbar-actions .btn {
@@ -436,7 +440,7 @@
 
         body.dark-mode .demo-chip {
             background: #1e293b;
-            color: #bfdbfe;
+            color: #cbd5ff;
         }
 
         @media (max-width: 980px) {

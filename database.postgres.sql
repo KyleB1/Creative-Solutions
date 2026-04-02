@@ -114,6 +114,7 @@ CREATE TABLE audit_logs (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+
 -- View for customer-specific portal summary.
 CREATE VIEW customer_portal_summary AS
 SELECT

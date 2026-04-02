@@ -1,20 +1,41 @@
 {
   "customers": {
-    "authtest+1775031209@example.com": {
+    "test@test.com": {
       "role": "customer",
-      "plan": "Starter plan",
+      "plan": "Growth plan",
       "renewal": "May 18",
       "activeProjects": 8,
       "newLeads": 24,
       "supportTickets": 3,
       "monthlySpend": "$2.4K",
-      "notifications": true,
-      "customerId": "c29cc128-578e-4449-9046-78e73052bc3f",
-      "name": "Auth Test Updated",
-      "email": "authtest+1775031209@example.com",
-      "passwordSalt": "71cd03617b89a88db0e094ea683587bd",
-      "passwordHash": "bca229656ca1c4c0daf0dc60469b9ff08b071036967804f1c8b5072075f7509a70d7cee6f7e63ed3baf2290b100642bc386b7dff40a9671701ef988510859f62",
-      "createdAt": "2026-04-01T08:13:29.376Z"
+      "notifications": false,
+      "customerId": "a25d7278-08b8-4f07-806c-12e90619901c",
+      "name": "Test User",
+      "email": "test@test.com",
+      "passwordSalt": "adc7ad1377e2171a54d42cc7377af26e",
+      "passwordHash": "820f45ab4bfcedf9b7e180072e3fc75afae229437a44b2e18899e4ab5d891a4dbb5f641ee86d68cd2d8c0bbeca6e102477ce3eedffe66360665237993298e2ce",
+      "createdAt": "2026-04-02T02:10:03.424Z"
+    },
+    "permtest_1775123769048@example.com": {
+      "role": "customer",
+      "plan": "Growth plan",
+      "renewal": "May 18",
+      "activeProjects": 8,
+      "newLeads": 24,
+      "supportTickets": 3,
+      "monthlySpend": "$2.4K",
+      "notifications": false,
+      "customerId": "56c11000-fba9-4141-94c5-ecd4e8f44c38",
+      "name": "Perm Test",
+      "email": "permtest_1775123769048@example.com",
+      "passwordSalt": "1eaedec5c0de50e35f62d3bcea412495",
+      "passwordHash": "5c598c3b766df0ea8291bd585b908524a49e2910a51adf20f0a32780735fcbd646603447b9b3b08c8524c804805d09151362025f9ab5d85e040dc468f9178563",
+      "emailVerified": true,
+      "emailVerificationTokenHash": null,
+      "emailVerificationExpiresAt": null,
+      "passwordResetTokenHash": null,
+      "passwordResetExpiresAt": null,
+      "createdAt": "2026-04-02T09:56:09.137Z"
     }
   }
 }

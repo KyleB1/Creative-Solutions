@@ -14,6 +14,9 @@
     </style>
 </head>
 <body>
+    <div class="container pt-4">
+        <img src="creative_solutions_logo.png" alt="Creative Web Solutions logo" style="max-width: 300px; height: auto; display: block;" />
+    </div>
     <main class="site-main">
         <section id="about" class="hero-section pt-5">
             <div class="container py-5">
@@ -148,7 +151,7 @@
                 <div class="row align-items-center">
                     <div class="col-lg-6 mb-4 mb-lg-0">
                         <h2>Contact Us</h2>
-                        <p class="text-muted">Ready to talk about your next project? Send us a message and we’ll reply within one business day.</p>
+                        <p class="text-muted">Ready to talk about your next project? Send us a message and we’ll reply within 24 to 48 hours.</p>
                         <ul class="list-unstyled text-muted">
                             <li><strong>Email:</strong> hello@creativewebsolutions.com</li>
                             <li><strong>Phone:</strong> (555) 123-4567</li>
@@ -156,7 +159,7 @@
                         </ul>
                     </div>
                     <div class="col-lg-6">
-                        <form class="contact-form p-4 rounded-4 shadow-sm bg-white">
+                        <form id="contactForm" class="contact-form p-4 rounded-4 shadow-sm bg-white" novalidate>
                             <div class="mb-3">
                                 <label for="contactName" class="form-label">Name</label>
                                 <input type="text" class="form-control" id="contactName" placeholder="Your name">
@@ -169,7 +172,8 @@
                                 <label for="contactMessage" class="form-label">Message</label>
                                 <textarea class="form-control" id="contactMessage" rows="4" placeholder="Tell us about your project"></textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary">Send Message</button>
+                            <button id="contactSubmitBtn" type="submit" class="btn btn-primary">Send Message</button>
+                            <p id="contactStatus" aria-live="polite" style="margin-top:0.75rem; font-weight:500; display:none;"></p>
                         </form>
                     </div>
                 </div>
@@ -185,5 +189,48 @@
 
     <script defer src="auth.js"></script>
     <script defer src="header.js"></script>
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const btn = document.getElementById('contactSubmitBtn');
+            const statusEl = document.getElementById('contactStatus');
+            const name = document.getElementById('contactName').value.trim();
+            const email = document.getElementById('contactEmail').value.trim();
+            const message = document.getElementById('contactMessage').value.trim();
+
+            if (!name || !email || !message) {
+                statusEl.textContent = 'Please fill in all fields.';
+                statusEl.style.color = '#dc2626';
+                statusEl.style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+            statusEl.style.display = 'none';
+
+            try {
+                const apiBase = (typeof SiteAuth !== 'undefined') ? SiteAuth.buildApiUrl('/api/contact') : '/api/contact';
+                const res = await fetch(apiBase, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, message })
+                });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error(data.error || 'Something went wrong.');
+                statusEl.textContent = data.message || 'Message sent! We will be in touch soon.';
+                statusEl.style.color = '#16a34a';
+                statusEl.style.display = 'block';
+                event.target.reset();
+            } catch (err) {
+                statusEl.textContent = err.message || 'Unable to send your message. Please try again.';
+                statusEl.style.color = '#dc2626';
+                statusEl.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Send Message';
+            }
+        });
+    </script>
 </body>
 </html>

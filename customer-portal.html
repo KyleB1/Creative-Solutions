@@ -305,6 +305,59 @@
       transform: translateY(-1px);
     }
 
+    .support-request-card {
+      display: grid;
+      gap: 0.9rem;
+      margin-bottom: 1rem;
+      padding: 1.25rem;
+      border-radius: 22px;
+      background: var(--surface-alt);
+      border: 1px solid rgba(229, 231, 235, 0.8);
+    }
+
+    .support-request-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .support-request-card input,
+    .support-request-card select,
+    .support-request-card textarea {
+      width: 100%;
+      padding: 0.9rem;
+      border-radius: 14px;
+      border: 1px solid #d1d5db;
+      font: inherit;
+      background: #ffffff;
+      color: #111827;
+    }
+
+    .support-request-card textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .support-request-card input:focus,
+    .support-request-card select:focus,
+    .support-request-card textarea:focus {
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12);
+      border-color: #7c3aed;
+    }
+
+    .support-request-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .support-request-status {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+
     .theme-toggle,
     .logout-button {
       padding: 0.75rem 1rem;
@@ -337,7 +390,11 @@
 
     body.dark-mode {
       background: #090b17;
-      color: #e2e8f0;
+      color: #f1f5f9;
+      --surface: #111827;
+      --surface-alt: #182235;
+      --border: #334155;
+      --text-muted: #c2cffd;
     }
 
     body.dark-mode .topbar,
@@ -374,12 +431,44 @@
       border-color: #374151;
     }
 
+    body.dark-mode .project-card,
+    body.dark-mode .invoice-card,
+    body.dark-mode .message-card,
+    body.dark-mode .setting-card,
+    body.dark-mode .support-request-card,
+    body.dark-mode .activity-row,
+    body.dark-mode .task-row,
+    body.dark-mode .status-card .card {
+      background: #182235;
+      border-color: #334155;
+    }
+
+    body.dark-mode .payment-card {
+      background: #182235 !important;
+      border-color: #334155 !important;
+      color: #e5e7eb !important;
+    }
+
+    body.dark-mode .payment-card input,
+    body.dark-mode .setting-card input,
+    body.dark-mode .setting-card select,
+    body.dark-mode .support-request-card input,
+    body.dark-mode .support-request-card select,
+    body.dark-mode .support-request-card textarea {
+      background: #0f172a !important;
+      color: #e5e7eb !important;
+      border-color: #334155 !important;
+    }
+
+    body.dark-mode .payment-card input::placeholder,
+    body.dark-mode .setting-card input::placeholder {
+      color: #b8c7ea !important;
+    }
+
     body.dark-mode h1,
     body.dark-mode h2,
     body.dark-mode h3,
     body.dark-mode p,
-    body.dark-mode span,
-    body.dark-mode a,
     body.dark-mode label,
     body.dark-mode input,
     body.dark-mode button,
@@ -390,7 +479,7 @@
 
     body.dark-mode .badge.success { background: #14532d; color: #d1fae5; }
     body.dark-mode .badge.warning { background: #78350f; color: #fef3c7; }
-    body.dark-mode .badge.info { background: #4338ca; color: #eef2ff; }
+    body.dark-mode .badge.info { background: #4338ca; color: #cbd5ff; }
 
     body.dark-mode .footer-panel {
       display: flex;
@@ -398,7 +487,7 @@
       justify-content: space-between;
       gap: 1rem;
       padding-top: 0.5rem;
-      color: #94a3b8;
+      color: #c2cffd;
       font-size: 0.95rem;
     }
 
@@ -577,7 +666,34 @@
         </section>
 
         <section class="content-section panel" id="messagesSection">
-          <h2>Messages</h2>
+          <h2>Support desk</h2>
+          <div class="support-request-card">
+            <strong>Open a new support ticket</strong>
+            <span>Send a new issue directly into the support queue and track it from this page.</span>
+            <div class="support-request-grid">
+              <input id="ticketSubjectInput" type="text" placeholder="Short issue summary">
+              <select id="ticketProductSelect">
+                <option value="Client portal">Client portal</option>
+                <option value="Billing dashboard">Billing dashboard</option>
+                <option value="Website CMS">Website CMS</option>
+                <option value="Contact form">Contact form</option>
+                <option value="General support">General support</option>
+              </select>
+            </div>
+            <div class="support-request-grid">
+              <select id="ticketPrioritySelect">
+                <option value="Low">Low priority</option>
+                <option value="Medium" selected>Medium priority</option>
+                <option value="High">High priority</option>
+              </select>
+              <div></div>
+            </div>
+            <textarea id="ticketDescriptionInput" placeholder="Describe the issue, what you expected, and anything support should know."></textarea>
+            <div class="support-request-actions">
+              <button id="createTicketBtn" style="padding:0.95rem 1.25rem; border:none; border-radius:18px; background:#7c3aed; color:#fff; font-weight:700; cursor:pointer;">Create ticket</button>
+              <span id="ticketRequestStatus" class="support-request-status">No new ticket submitted in this session.</span>
+            </div>
+          </div>
           <div class="message-list" id="messageList"></div>
         </section>
 
@@ -585,7 +701,7 @@
           <h2>Settings</h2>
           <div class="setting-card">
             <strong>Account details</strong>
-            <span id="settingsDetails">Email: <span id="settingsEmail"></span> • Plan: <span id="settingsPlan"></span></span>
+            <span id="settingsDetails">Email: <span id="settingsEmail"></span> ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Plan: <span id="settingsPlan"></span></span>
           </div>
           <div class="setting-card">
             <strong>Manage preferences</strong>
@@ -614,7 +730,13 @@
       </main>
     </div>
   </div>
+  <script>
+    if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      window.CWS_API_BASE = 'http://localhost:3100';
+    }
+  </script>
   <script src="auth.js"></script>
+  <script src="billing-frontend.js"></script>
   <script defer src="header.js"></script>
   <script>
     (async () => {
@@ -636,18 +758,24 @@
     const paymentStatusMsg = document.getElementById('paymentStatusMsg');
     const paymentHistoryList = document.getElementById('paymentHistoryList');
     const settingsStatusMsg = document.getElementById('settingsStatusMsg');
+    const ticketSubjectInput = document.getElementById('ticketSubjectInput');
+    const ticketProductSelect = document.getElementById('ticketProductSelect');
+    const ticketPrioritySelect = document.getElementById('ticketPrioritySelect');
+    const ticketDescriptionInput = document.getElementById('ticketDescriptionInput');
+    const createTicketBtn = document.getElementById('createTicketBtn');
+    const ticketRequestStatus = document.getElementById('ticketRequestStatus');
 
-    const getStoredPayments = () => {
-      const stored = JSON.parse(localStorage.getItem('customerPayments') || '[]');
-      return Array.isArray(stored) ? stored : [];
-    };
+    let customerTickets = [];
 
-    const saveStoredPayments = (payments) => {
-      localStorage.setItem('customerPayments', JSON.stringify(payments));
-    };
+    let backendPayments = [];
 
-    const getCustomerPayments = () => {
-      return getStoredPayments().filter(payment => payment.customerEmail === customerData.email);
+    const loadPaymentHistory = async () => {
+      try {
+        const payload = await SiteAuth.apiRequest('/api/billing/payments?limit=20', { method: 'GET' });
+        backendPayments = Array.isArray(payload && payload.payments) ? payload.payments : [];
+      } catch (error) {
+        backendPayments = [];
+      }
     };
 
     const maskCardNumber = (value) => {
@@ -663,8 +791,19 @@
       return 'Card';
     };
 
+    const formatDate = (value) => {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value || 'ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â';
+      return date.toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    };
+
+    const loadCustomerTickets = async () => {
+      const payload = await SiteAuth.apiRequest('/api/auth/customer/tickets', { method: 'GET' });
+      customerTickets = Array.isArray(payload && payload.tickets) ? payload.tickets : [];
+    };
+
     const renderPaymentHistory = () => {
-      const payments = getCustomerPayments();
+      const payments = backendPayments;
       if (!payments.length) {
         paymentHistoryList.innerHTML = '<p style="margin:0; color:#6b7280;">No payment records yet.</p>';
         return;
@@ -672,15 +811,15 @@
       paymentHistoryList.innerHTML = '<h4 style="margin:0 0 0.75rem;">Payment history</h4>' + payments.map(payment => `
         <div style="padding:1rem; margin-bottom:0.75rem; border:1px solid #e5e7eb; border-radius:18px; background:#f8fafc;">
           <div style="display:flex; justify-content:space-between; gap:1rem; align-items:center;">
-            <strong>${payment.status}</strong>
-            <span>${payment.processedAt}</span>
+            <strong>${payment.status || 'Processed'}</strong>
+            <span>${formatDate(payment.date)}</span>
           </div>
-          <p style="margin:0.75rem 0 0; color:#4b5563;">${payment.method} • ${payment.maskedCard} • ${payment.currency} ${payment.amount.toFixed(2)}</p>
+          <p style="margin:0.75rem 0 0; color:#4b5563;">${payment.currency || 'USD'} ${Number(payment.amount || 0).toFixed(2)} ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ ${payment.id || 'Transaction'}</p>
         </div>`).join('');
     };
 
     const renderSavedPaymentMethod = () => {
-      const payments = getCustomerPayments();
+      const payments = backendPayments;
       const latest = payments[payments.length - 1];
       const paymentSection = document.getElementById('billingSection');
       const existingSummary = paymentSection.querySelector('.saved-payment-summary');
@@ -694,17 +833,11 @@
       summary.style.borderRadius = '18px';
       summary.style.background = '#f8fafc';
       summary.innerHTML = `
-        <strong style="display:block; margin-bottom:0.5rem;">Saved payment method</strong>
-        <span style="color:#6b7280;">${latest.method} ending ${latest.maskedCard.slice(-4)}</span><br />
-        <span style="color:#6b7280;">Expires ${latest.expiry}</span>
+        <strong style="display:block; margin-bottom:0.5rem;">Last payment</strong>
+        <span style="color:#6b7280;">${latest.currency || 'USD'} ${Number(latest.amount || 0).toFixed(2)}</span><br />
+        <span style="color:#6b7280;">Status: ${latest.status || 'Processed'}</span>
       `;
       paymentSection.insertBefore(summary, paymentSection.querySelector('.payment-card'));
-    };
-
-    const addPaymentRecord = (record) => {
-      const payments = getStoredPayments();
-      payments.push(record);
-      saveStoredPayments(payments);
     };
 
     const renderPaymentSummary = () => {
@@ -743,12 +876,6 @@
       { number: '#120', amount: '$2,340', due: 'Jun 15', status: 'Upcoming' }
     ];
 
-    const customerMessages = [
-      { from: 'Mason', subject: 'Strategy review call', time: '1h ago', status: 'Action needed' },
-      { from: 'Avery', subject: 'Design approval', time: 'Yesterday', status: 'Waiting' },
-      { from: 'Support Team', subject: 'Invoice details', time: '2 days ago', status: 'Answered' }
-    ];
-
     const showSection = (section) => {
       contentSections.forEach(sec => sec.classList.toggle('active', sec.id === `${section}Section`));
       navLinks.forEach(link => link.classList.toggle('active', link.dataset.section === section));
@@ -762,7 +889,7 @@
         card.className = 'project-card';
         card.innerHTML = `
           <strong>${project.title}</strong>
-          <span>${project.owner} • Due ${project.due}</span>
+          <span>${project.owner} ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Due ${project.due}</span>
           <span>Status: ${project.status}</span>
         `;
         list.appendChild(card);
@@ -777,7 +904,7 @@
         card.className = 'invoice-card';
         card.innerHTML = `
           <strong>Invoice ${invoice.number}</strong>
-          <span>${invoice.amount} • Due ${invoice.due}</span>
+          <span>${invoice.amount} ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Due ${invoice.due}</span>
           <span>Status: ${invoice.status}</span>
         `;
         list.appendChild(card);
@@ -787,21 +914,27 @@
     const renderMessages = () => {
       const list = document.getElementById('messageList');
       list.innerHTML = '';
-      customerMessages.forEach(message => {
+      customerTickets.forEach(message => {
         const card = document.createElement('div');
         card.className = 'message-card';
         card.innerHTML = `
-          <strong>${message.subject}</strong>
-          <span>From ${message.from} • ${message.time}</span>
-          <span>Status: ${message.status}</span>
+          <strong>${message.subject} (${message.id})</strong>
+          <span>${message.product} ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Updated ${formatDate(message.updatedAt)}</span>
+          <span>Status: ${message.status} ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Priority: ${message.priority}</span>
+          <span>${message.description}</span>
         `;
         list.appendChild(card);
       });
+      if (!customerTickets.length) {
+        list.innerHTML = '<div class="message-card"><strong>No support tickets yet</strong><span>Create your first ticket to contact support.</span></div>';
+      }
     };
 
     renderProjects();
     renderInvoices();
+    await loadCustomerTickets();
     renderMessages();
+    document.getElementById('supportTickets').textContent = customerTickets.length;
 
     navLinks.forEach(link => {
       link.addEventListener('click', (event) => {
@@ -828,6 +961,48 @@
     const logoutBtn = document.getElementById('logoutBtn');
     logoutBtn.addEventListener('click', async () => {
       await SiteAuth.logoutCustomer('login.html');
+    });
+
+    createTicketBtn.addEventListener('click', async () => {
+      const subject = ticketSubjectInput.value.trim();
+      const product = ticketProductSelect.value;
+      const priority = ticketPrioritySelect.value;
+      const description = ticketDescriptionInput.value.trim();
+
+      if (!subject || !description) {
+        ticketRequestStatus.textContent = 'Subject and description are required.';
+        ticketRequestStatus.style.color = '#dc2626';
+        return;
+      }
+
+      createTicketBtn.disabled = true;
+      createTicketBtn.textContent = 'Creating...';
+      try {
+        const payload = await SiteAuth.apiRequest('/api/auth/customer/tickets', {
+          method: 'POST',
+          body: JSON.stringify({ subject, product, priority, description })
+        });
+        if (payload && payload.ticket) {
+          customerTickets.unshift(payload.ticket);
+        }
+        if (payload && payload.user) {
+          Object.assign(customerData, payload.user);
+        }
+        document.getElementById('supportTickets').textContent = customerTickets.length;
+        ticketSubjectInput.value = '';
+        ticketDescriptionInput.value = '';
+        ticketPrioritySelect.value = 'Medium';
+        ticketProductSelect.value = 'Client portal';
+        ticketRequestStatus.textContent = 'Support ticket created successfully.';
+        ticketRequestStatus.style.color = '#16a34a';
+        renderMessages();
+      } catch (error) {
+        ticketRequestStatus.textContent = error.message || 'Unable to create a support ticket.';
+        ticketRequestStatus.style.color = '#dc2626';
+      } finally {
+        createTicketBtn.disabled = false;
+        createTicketBtn.textContent = 'Create ticket';
+      }
     });
 
     settingsSaveBtn.addEventListener('click', async () => {
@@ -882,26 +1057,38 @@
         return;
       }
 
-      const paymentRecord = {
-        customerEmail: customerData.email,
-        amount,
-        currency: 'USD',
-        method: getCardBrand(card),
-        maskedCard: maskCardNumber(card),
-        expiry,
-        status: 'Completed',
-        transactionReference: `TX-${Date.now()}`,
-        processedAt: new Date().toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
-      };
+      const paymentMethodId = /^4/.test(card)
+        ? 'pm_card_visa'
+        : /^5[1-5]/.test(card)
+          ? 'pm_card_mastercard'
+          : 'pm_card_visa';
 
-      addPaymentRecord(paymentRecord);
-      paymentStatusMsg.style.color = '#16a34a';
-      paymentStatusMsg.textContent = `Payment of $${amount.toFixed(2)} processed successfully.`;
-      paymentCard.value = '';
-      paymentCvv.value = '';
-      renderPaymentSummary();
+      paymentStatusMsg.style.color = '#475569';
+      paymentStatusMsg.textContent = 'Processing payment...';
+
+      SiteAuth.apiRequest('/api/billing/charge', {
+        method: 'POST',
+        body: JSON.stringify({
+          amount,
+          currency: 'USD',
+          customerId: customerData.customerId,
+          paymentMethodId,
+          description: `Portal payment by ${customerData.email}`
+        })
+      }).then(async () => {
+        paymentStatusMsg.style.color = '#16a34a';
+        paymentStatusMsg.textContent = `Payment of $${amount.toFixed(2)} processed successfully.`;
+        paymentCard.value = '';
+        paymentCvv.value = '';
+        await loadPaymentHistory();
+        renderPaymentSummary();
+      }).catch((error) => {
+        paymentStatusMsg.style.color = '#dc2626';
+        paymentStatusMsg.textContent = error.message || 'Payment could not be processed.';
+      });
     });
 
+    await loadPaymentHistory();
     renderPaymentSummary();
     applyTheme(storedTheme);
     })();

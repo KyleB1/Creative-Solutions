@@ -106,14 +106,25 @@
     .page-footnote { margin-top: 1.5rem; color: #6b7280; font-size: 0.95rem; }
     .page-footnote a { color: #7c3aed; text-decoration: none; font-weight: 600; }
     .error-message { margin-top: 1rem; color: #b91c1c; font-size: 0.95rem; font-weight: 600; }
+    .status-banner {
+      margin: 0 0 1rem;
+      padding: 0.75rem 0.9rem;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      line-height: 1.45;
+      border: 1px solid transparent;
+    }
+    .status-banner.info { background: #eef2ff; border-color: #cbd5ff; color: #3730a3; }
+    .status-banner.ok { background: #ecfdf3; border-color: #a7f3d0; color: #065f46; }
+    .status-banner.error { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
     body.dark-mode .error-message { color: #fecaca; }
 
     .theme-toggle { position: fixed; top: 1rem; right: 1rem; z-index: 1000; padding: 0.75rem 1rem; border-radius: 999px; border: 1px solid rgba(124, 58, 237, 0.25); background: #ffffff; color: #5b4b96; font-weight: 600; cursor: pointer; transition: background 0.2s ease, transform 0.2s ease; }
     .theme-toggle:hover { background: rgba(124, 58, 237, 0.08); }
 
-    body.dark-mode { background: #0b1222; color: #e2e8f0; }
+    body.dark-mode { background: #0b1222; color: #f1f5f9; }
     body.dark-mode .login-shell { background: #111827; border-color: #334155; }
-    body.dark-mode .info-panel,
+    body.dark-mode .info-panel { background: linear-gradient(180deg, #182235 0%, #111827 100%); }
     body.dark-mode .form-panel { background: #111827; }
     body.dark-mode label,
     body.dark-mode input,
@@ -121,12 +132,15 @@
     body.dark-mode .info-panel p,
     body.dark-mode .benefit span,
     body.dark-mode .back-links a { color: #e2e8f0; }
-    body.dark-mode input { background: #111827; border-color: #334155; }
+    body.dark-mode input { background: #0f172a; border-color: #334155; }
     body.dark-mode .primary-btn { background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%); }
     body.dark-mode .secondary-btn { background: #1f2937; border-color: rgba(148, 163, 184, 0.3); color: #e5e7eb; }
     body.dark-mode .theme-toggle { background: #1f2937; color: #e5e7eb; border-color: rgba(148, 163, 184, 0.45); }
     body.dark-mode .agent-count { background: #1f2937; border-color: #334155; color: #e5e7eb; }
-    body.dark-mode .agent-count span { color: #9ca3af; }
+    body.dark-mode .agent-count span { color: #c2cffd; }
+    body.dark-mode .status-banner.info { background: #1f2937; border-color: #374151; color: #cbd5ff; }
+    body.dark-mode .status-banner.ok { background: #052e24; border-color: #065f46; color: #a7f3d0; }
+    body.dark-mode .status-banner.error { background: #3f1d1d; border-color: #7f1d1d; color: #fecaca; }
 
     body.dark-mode a,
     body.dark-mode button,
@@ -136,7 +150,7 @@
     }
 
     body.dark-mode input::placeholder {
-      color: #94a3b8;
+      color: #b8c7ea;
     }
 
     @media (max-width: 860px) { .login-shell { grid-template-columns: 1fr; } }
@@ -168,11 +182,12 @@
 
     <main class="form-panel">
       <div class="back-links">
-        <a class="secondary-btn" href="index.htm">← Home</a>
-        <a class="secondary-btn" href="login.html">← Customer Login</a>
+        <a class="secondary-btn" href="index.htm">ÃƒÂ¢Ã¢â‚¬Â Ã‚Â Home</a>
+        <a class="secondary-btn" href="login.html">ÃƒÂ¢Ã¢â‚¬Â Ã‚Â Customer Login</a>
       </div>
       <h2>Agent sign in</h2>
       <p>Enter your staff credentials to access the support portal.</p>
+      <p id="apiStatusBanner" class="status-banner info" role="status" aria-live="polite">Checking login server availability...</p>
       <form id="supportLoginForm">
         <div class="form-group">
           <label for="supportEmail">Work email</label>
@@ -189,6 +204,11 @@
     </main>
   </div>
 
+  <script>
+    if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      window.CWS_API_BASE = 'http://localhost:3100';
+    }
+  </script>
   <script src="auth.js"></script>
   <script defer src="header.js"></script>
   <script>
@@ -208,10 +228,10 @@
     applyTheme(storedTheme);
 
     if (!SiteAuth.isSupportLoggedIn() && SiteAuth.isCustomerLoggedIn()) {
-      window.location.href = 'index.htm';
+      window.location.href = SiteAuth.toAppUrl('customer-portal.html');
     }
 
-    const authorizedSupportAgents = SiteAuth.SUPPORT_ROLES;
+    const authorizedSupportEmails = SiteAuth.getAuthorizedSupportEmails();
 
     const onlineCountEl = document.getElementById('onlineCount');
     const offlineCountEl = document.getElementById('offlineCount');
@@ -221,7 +241,7 @@
       if (!Array.isArray(stored)) return [];
       return [...new Set(stored
         .map(email => SiteAuth.normalizeEmail(email))
-        .filter(email => Object.prototype.hasOwnProperty.call(authorizedSupportAgents, email))
+        .filter(email => authorizedSupportEmails.includes(email))
       )];
     };
 
@@ -230,6 +250,8 @@
         [...new Set(emails.map(email => String(email).toLowerCase()))]
       ));
     };
+
+    const getSupportDestination = (role) => SiteAuth.getSupportLandingUrl(role);
 
     const addOnlineAgent = (email) => {
       const roster = getSupportOnlineAgents();
@@ -242,23 +264,48 @@
 
     const updateAgentCounts = () => {
       const online = getSupportOnlineAgents().length;
-      const totalAgents = Object.keys(authorizedSupportAgents).length;
+      const totalAgents = authorizedSupportEmails.length;
       onlineCountEl.textContent = online;
       offlineCountEl.textContent = Math.max(totalAgents - online, 0);
     };
 
     const loginError = document.getElementById('loginError');
+    const apiStatusBanner = document.getElementById('apiStatusBanner');
     updateAgentCounts();
+
+    const setBannerState = (state, message) => {
+      apiStatusBanner.classList.remove('info', 'ok', 'error');
+      apiStatusBanner.classList.add(state);
+      apiStatusBanner.textContent = message;
+    };
+
+    const checkApiConnectivity = async () => {
+      setBannerState('info', 'Checking login server availability...');
+
+      const timeoutMs = 6500;
+      const timeoutPromise = new Promise((_, reject) => {
+        const timer = setTimeout(() => {
+          clearTimeout(timer);
+          reject(new Error('timeout'));
+        }, timeoutMs);
+      });
+
+      try {
+        await Promise.race([
+          SiteAuth.hasRegisteredAccounts(),
+          timeoutPromise
+        ]);
+        setBannerState('ok', 'Login server is online. You can sign in now.');
+      } catch (_error) {
+        setBannerState('error', 'Login server is unreachable right now. If you are testing locally, start the Node backend, or configure window.CWS_API_BASE to your API URL.');
+      }
+    };
+
     const supportLoginForm = document.getElementById('supportLoginForm');
     supportLoginForm.addEventListener('submit', async (event) => {
       event.preventDefault();
       const email = SiteAuth.normalizeEmail(document.getElementById('supportEmail').value);
       const password = document.getElementById('supportPassword').value.trim();
-      const role = SiteAuth.getSupportRoleForEmail(email);
-      if (!role) {
-        loginError.textContent = 'Access denied. This account does not have support portal permissions.';
-        return;
-      }
       if (!password) {
         loginError.textContent = 'Please enter your password.';
         return;
@@ -266,16 +313,23 @@
 
       try {
         loginError.textContent = '';
-        await SiteAuth.loginSupport({ email, password });
-        addOnlineAgent(email);
-        window.location.href = 'support-portal.html';
+        const supportUser = await SiteAuth.loginSupport({ email, password });
+        if (supportUser && supportUser.email) {
+          addOnlineAgent(supportUser.email);
+        }
+        window.location.href = getSupportDestination((supportUser && supportUser.supportRole) || 'Support Agent');
       } catch (error) {
         loginError.textContent = error.message || 'Unable to access the support portal.';
       }
     });
 
     (async () => {
-      await SiteAuth.redirectIfSupport('support-portal.html');
+      await checkApiConnectivity();
+      await SiteAuth.init();
+      const activeSupport = SiteAuth.getSupport();
+      if (activeSupport) {
+        window.location.href = getSupportDestination(activeSupport.role);
+      }
     })();
   </script>
 </body>

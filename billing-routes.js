@@ -63,32 +63,48 @@ function verifyJwtClaims(token) {
 }
 
 /**
- * Middleware: Verify customer authentication
+ * Middleware: Verify customer authentication.
+ *
+ * Accepted paths (in order):
+ *  1. A cryptographically verified HS256 JWT (requires BILLING_JWT_SECRET env var)
+ *  2. An active server-side session cookie issued by auth-routes.js
+ *
+ * Request body / query `customerId` fields are NEVER trusted as sole proof of
+ * identity — they are only used to detect a cross-customer mismatch.
  */
 const requireAuth = (req, res, next) => {
+  // --- Path 1: Verified JWT ---
   const authHeader = req.get('Authorization') || '';
-  const token = authHeader.replace('Bearer ', '');
+  const token = authHeader.replace(/^Bearer\s+/i, '').trim();
 
-  if (!token) {
-    return res.status(401).json({ error: 'Authorization required' });
+  if (token) {
+    const verified = verifyJwtClaims(token);
+    if (verified && typeof verified.sub === 'string') {
+      const requestCustomerId = req.body.customerId || req.query.customerId;
+      if (requestCustomerId && requestCustomerId !== verified.sub) {
+        return res.status(403).json({ error: 'Customer mismatch for authenticated session' });
+      }
+      req.customerId = verified.sub;
+      req.authClaims = verified;
+      return next();
+    }
+    // Token present but not verifiable — reject rather than fall through
+    return res.status(401).json({ error: 'Invalid or expired authorization token' });
   }
 
-  const claims = parseJwtClaims(token);
-  const tokenCustomerId = claims && typeof claims.sub === 'string' ? claims.sub : null;
-  const requestCustomerId = req.body.customerId || req.query.customerId || req.get('X-Customer-Id');
-
-  if (tokenCustomerId && requestCustomerId && tokenCustomerId !== requestCustomerId) {
-    return res.status(403).json({ error: 'Customer mismatch for authenticated session' });
+  // --- Path 2: Active server-side session cookie ---
+  const session = getActiveSession(req);
+  if (session && session.user && session.user.customerId) {
+    const requestCustomerId = req.body.customerId || req.query.customerId;
+    if (requestCustomerId && requestCustomerId !== session.user.customerId) {
+      return res.status(403).json({ error: 'Customer mismatch for authenticated session' });
+    }
+    req.customerId = session.user.customerId;
+    req.authClaims = { sub: session.user.customerId, role: session.user.role };
+    return next();
   }
 
-  req.customerId = tokenCustomerId || requestCustomerId;
-  req.authClaims = claims || null;
-  
-  if (!req.customerId) {
-    return res.status(401).json({ error: 'Customer ID required' });
-  }
-
-  next();
+  return res.status(401).json({ error: 'Authorization required' });
 };
 
 /**
