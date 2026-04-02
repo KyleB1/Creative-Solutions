@@ -306,8 +306,10 @@
       })
     });
     clearSupport();
-    setCustomer(result && result.user);
-    return result && result.user;
+    if (result && result.user) {
+      setCustomer(result.user);
+    }
+    return result;
   }
 
   async function loginCustomer(payload) {
@@ -349,6 +351,27 @@
     return result && result.user;
   }
 
+  async function requestPasswordReset(email) {
+    return apiRequest('/api/auth/password-reset/request', {
+      method: 'POST',
+      body: JSON.stringify({ email: normalizeEmail(email) })
+    });
+  }
+
+  async function confirmPasswordReset(token, password) {
+    return apiRequest('/api/auth/password-reset/confirm', {
+      method: 'POST',
+      body: JSON.stringify({ token: String(token || '').trim(), password })
+    });
+  }
+
+  async function verifyEmail(token) {
+    return apiRequest('/api/auth/verify-email', {
+      method: 'POST',
+      body: JSON.stringify({ token: String(token || '').trim() })
+    });
+  }
+
   async function logout(redirectTo) {
     const support = getSupport();
     try {
@@ -376,7 +399,6 @@
   }
 
   window.SiteAuth = {
-    SUPPORT_ROLES,
     safeParse,
     normalizeEmail,
     buildApiUrl,
@@ -405,6 +427,9 @@
     loginCustomer,
     loginSupport,
     updateCustomerProfile,
+    requestPasswordReset,
+    confirmPasswordReset,
+    verifyEmail,
     logoutCustomer,
     logoutSupport
   };

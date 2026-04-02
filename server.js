@@ -85,8 +85,9 @@ app.use(helmet({
   contentSecurityPolicy: {
     useDefaults: true,
     directives: {
-      // Existing pages rely on inline scripts for auth/session wiring.
-      scriptSrc: ["'self'", "'unsafe-inline'"],
+      // TODO: migrate all page inline <script> blocks to external files, then
+      // remove 'unsafe-inline' from scriptSrc to complete the CSP hardening.
+      scriptSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net'],
       styleSrc: ["'self'", 'https:', "'unsafe-inline'"]
     }
   }
@@ -113,6 +114,14 @@ const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
   message: { error: 'Too many authentication attempts, please try again later.' },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+const contactLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5,
+  message: { error: 'Too many contact submissions, please try again later.' },
   standardHeaders: true,
   legacyHeaders: false
 });
@@ -151,6 +160,7 @@ app.get('/health', (req, res) => {
 // API routes
 const authRoutes = require('./auth-routes');
 const billingRoutes = require('./billing-routes');
+const contactRoutes = require('./contact-routes');
 
 // Rate-limit only the mutating auth endpoints.
 // Do NOT apply to GET /api/auth/session or GET /api/auth/meta;
@@ -160,6 +170,7 @@ app.use('/api/auth/signup', authLimiter);
 app.use('/api/auth/support-login', authLimiter);
 app.use('/api/auth', authRoutes);
 app.use('/api/billing', paymentLimiter, billingRoutes);
+app.use('/api/contact', contactLimiter, contactRoutes);
 
 // Static files (if serving frontend from same server)
 app.use((req, res, next) => {
@@ -176,7 +187,8 @@ app.use((req, res, next) => {
     'billing-backend.js',
     'stripe-config.js',
     'package.json',
-    '.env'
+    '.env',
+    'contact-routes.js',
   ]);
   const blockedExtensions = new Set(['.sql', '.md', '.sh', '.cjs']);
 
@@ -199,21 +211,15 @@ app.use(express.static(path.join(__dirname), {
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({
-    error: 'Not found',
-    path: req.path,
-    method: req.method
-  });
+  res.status(404).json({ error: 'Not found' });
 });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Server error:', err);
-  
   res.status(err.status || 500).json({
-    error: err.message || 'Internal server error',
-    timestamp: new Date().toISOString(),
-    path: req.path
+    error: err.status ? (err.message || 'Request failed') : 'Internal server error',
+    timestamp: new Date().toISOString()
   });
 });
 

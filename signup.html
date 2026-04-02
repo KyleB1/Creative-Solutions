@@ -216,12 +216,26 @@
             confirmPasswordError.textContent = '';
 
             try {
-                await SiteAuth.signupCustomer({ name, email, password });
+                const signupResult = await SiteAuth.signupCustomer({ name, email, password });
                 message.className = 'message success';
-                message.textContent = 'Account created! Redirecting to your portal…';
+                message.textContent = signupResult && signupResult.message
+                    ? signupResult.message
+                    : 'Account created. Redirecting to your portal...';
                 signupForm.reset();
                 updateStrengthBar('');
-                setTimeout(() => { window.location.href = 'customer-portal.html'; }, 900);
+
+                setTimeout(() => {
+                    if (signupResult && signupResult.requiresEmailVerification) {
+                        const params = new URLSearchParams();
+                        if (signupResult.verificationToken) {
+                            params.set('token', signupResult.verificationToken);
+                        }
+                        const suffix = params.toString();
+                        window.location.href = suffix ? `verify-email.html?${suffix}` : 'verify-email.html';
+                        return;
+                    }
+                    window.location.href = 'customer-portal.html';
+                }, 900);
             } catch (error) {
                 message.className = 'message error';
                 message.textContent = error.message || 'Unable to create your account right now.';

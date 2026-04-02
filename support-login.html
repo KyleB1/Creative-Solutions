@@ -226,7 +226,7 @@
       window.location.href = 'index.htm';
     }
 
-    const authorizedSupportAgents = SiteAuth.SUPPORT_ROLES;
+    const authorizedSupportEmails = SiteAuth.getAuthorizedSupportEmails();
 
     const onlineCountEl = document.getElementById('onlineCount');
     const offlineCountEl = document.getElementById('offlineCount');
@@ -236,7 +236,7 @@
       if (!Array.isArray(stored)) return [];
       return [...new Set(stored
         .map(email => SiteAuth.normalizeEmail(email))
-        .filter(email => Object.prototype.hasOwnProperty.call(authorizedSupportAgents, email))
+        .filter(email => authorizedSupportEmails.includes(email))
       )];
     };
 
@@ -259,7 +259,7 @@
 
     const updateAgentCounts = () => {
       const online = getSupportOnlineAgents().length;
-      const totalAgents = Object.keys(authorizedSupportAgents).length;
+      const totalAgents = authorizedSupportEmails.length;
       onlineCountEl.textContent = online;
       offlineCountEl.textContent = Math.max(totalAgents - online, 0);
     };

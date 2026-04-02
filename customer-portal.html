@@ -731,6 +731,7 @@
     </div>
   </div>
   <script src="auth.js"></script>
+  <script src="billing-frontend.js"></script>
   <script defer src="header.js"></script>
   <script>
     (async () => {
@@ -761,17 +762,15 @@
 
     let customerTickets = [];
 
-    const getStoredPayments = () => {
-      const stored = JSON.parse(localStorage.getItem('customerPayments') || '[]');
-      return Array.isArray(stored) ? stored : [];
-    };
+    let backendPayments = [];
 
-    const saveStoredPayments = (payments) => {
-      localStorage.setItem('customerPayments', JSON.stringify(payments));
-    };
-
-    const getCustomerPayments = () => {
-      return getStoredPayments().filter(payment => payment.customerEmail === customerData.email);
+    const loadPaymentHistory = async () => {
+      try {
+        const payload = await SiteAuth.apiRequest('/api/billing/payments?limit=20', { method: 'GET' });
+        backendPayments = Array.isArray(payload && payload.payments) ? payload.payments : [];
+      } catch (error) {
+        backendPayments = [];
+      }
     };
 
     const maskCardNumber = (value) => {
@@ -799,7 +798,7 @@
     };
 
     const renderPaymentHistory = () => {
-      const payments = getCustomerPayments();
+      const payments = backendPayments;
       if (!payments.length) {
         paymentHistoryList.innerHTML = '<p style="margin:0; color:#6b7280;">No payment records yet.</p>';
         return;
@@ -807,15 +806,15 @@
       paymentHistoryList.innerHTML = '<h4 style="margin:0 0 0.75rem;">Payment history</h4>' + payments.map(payment => `
         <div style="padding:1rem; margin-bottom:0.75rem; border:1px solid #e5e7eb; border-radius:18px; background:#f8fafc;">
           <div style="display:flex; justify-content:space-between; gap:1rem; align-items:center;">
-            <strong>${payment.status}</strong>
-            <span>${payment.processedAt}</span>
+            <strong>${payment.status || 'Processed'}</strong>
+            <span>${formatDate(payment.date)}</span>
           </div>
-          <p style="margin:0.75rem 0 0; color:#4b5563;">${payment.method} • ${payment.maskedCard} • ${payment.currency} ${payment.amount.toFixed(2)}</p>
+          <p style="margin:0.75rem 0 0; color:#4b5563;">${payment.currency || 'USD'} ${Number(payment.amount || 0).toFixed(2)} • ${payment.id || 'Transaction'}</p>
         </div>`).join('');
     };
 
     const renderSavedPaymentMethod = () => {
-      const payments = getCustomerPayments();
+      const payments = backendPayments;
       const latest = payments[payments.length - 1];
       const paymentSection = document.getElementById('billingSection');
       const existingSummary = paymentSection.querySelector('.saved-payment-summary');
@@ -829,17 +828,11 @@
       summary.style.borderRadius = '18px';
       summary.style.background = '#f8fafc';
       summary.innerHTML = `
-        <strong style="display:block; margin-bottom:0.5rem;">Saved payment method</strong>
-        <span style="color:#6b7280;">${latest.method} ending ${latest.maskedCard.slice(-4)}</span><br />
-        <span style="color:#6b7280;">Expires ${latest.expiry}</span>
+        <strong style="display:block; margin-bottom:0.5rem;">Last payment</strong>
+        <span style="color:#6b7280;">${latest.currency || 'USD'} ${Number(latest.amount || 0).toFixed(2)}</span><br />
+        <span style="color:#6b7280;">Status: ${latest.status || 'Processed'}</span>
       `;
       paymentSection.insertBefore(summary, paymentSection.querySelector('.payment-card'));
-    };
-
-    const addPaymentRecord = (record) => {
-      const payments = getStoredPayments();
-      payments.push(record);
-      saveStoredPayments(payments);
     };
 
     const renderPaymentSummary = () => {
@@ -1059,26 +1052,38 @@
         return;
       }
 
-      const paymentRecord = {
-        customerEmail: customerData.email,
-        amount,
-        currency: 'USD',
-        method: getCardBrand(card),
-        maskedCard: maskCardNumber(card),
-        expiry,
-        status: 'Completed',
-        transactionReference: `TX-${Date.now()}`,
-        processedAt: new Date().toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })
-      };
+      const paymentMethodId = /^4/.test(card)
+        ? 'pm_card_visa'
+        : /^5[1-5]/.test(card)
+          ? 'pm_card_mastercard'
+          : 'pm_card_visa';
 
-      addPaymentRecord(paymentRecord);
-      paymentStatusMsg.style.color = '#16a34a';
-      paymentStatusMsg.textContent = `Payment of $${amount.toFixed(2)} processed successfully.`;
-      paymentCard.value = '';
-      paymentCvv.value = '';
-      renderPaymentSummary();
+      paymentStatusMsg.style.color = '#475569';
+      paymentStatusMsg.textContent = 'Processing payment...';
+
+      SiteAuth.apiRequest('/api/billing/charge', {
+        method: 'POST',
+        body: JSON.stringify({
+          amount,
+          currency: 'USD',
+          customerId: customerData.customerId,
+          paymentMethodId,
+          description: `Portal payment by ${customerData.email}`
+        })
+      }).then(async () => {
+        paymentStatusMsg.style.color = '#16a34a';
+        paymentStatusMsg.textContent = `Payment of $${amount.toFixed(2)} processed successfully.`;
+        paymentCard.value = '';
+        paymentCvv.value = '';
+        await loadPaymentHistory();
+        renderPaymentSummary();
+      }).catch((error) => {
+        paymentStatusMsg.style.color = '#dc2626';
+        paymentStatusMsg.textContent = error.message || 'Payment could not be processed.';
+      });
     });
 
+    await loadPaymentHistory();
     renderPaymentSummary();
     applyTheme(storedTheme);
     })();

@@ -180,7 +180,7 @@
                         </ul>
                     </div>
                     <div class="col-lg-6">
-                        <form class="contact-form p-4 rounded-4 shadow-sm bg-white">
+                        <form id="contactForm" class="contact-form p-4 rounded-4 shadow-sm bg-white" novalidate>
                             <div class="mb-3">
                                 <label for="contactName" class="form-label">Name</label>
                                 <input type="text" class="form-control" id="contactName" placeholder="Your name">
@@ -193,7 +193,8 @@
                                 <label for="contactMessage" class="form-label">Message</label>
                                 <textarea class="form-control" id="contactMessage" rows="4" placeholder="Tell us about your project"></textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary">Send Message</button>
+                            <button id="contactSubmitBtn" type="submit" class="btn btn-primary">Send Message</button>
+                            <p id="contactStatus" aria-live="polite" style="margin-top:0.75rem; font-weight:500; display:none;"></p>
                         </form>
                     </div>
                 </div>
@@ -234,6 +235,48 @@
         if (portalCustomer && crmLink) {
             crmLink.style.display = 'none';
         }
+
+        document.getElementById('contactForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const btn = document.getElementById('contactSubmitBtn');
+            const statusEl = document.getElementById('contactStatus');
+            const name = document.getElementById('contactName').value.trim();
+            const email = document.getElementById('contactEmail').value.trim();
+            const message = document.getElementById('contactMessage').value.trim();
+
+            if (!name || !email || !message) {
+                statusEl.textContent = 'Please fill in all fields.';
+                statusEl.style.color = '#dc2626';
+                statusEl.style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+            statusEl.style.display = 'none';
+
+            const apiBase = typeof window.CWS_API_BASE === 'string' ? window.CWS_API_BASE : 'https://creative-solutions.onrender.com';
+            try {
+                const res = await fetch(apiBase + '/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, message })
+                });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) throw new Error(data.error || 'Something went wrong.');
+                statusEl.textContent = data.message || 'Message sent! We will be in touch soon.';
+                statusEl.style.color = '#16a34a';
+                statusEl.style.display = 'block';
+                event.target.reset();
+            } catch (err) {
+                statusEl.textContent = err.message || 'Unable to send your message. Please try again.';
+                statusEl.style.color = '#dc2626';
+                statusEl.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Send Message';
+            }
+        });
     </script>
 </body>
 </html>

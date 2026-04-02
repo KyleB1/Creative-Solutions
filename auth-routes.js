@@ -16,7 +16,14 @@ const CUSTOMER_STORE_PATH = path.resolve(
 const ADMIN_STORE_PATH = path.resolve(
   process.env.ADMIN_STORE_PATH || path.join(__dirname, 'data', 'admin-state.json')
 );
+const SESSION_STORE_PATH = path.resolve(
+  process.env.SESSION_STORE_PATH || path.join(__dirname, 'data', 'sessions.json')
+);
+const REQUIRE_EMAIL_VERIFICATION = String(process.env.REQUIRE_EMAIL_VERIFICATION || '').toLowerCase() === 'true';
 const sessions = new Map();
+let sessionStoreLoaded = false;
+let sessionStoreLoadPromise = null;
+let sessionStoreWriteQueue = Promise.resolve();
 
 const SUPPORT_ROLES = Object.freeze({
   'support@creativewebsolutions.com': 'Support Agent',
@@ -108,6 +115,15 @@ router.use((req, res, next) => {
   next();
 });
 
+router.use(async (req, res, next) => {
+  try {
+    await loadSessionStore();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
 function safeEqual(left, right) {
   const leftBuffer = Buffer.from(String(left || ''), 'utf8');
   const rightBuffer = Buffer.from(String(right || ''), 'utf8');
@@ -149,6 +165,16 @@ function createPasswordRecord(password) {
     salt,
     hash: hashPassword(password, salt)
   };
+}
+
+function createOneTimeToken() {
+  const token = crypto.randomBytes(24).toString('hex');
+  const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+  return { token, tokenHash };
+}
+
+function hashOneTimeToken(token) {
+  return crypto.createHash('sha256').update(String(token || '')).digest('hex');
 }
 
 function verifyPassword(password, record) {
@@ -274,6 +300,97 @@ async function writeAdminStore(store) {
   await fs.writeFile(ADMIN_STORE_PATH, JSON.stringify(normalizeAdminStore(store), null, 2), 'utf8');
 }
 
+async function ensureSessionStore() {
+  await fs.mkdir(path.dirname(SESSION_STORE_PATH), { recursive: true });
+
+  try {
+    await fs.access(SESSION_STORE_PATH);
+  } catch (error) {
+    await fs.writeFile(SESSION_STORE_PATH, JSON.stringify({ sessions: {} }, null, 2), 'utf8');
+  }
+}
+
+function normalizeSessionRecord(session) {
+  if (!session || typeof session !== 'object' || !session.user || typeof session.expiresAt !== 'number') {
+    return null;
+  }
+  if (session.expiresAt <= Date.now()) {
+    return null;
+  }
+  return {
+    user: session.user,
+    expiresAt: session.expiresAt
+  };
+}
+
+async function loadSessionStore() {
+  if (sessionStoreLoaded) {
+    return;
+  }
+  if (sessionStoreLoadPromise) {
+    return sessionStoreLoadPromise;
+  }
+
+  sessionStoreLoadPromise = (async () => {
+    await ensureSessionStore();
+    const raw = await fs.readFile(SESSION_STORE_PATH, 'utf8');
+    const parsed = JSON.parse(raw || '{}');
+    const entries = parsed && parsed.sessions && typeof parsed.sessions === 'object'
+      ? Object.entries(parsed.sessions)
+      : [];
+
+    sessions.clear();
+    for (const [sessionId, session] of entries) {
+      const normalized = normalizeSessionRecord(session);
+      if (normalized) {
+        sessions.set(sessionId, normalized);
+      }
+    }
+
+    sessionStoreLoaded = true;
+  })();
+
+  try {
+    await sessionStoreLoadPromise;
+  } finally {
+    sessionStoreLoadPromise = null;
+  }
+}
+
+async function writeSessionStore() {
+  await ensureSessionStore();
+
+  const serialized = {};
+  for (const [sessionId, session] of sessions.entries()) {
+    const normalized = normalizeSessionRecord(session);
+    if (normalized) {
+      serialized[sessionId] = normalized;
+    }
+  }
+
+  await fs.writeFile(SESSION_STORE_PATH, JSON.stringify({ sessions: serialized }, null, 2), 'utf8');
+}
+
+function queueSessionStoreWrite() {
+  sessionStoreWriteQueue = sessionStoreWriteQueue
+    .then(() => writeSessionStore())
+    .catch((error) => {
+      console.error('Failed to persist session store:', error);
+    });
+}
+
+function setSession(sessionId, session) {
+  sessions.set(sessionId, session);
+  queueSessionStoreWrite();
+}
+
+function deleteSession(sessionId) {
+  const removed = sessions.delete(sessionId);
+  if (removed) {
+    queueSessionStoreWrite();
+  }
+}
+
 function getSupportPasswordRecord(store) {
   const settings = store && store.supportSettings;
   if (!settings || !settings.passwordSalt || !settings.passwordHash) {
@@ -312,7 +429,7 @@ async function appendAuditEvent(event) {
 function updateCustomerSessions(email, user) {
   for (const [sessionId, session] of sessions.entries()) {
     if (session && session.user && session.user.role === 'customer' && session.user.email === email) {
-      sessions.set(sessionId, {
+      setSession(sessionId, {
         ...session,
         user: customerSessionView(user)
       });
@@ -420,7 +537,7 @@ function createSession(res, user) {
   const sessionId = crypto.randomBytes(32).toString('hex');
   const expiresAt = Date.now() + SESSION_TTL_MS;
 
-  sessions.set(sessionId, {
+  setSession(sessionId, {
     user,
     expiresAt
   });
@@ -433,17 +550,22 @@ function destroySession(req, res) {
   const cookies = parseCookies(req.headers.cookie);
   const sessionId = cookies[SESSION_COOKIE_NAME];
   if (sessionId) {
-    sessions.delete(sessionId);
+    deleteSession(sessionId);
   }
   clearSessionCookie(res);
 }
 
 function pruneExpiredSessions() {
   const now = Date.now();
+  let removedAny = false;
   for (const [sessionId, session] of sessions.entries()) {
     if (!session || session.expiresAt <= now) {
       sessions.delete(sessionId);
+      removedAny = true;
     }
+  }
+  if (removedAny) {
+    queueSessionStoreWrite();
   }
 }
 
@@ -457,7 +579,7 @@ function getActiveSession(req) {
 
   const session = sessions.get(sessionId);
   if (!session || session.expiresAt <= Date.now()) {
-    sessions.delete(sessionId);
+    deleteSession(sessionId);
     return null;
   }
 
@@ -697,7 +819,7 @@ router.post('/customer/tickets', requireSessionRole('customer'), async (req, res
     const refreshedCustomerStore = await readCustomerStore();
     const updatedCustomer = refreshedCustomerStore.customers[req.session.user.email];
     if (updatedCustomer && req.session.sessionId) {
-      sessions.set(req.session.sessionId, {
+      setSession(req.session.sessionId, {
         user: customerSessionView(updatedCustomer),
         expiresAt: req.session.expiresAt
       });
@@ -839,7 +961,7 @@ router.post('/admin/sessions/:sessionId/revoke', requireSessionRole('admin'), as
     }
 
     const targetUser = targetSession.user || {};
-    sessions.delete(req.params.sessionId);
+    deleteSession(req.params.sessionId);
     await appendAuditEvent({
       action: 'session.revoked',
       title: 'Session revoked by admin',
@@ -965,15 +1087,29 @@ router.post('/signup', async (req, res, next) => {
       email,
       passwordSalt: passwordRecord.salt,
       passwordHash: passwordRecord.hash,
+      emailVerified: !REQUIRE_EMAIL_VERIFICATION,
+      emailVerificationTokenHash: null,
+      emailVerificationExpiresAt: null,
+      passwordResetTokenHash: null,
+      passwordResetExpiresAt: null,
       createdAt: new Date().toISOString()
     };
+
+    let verification = null;
+    if (REQUIRE_EMAIL_VERIFICATION) {
+      verification = createOneTimeToken();
+      customer.emailVerificationTokenHash = verification.tokenHash;
+      customer.emailVerificationExpiresAt = new Date(Date.now() + (1000 * 60 * 60 * 24)).toISOString();
+    }
 
     customers[email] = customer;
     store.customers = customers;
     await writeCustomerStore(store);
 
     destroySession(req, res);
-    createSession(res, customerSessionView(customer));
+    if (!REQUIRE_EMAIL_VERIFICATION) {
+      createSession(res, customerSessionView(customer));
+    }
     await appendAuditEvent({
       action: 'customer.signup',
       title: `${customer.name} created an account`,
@@ -986,9 +1122,154 @@ router.post('/signup', async (req, res, next) => {
       createdAt: customer.createdAt
     });
 
-    res.status(201).json({
-      user: customerSessionView(customer)
+    const response = REQUIRE_EMAIL_VERIFICATION
+      ? {
+          requiresEmailVerification: true,
+          message: 'Account created. Please verify your email before signing in.'
+        }
+      : {
+          requiresEmailVerification: false,
+          message: 'Account created. Redirecting to your portal...',
+          user: customerSessionView(customer)
+        };
+
+    if (REQUIRE_EMAIL_VERIFICATION && verification && process.env.NODE_ENV !== 'production') {
+      response.verificationToken = verification.token;
+    }
+
+    res.status(201).json(response);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/verify-email', async (req, res, next) => {
+  try {
+    const token = String(req.body.token || '').trim();
+    if (!token) {
+      return res.status(400).json({ error: 'Verification token is required.' });
+    }
+
+    const tokenHash = hashOneTimeToken(token);
+    const store = await readCustomerStore();
+    const customers = store.customers && typeof store.customers === 'object' ? store.customers : {};
+    const customer = Object.values(customers).find((entry) => {
+      if (!entry || !entry.emailVerificationTokenHash || !entry.emailVerificationExpiresAt) return false;
+      return safeEqual(entry.emailVerificationTokenHash, tokenHash) && new Date(entry.emailVerificationExpiresAt).getTime() > Date.now();
     });
+
+    if (!customer) {
+      return res.status(400).json({ error: 'Verification link is invalid or has expired.' });
+    }
+
+    customer.emailVerified = true;
+    customer.emailVerificationTokenHash = null;
+    customer.emailVerificationExpiresAt = null;
+    store.customers = customers;
+    await writeCustomerStore(store);
+
+    await appendAuditEvent({
+      action: 'customer.email.verified',
+      title: `${customer.name} verified their email`,
+      description: `${customer.email} completed email verification.`,
+      actorEmail: customer.email,
+      actorName: customer.name,
+      actorRole: 'customer',
+      targetType: 'customer',
+      targetId: customer.email
+    });
+
+    res.json({ success: true, message: 'Email verified successfully. You can now sign in.' });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/password-reset/request', async (req, res, next) => {
+  try {
+    const email = normalizeEmail(req.body.email);
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required.' });
+    }
+
+    const store = await readCustomerStore();
+    const customer = store.customers && store.customers[email];
+    if (!customer) {
+      return res.json({ message: 'If an account exists for that email, a reset link has been generated.' });
+    }
+
+    const reset = createOneTimeToken();
+    customer.passwordResetTokenHash = reset.tokenHash;
+    customer.passwordResetExpiresAt = new Date(Date.now() + (1000 * 60 * 30)).toISOString();
+    store.customers[email] = customer;
+    await writeCustomerStore(store);
+
+    await appendAuditEvent({
+      action: 'customer.password_reset.requested',
+      title: `${customer.name} requested a password reset`,
+      description: `${customer.email} requested a password reset link.`,
+      actorEmail: customer.email,
+      actorName: customer.name,
+      actorRole: 'customer',
+      targetType: 'customer',
+      targetId: customer.email
+    });
+
+    const response = { message: 'If an account exists for that email, a reset link has been generated.' };
+    if (process.env.NODE_ENV !== 'production') {
+      response.resetToken = reset.token;
+    }
+    res.json(response);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/password-reset/confirm', async (req, res, next) => {
+  try {
+    const token = String(req.body.token || '').trim();
+    const password = String(req.body.password || '');
+
+    if (!token || !password) {
+      return res.status(400).json({ error: 'Token and new password are required.' });
+    }
+
+    if (!validatePassword(password)) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.' });
+    }
+
+    const tokenHash = hashOneTimeToken(token);
+    const store = await readCustomerStore();
+    const customers = store.customers && typeof store.customers === 'object' ? store.customers : {};
+    const customer = Object.values(customers).find((entry) => {
+      if (!entry || !entry.passwordResetTokenHash || !entry.passwordResetExpiresAt) return false;
+      return safeEqual(entry.passwordResetTokenHash, tokenHash) && new Date(entry.passwordResetExpiresAt).getTime() > Date.now();
+    });
+
+    if (!customer) {
+      return res.status(400).json({ error: 'Reset token is invalid or has expired.' });
+    }
+
+    const passwordRecord = createPasswordRecord(password);
+    customer.passwordSalt = passwordRecord.salt;
+    customer.passwordHash = passwordRecord.hash;
+    customer.passwordResetTokenHash = null;
+    customer.passwordResetExpiresAt = null;
+    store.customers[customer.email] = customer;
+    await writeCustomerStore(store);
+
+    await appendAuditEvent({
+      action: 'customer.password_reset.completed',
+      title: `${customer.name} reset their password`,
+      description: `${customer.email} successfully reset their password.`,
+      actorEmail: customer.email,
+      actorName: customer.name,
+      actorRole: 'customer',
+      targetType: 'customer',
+      targetId: customer.email
+    });
+
+    res.json({ success: true, message: 'Password updated. You can now sign in.' });
   } catch (error) {
     next(error);
   }
@@ -1011,6 +1292,10 @@ router.post('/login', async (req, res, next) => {
 
     if (!verifyPassword(password, { salt: customer.passwordSalt, hash: customer.passwordHash })) {
       return res.status(401).json({ error: 'Incorrect password. Please try again.' });
+    }
+
+    if (REQUIRE_EMAIL_VERIFICATION && customer.emailVerified === false) {
+      return res.status(403).json({ error: 'Please verify your email before signing in.' });
     }
 
     destroySession(req, res);
@@ -1116,7 +1401,7 @@ router.patch('/customer-profile', requireSessionRole('customer'), async (req, re
     await writeCustomerStore(store);
 
     const updatedUser = customerSessionView(updatedCustomer);
-    sessions.set(req.session.sessionId, {
+    setSession(req.session.sessionId, {
       user: updatedUser,
       expiresAt: req.session.expiresAt
     });
@@ -1157,6 +1442,10 @@ router.post('/logout', async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+});
+
+loadSessionStore().catch((error) => {
+  console.error('Failed to load persisted sessions:', error);
 });
 
 module.exports = router;

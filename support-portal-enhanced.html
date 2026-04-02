@@ -80,6 +80,19 @@
     if (!support) throw new Error('Unauthorized');
     document.getElementById('staffName').textContent = `${support.name} - ${support.role}`;
 
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function renderWithMentions(str) {
+      return escapeHtml(str).replace(/@(\w+)/g, '<span class="mention">@$1</span>');
+    }
+
     const statuses = ['open','inprogress','waiting','resolved'];
     const statusLabels = { open:'Open', inprogress:'In Progress', waiting:'Waiting', resolved:'Resolved' };
     const tickets = [
@@ -100,12 +113,21 @@
       statuses.forEach(s => {
         const col = document.createElement('div');
         col.className = 'col';
-        col.innerHTML = `<h3>${statusLabels[s]}</h3>`;
+        const heading = document.createElement('h3');
+        heading.textContent = statusLabels[s];
+        col.appendChild(heading);
         tickets.filter(t => t.status === s).forEach(t => {
           const card = document.createElement('button');
           card.type='button';
           card.className='ticket';
-          card.innerHTML = `<strong>${t.subject}</strong><br><small>${t.customer}</small>`;
+          const strong = document.createElement('strong');
+          strong.textContent = t.subject;
+          const br = document.createElement('br');
+          const small = document.createElement('small');
+          small.textContent = t.customer;
+          card.appendChild(strong);
+          card.appendChild(br);
+          card.appendChild(small);
           card.addEventListener('click', () => { selected = t; renderDetail(); });
           col.appendChild(card);
         });
@@ -117,7 +139,9 @@
       document.getElementById('subject').textContent = `${selected.subject} (${selected.id})`;
       document.getElementById('description').textContent = selected.description;
       const history = document.getElementById('history');
-      history.innerHTML = selected.history.map(h => `<div class="chat-item"><strong>${h.author}</strong><p>${String(h.content).replace(/@(\w+)/g,'<span class="mention">@$1</span>')}</p></div>`).join('');
+      history.innerHTML = selected.history.map(h =>
+        `<div class="chat-item"><strong>${escapeHtml(h.author)}</strong><p>${renderWithMentions(h.content)}</p></div>`
+      ).join('');
     }
 
     function chatKey(){ return `support:chat:${channel}`; }
@@ -133,7 +157,9 @@
 
     function renderChat(){
       document.getElementById('channelLabel').textContent = channel;
-      chatList.innerHTML = getChat().slice(-40).map(m => `<div class="chat-item"><strong>${m.author}</strong><p>${String(m.content).replace(/@(\w+)/g,'<span class="mention">@$1</span>')}</p></div>`).join('');
+      chatList.innerHTML = getChat().slice(-40).map(m =>
+        `<div class="chat-item"><strong>${escapeHtml(m.author)}</strong><p>${renderWithMentions(m.content)}</p></div>`
+      ).join('');
       chatList.scrollTop = chatList.scrollHeight;
     }
 
