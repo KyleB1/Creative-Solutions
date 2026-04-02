@@ -4,8 +4,7 @@
     'support@creativewebsolutions.com': 'Support Agent',
     'helpdesk@creativewebsolutions.com': 'Support Agent',
     'admin@creativewebsolutions.com': 'System Administrator',
-    'kyle.creativesolutions@gmail.com': 'Support Administrator',
-    'kyle.creativesolutins@gmail.com': 'System Administrator'
+    'kyle.creativesolutions@gmail.com': 'System Administrator'
   });
 
   const state = {

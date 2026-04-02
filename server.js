@@ -122,7 +122,14 @@ app.get('/health', (req, res) => {
 // API routes
 const authRoutes = require('./auth-routes');
 const billingRoutes = require('./billing-routes');
-app.use('/api/auth', authLimiter, authRoutes);
+
+// Rate-limit only the mutating auth endpoints.
+// Do NOT apply to GET /api/auth/session or GET /api/auth/meta;
+// those are called on every page load and would exhaust the limit.
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/signup', authLimiter);
+app.use('/api/auth/support-login', authLimiter);
+app.use('/api/auth', authRoutes);
 app.use('/api/billing', paymentLimiter, billingRoutes);
 
 // Static files (if serving frontend from same server)
@@ -181,6 +188,9 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Track the active server instance so SIGTERM shutdown works correctly.
+let activeServer = null;
+
 // Start server — auto-increment port if the preferred one is already in use
 function startServer(port) {
   const s = app.listen(port, onListening.bind(null, port));
@@ -192,6 +202,7 @@ function startServer(port) {
       throw err;
     }
   });
+  activeServer = s;
   return s;
 }
 
@@ -234,10 +245,14 @@ async function onListening(port) {
 // Graceful shutdown
 process.on('SIGTERM', () => {
   console.log('SIGTERM received, shutting down gracefully...');
-  startServer.instance && startServer.instance.close(() => {
-    console.log('Server closed');
+  if (activeServer) {
+    activeServer.close(() => {
+      console.log('Server closed');
+      process.exit(0);
+    });
+  } else {
     process.exit(0);
-  });
+  }
 });
 
 startServer(PORT);
