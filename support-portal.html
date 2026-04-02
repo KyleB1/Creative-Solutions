@@ -95,6 +95,21 @@
       color: #4c1d95;
       border-radius: 999px;
       font-weight: 700;
+      border: 1px solid rgba(124, 58, 237, 0.16);
+    }
+    .profile-pill-text {
+      display: grid;
+      gap: 0.1rem;
+      line-height: 1.2;
+    }
+    .profile-pill strong {
+      color: #111827;
+      font-size: 0.92rem;
+    }
+    .profile-pill span {
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      font-weight: 600;
     }
 
     .hero-panel {
@@ -547,7 +562,9 @@
     body.dark-mode .action-btn.primary { background: #8b5cf6; }
     body.dark-mode .action-btn.secondary { background: #1f2937; color: #e5e7eb; }
     body.dark-mode .action-btn.secondary.status-action { background: #1f2937; color: #e5e7eb; border-color: rgba(148, 163, 184, 0.25); }
-    body.dark-mode .profile-pill { background: #1f2937; color: #e5e7eb; }
+    body.dark-mode .profile-pill { background: #1f2937; color: #e5e7eb; border-color: rgba(148, 163, 184, 0.35); }
+    body.dark-mode .profile-pill strong { color: #f1f5f9; }
+    body.dark-mode .profile-pill span { color: #b8c4d6; }
     body.dark-mode .theme-toggle,
     body.dark-mode .logout-button { background: #1f2937; color: #e5e7eb; border-color: rgba(148, 163, 184, 0.45); }
   </style>
@@ -561,9 +578,14 @@
         <a href="support-login.html">Agent Login</a>
         <a href="customer-portal.html">Customer Portal</a>
       </nav>
-      <div class="profile-pill" id="staffPill">Support Agent</div>
+      <div class="profile-pill" id="staffPill" hidden>
+        <div class="profile-pill-text">
+          <strong id="staffName">Support Agent</strong>
+          <span id="staffRole">Session active</span>
+        </div>
+      </div>
       <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
-        <button id="logoutBtn" class="logout-button" type="button">Log Out</button>
+        <button id="logoutBtn" class="logout-button" type="button" hidden>Log Out</button>
         <button id="themeToggle" class="theme-toggle" type="button">Dark Mode</button>
       </div>
     </header>
@@ -775,7 +797,13 @@
     };
 
     const staffPill = document.getElementById('staffPill');
-    staffPill.textContent = `${staffData.name} • ${staffData.role}`;
+    const staffName = document.getElementById('staffName');
+    const staffRole = document.getElementById('staffRole');
+    const logoutBtn = document.getElementById('logoutBtn');
+    staffPill.hidden = false;
+    logoutBtn.hidden = false;
+    staffName.textContent = staffData.name || staffData.email || 'Support Agent';
+    staffRole.textContent = staffData.role || 'Session active';
     addOnlineAgent(staffData.email);
 
     if (staffData.role === 'System Administrator') {
@@ -1082,7 +1110,9 @@
       if (event.key === 'supportOnlineAgents') renderCounts();
     });
 
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
+    logoutBtn.addEventListener('click', async () => {
+      logoutBtn.disabled = true;
+      logoutBtn.textContent = 'Logging out...';
       await SiteAuth.logoutSupport('support-login.html');
     });
 
