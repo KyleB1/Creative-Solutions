@@ -337,7 +337,11 @@
 
     body.dark-mode {
       background: #090b17;
-      color: #e2e8f0;
+      color: #f1f5f9;
+      --surface: #111827;
+      --surface-alt: #182235;
+      --border: #334155;
+      --text-muted: #b8c4d6;
     }
 
     body.dark-mode .topbar,
@@ -374,12 +378,40 @@
       border-color: #374151;
     }
 
+    body.dark-mode .project-card,
+    body.dark-mode .invoice-card,
+    body.dark-mode .message-card,
+    body.dark-mode .setting-card,
+    body.dark-mode .activity-row,
+    body.dark-mode .task-row,
+    body.dark-mode .status-card .card {
+      background: #182235;
+      border-color: #334155;
+    }
+
+    body.dark-mode .payment-card {
+      background: #182235 !important;
+      border-color: #334155 !important;
+      color: #e5e7eb !important;
+    }
+
+    body.dark-mode .payment-card input,
+    body.dark-mode .setting-card input,
+    body.dark-mode .setting-card select {
+      background: #0f172a !important;
+      color: #e5e7eb !important;
+      border-color: #334155 !important;
+    }
+
+    body.dark-mode .payment-card input::placeholder,
+    body.dark-mode .setting-card input::placeholder {
+      color: #9fb0c7 !important;
+    }
+
     body.dark-mode h1,
     body.dark-mode h2,
     body.dark-mode h3,
     body.dark-mode p,
-    body.dark-mode span,
-    body.dark-mode a,
     body.dark-mode label,
     body.dark-mode input,
     body.dark-mode button,

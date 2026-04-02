@@ -18,7 +18,7 @@ const path = require('path');
 
 // Initialize Express
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 app.disable('x-powered-by');
 app.set('trust proxy', 1);
@@ -81,7 +81,15 @@ function buildCorsOptions(req) {
 
 // Security middleware
 app.use(helmet({
-  crossOriginResourcePolicy: { policy: 'same-site' }
+  crossOriginResourcePolicy: { policy: 'same-site' },
+  contentSecurityPolicy: {
+    useDefaults: true,
+    directives: {
+      // Existing pages rely on inline scripts for auth/session wiring.
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", 'https:', "'unsafe-inline'"]
+    }
+  }
 }));
 
 // CORS configuration
@@ -214,11 +222,12 @@ let activeServer = null;
 
 // Start server — auto-increment port if the preferred one is already in use
 function startServer(port) {
-  const s = app.listen(port, onListening.bind(null, port));
+  const normalizedPort = Number(port);
+  const s = app.listen(normalizedPort, onListening.bind(null, normalizedPort));
   s.on('error', err => {
     if (err.code === 'EADDRINUSE') {
-      console.warn(`Port ${port} in use, trying ${port + 1}…`);
-      startServer(port + 1);
+      console.warn(`Port ${normalizedPort} in use, trying ${normalizedPort + 1}…`);
+      startServer(normalizedPort + 1);
     } else {
       throw err;
     }

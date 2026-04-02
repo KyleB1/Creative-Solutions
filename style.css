@@ -14,9 +14,9 @@ body.dark-mode {
   color-scheme: dark;
   --bg: #0f172a;
   --surface: #111827;
-  --surface-alt: #1f2937;
-  --text: #e2e8f0;
-  --muted: #94a3b8;
+  --surface-alt: #182235;
+  --text: #f1f5f9;
+  --muted: #b8c4d6;
   --primary: #82aaff;
   --primary-soft: #1e2a5b;
   --surface-contrast: rgba(148, 163, 184, 0.16);
@@ -45,7 +45,7 @@ body.dark-mode .section-bg {
 
 body.dark-mode .feature-box {
   background: var(--surface-alt);
-  border-color: rgba(148, 163, 184, 0.25);
+  border-color: rgba(148, 163, 184, 0.35);
 }
 
 body.dark-mode .navbar-brand,

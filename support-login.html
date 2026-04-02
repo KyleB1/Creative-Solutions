@@ -122,9 +122,9 @@
     .theme-toggle { position: fixed; top: 1rem; right: 1rem; z-index: 1000; padding: 0.75rem 1rem; border-radius: 999px; border: 1px solid rgba(124, 58, 237, 0.25); background: #ffffff; color: #5b4b96; font-weight: 600; cursor: pointer; transition: background 0.2s ease, transform 0.2s ease; }
     .theme-toggle:hover { background: rgba(124, 58, 237, 0.08); }
 
-    body.dark-mode { background: #0b1222; color: #e2e8f0; }
+    body.dark-mode { background: #0b1222; color: #f1f5f9; }
     body.dark-mode .login-shell { background: #111827; border-color: #334155; }
-    body.dark-mode .info-panel,
+    body.dark-mode .info-panel { background: linear-gradient(180deg, #182235 0%, #111827 100%); }
     body.dark-mode .form-panel { background: #111827; }
     body.dark-mode label,
     body.dark-mode input,
@@ -132,12 +132,12 @@
     body.dark-mode .info-panel p,
     body.dark-mode .benefit span,
     body.dark-mode .back-links a { color: #e2e8f0; }
-    body.dark-mode input { background: #111827; border-color: #334155; }
+    body.dark-mode input { background: #0f172a; border-color: #334155; }
     body.dark-mode .primary-btn { background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%); }
     body.dark-mode .secondary-btn { background: #1f2937; border-color: rgba(148, 163, 184, 0.3); color: #e5e7eb; }
     body.dark-mode .theme-toggle { background: #1f2937; color: #e5e7eb; border-color: rgba(148, 163, 184, 0.45); }
     body.dark-mode .agent-count { background: #1f2937; border-color: #334155; color: #e5e7eb; }
-    body.dark-mode .agent-count span { color: #9ca3af; }
+    body.dark-mode .agent-count span { color: #b8c4d6; }
     body.dark-mode .status-banner.info { background: #1f2937; border-color: #374151; color: #c7d2fe; }
     body.dark-mode .status-banner.ok { background: #052e24; border-color: #065f46; color: #a7f3d0; }
     body.dark-mode .status-banner.error { background: #3f1d1d; border-color: #7f1d1d; color: #fecaca; }
@@ -150,7 +150,7 @@
     }
 
     body.dark-mode input::placeholder {
-      color: #94a3b8;
+      color: #9fb0c7;
     }
 
     @media (max-width: 860px) { .login-shell { grid-template-columns: 1fr; } }

@@ -28,6 +28,27 @@
         .signup-intro { padding: 3rem; display: flex; flex-direction: column; justify-content: center; background: linear-gradient(180deg, #eef2ff 0%, #ffffff 100%); }
         .signup-intro h1 { margin: 0 0 1rem; font-size: clamp(2.2rem,2.8vw,3.3rem); line-height: 1.05; }
         .signup-intro p { margin: 0; color: #64748b; max-width: 38rem; font-size: 1rem; line-height: 1.8; }
+        .signup-visual {
+            margin-top: 2rem;
+            border-radius: 22px;
+            overflow: hidden;
+            border: 1px solid rgba(37, 99, 235, 0.16);
+            box-shadow: 0 18px 40px rgba(37, 99, 235, 0.14);
+            background: #ffffff;
+        }
+        .signup-visual img {
+            display: block;
+            width: 100%;
+            height: min(300px, 34vh);
+            object-fit: cover;
+        }
+        .signup-visual figcaption {
+            margin: 0;
+            padding: 0.85rem 1rem;
+            font-size: 0.92rem;
+            color: #475569;
+            background: rgba(248, 250, 252, 0.95);
+        }
         .highlight { color: #2563eb; font-weight: 700; }
         .signup-card { padding: 2.5rem; display: flex; flex-direction: column; justify-content: space-between; }
         .step-label { display: inline-flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; font-size: 0.95rem; color: #475569; }
@@ -56,20 +77,32 @@
         .layout-selection { margin: 0 0 1rem; padding: 0.75rem 0.9rem; border-radius: 12px; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; font-size: 0.9rem; }
         .theme-toggle { position: fixed; top: 1rem; right: 1rem; z-index: 1000; padding: 0.75rem 1rem; border-radius: 999px; border: 1px solid rgba(37,99,235,0.25); background: #ffffff; color: #374151; font-weight: 600; cursor: pointer; transition: background 0.2s ease; }
         .theme-toggle:hover { background: rgba(37,99,235,0.08); }
-        body.dark-mode { background: #0b1222; color: #e2e8f0; }
+        body.dark-mode { background: #0b1222; color: #f1f5f9; }
         body.dark-mode .signup-shell { background: #111827; border-color: #334155; }
-        body.dark-mode .signup-intro, body.dark-mode .signup-card { background: #111827; }
-        body.dark-mode .signup-intro p, body.dark-mode .step-label, body.dark-mode .step-badge { color: #cbd5e1; }
-        body.dark-mode .signup-intro { background: linear-gradient(180deg, #171a2b 0%, #111827 100%); }
+        body.dark-mode .signup-intro { background: linear-gradient(180deg, #182235 0%, #111827 100%); }
+        body.dark-mode .signup-card { background: #111827; }
+        body.dark-mode .signup-intro p, body.dark-mode .step-label, body.dark-mode .step-badge { color: #b8c4d6; }
+        body.dark-mode .signup-visual {
+            background: #0f172a;
+            border-color: #334155;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+        }
+        body.dark-mode .signup-visual figcaption {
+            color: #e2e8f0;
+            background: rgba(15, 23, 42, 0.95);
+        }
         body.dark-mode label, body.dark-mode input, body.dark-mode .form-footer, body.dark-mode .hint { color: #e2e8f0; }
-        body.dark-mode input { background: #111827; border-color: #334155; }
+        body.dark-mode input { background: #0f172a; border-color: #334155; }
         body.dark-mode .layout-selection { background: #0f172a; border-color: #334155; color: #e2e8f0; }
-        body.dark-mode input::placeholder { color: #94a3b8; }
+        body.dark-mode input::placeholder { color: #9fb0c7; }
         body.dark-mode .primary-btn { background: #7c3aed; }
         body.dark-mode .back-btn { background: #111827; border-color: #4f46e5; color: #e2e8f0; }
         body.dark-mode .theme-toggle { background: #1f2937; color: #e5e7eb; border-color: rgba(148,163,184,0.45); }
         body.dark-mode a, body.dark-mode button, body.dark-mode textarea, body.dark-mode select { color: #e2e8f0; }
-        @media (max-width: 900px) { .signup-shell { grid-template-columns: 1fr; } }
+        @media (max-width: 900px) {
+            .signup-shell { grid-template-columns: 1fr; }
+            .signup-visual img { height: 240px; }
+        }
         @media (max-width: 600px) { body { padding: 1.5rem; } .signup-intro, .signup-card { padding: 1.8rem; } }
     </style>
 </head>
@@ -80,6 +113,14 @@
             <span class="step-label"><span class="step-badge">1</span> Create your account</span>
             <h1>Sign up for <span class="highlight">Creative Web Solutions</span></h1>
             <p>Join now and get access to beautiful templates, fast onboarding, and ongoing support for your next web project.</p>
+            <figure class="signup-visual">
+                <img
+                    loading="lazy"
+                    src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1400&q=80"
+                    alt="Creative team planning a modern website launch"
+                >
+                <figcaption>Built for bold ideas, quick launches, and polished client experiences.</figcaption>
+            </figure>
         </div>
  
         <div class="signup-card">
