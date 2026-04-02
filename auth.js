@@ -14,6 +14,7 @@
   };
 
   const DEFAULT_HOSTED_API_BASE = 'https://creative-solutions.onrender.com';
+  const DEFAULT_LOCAL_API_BASE = 'http://localhost:3000';
 
   function isLocalHostName(hostname) {
     const normalized = String(hostname || '').toLowerCase();
@@ -37,14 +38,18 @@
       return DEFAULT_HOSTED_API_BASE;
     }
 
-    if (protocol === 'file:' || normalizedHost.endsWith('.github.io')) {
+    if (protocol === 'file:') {
+      return DEFAULT_LOCAL_API_BASE;
+    }
+
+    if (normalizedHost.endsWith('.github.io')) {
       return DEFAULT_HOSTED_API_BASE;
     }
 
     // When the site is opened from a local static server, route auth calls to
-    // the Node backend on port 3100. When already on 3100, use same-origin.
-    if (isLocalHostName(normalizedHost) && port && port !== '3100') {
-      return `http://${normalizedHost}:3100`;
+    // the Node backend on port 3000 by default (server.js default).
+    if (isLocalHostName(normalizedHost) && port && port !== '3000') {
+      return `http://${normalizedHost}:3000`;
     }
 
     return '';
@@ -150,13 +155,32 @@
     }
 
     const requestUrl = buildApiUrl(path);
+    const alternateUrl = (() => {
+      if (typeof window === 'undefined' || !window.location) return null;
+      const host = String(window.location.hostname || '').toLowerCase();
+      if (!isLocalHostName(host)) return null;
+      if (requestUrl.includes(':3000/')) return requestUrl.replace(':3000/', ':3100/');
+      if (requestUrl.includes(':3100/')) return requestUrl.replace(':3100/', ':3000/');
+      return null;
+    })();
+
     let response;
     try {
       response = await fetch(requestUrl, requestOptions);
     } catch (_networkError) {
-      const configuredBase = getApiBase();
-      const target = configuredBase || 'same-origin backend';
-      throw new Error(`Unable to reach the login server (${target}). If you are running the site locally, start the Node backend or set window.CWS_API_BASE to your API URL.`);
+      if (alternateUrl) {
+        try {
+          response = await fetch(alternateUrl, requestOptions);
+        } catch (_alternateError) {
+          const configuredBase = getApiBase();
+          const target = configuredBase || 'same-origin backend';
+          throw new Error(`Unable to reach the login server (${target}). If you are running the site locally, start the Node backend on port 3000 or set window.CWS_API_BASE to your API URL.`);
+        }
+      } else {
+        const configuredBase = getApiBase();
+        const target = configuredBase || 'same-origin backend';
+        throw new Error(`Unable to reach the login server (${target}). If you are running the site locally, start the Node backend on port 3000 or set window.CWS_API_BASE to your API URL.`);
+      }
     }
     const payload = response.status === 204 ? null : await response.json().catch(() => ({}));
 
