@@ -182,7 +182,22 @@
         throw new Error(`Unable to reach the login server (${target}). If you are running the site locally, start the Node backend on port 3000 or set window.CWS_API_BASE to your API URL.`);
       }
     }
-    const payload = response.status === 204 ? null : await response.json().catch(() => ({}));
+    let payload = response.status === 204 ? null : await response.json().catch(() => ({}));
+
+    // If the first local port responds but is not the auth server (e.g. 404),
+    // try the alternate local port before surfacing a connectivity/banner error.
+    if (!response.ok && alternateUrl) {
+      try {
+        const fallbackResponse = await fetch(alternateUrl, requestOptions);
+        const fallbackPayload = fallbackResponse.status === 204 ? null : await fallbackResponse.json().catch(() => ({}));
+        if (fallbackResponse.ok) {
+          response = fallbackResponse;
+          payload = fallbackPayload;
+        }
+      } catch (_fallbackError) {
+        // Keep original response/payload and error handling below.
+      }
+    }
 
     if (!response.ok) {
       const error = new Error((payload && payload.error) || 'Request failed');

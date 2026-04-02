@@ -1,0 +1,172 @@
+{
+  "supportSettings": {
+    "passwordSalt": null,
+    "passwordHash": null,
+    "updatedAt": null,
+    "updatedBy": null
+  },
+  "supportTickets": [
+    {
+      "id": "TCK-1012",
+      "customer": "Avery Francis",
+      "customerEmail": "avery.francis@example.com",
+      "subject": "Login not working",
+      "status": "open",
+      "priority": "High",
+      "createdAt": "2026-03-27T10:12:00.000Z",
+      "updatedAt": "2026-03-28T10:42:00.000Z",
+      "product": "Client portal",
+      "description": "Customer cannot access their account after password reset. They receive a generic error on login.",
+      "messages": [
+        {
+          "id": "msg-1012-1",
+          "author": "Customer",
+          "visibility": "customer",
+          "timestamp": "2026-03-27T10:12:00.000Z",
+          "content": "The reset link keeps failing and I cannot sign in."
+        },
+        {
+          "id": "msg-1012-2",
+          "author": "Agent",
+          "visibility": "agent",
+          "timestamp": "2026-03-27T10:42:00.000Z",
+          "content": "Checked the reset flow; looks like a token expiry issue. Need to patch the login handler."
+        }
+      ]
+    },
+    {
+      "id": "TCK-1009",
+      "customer": "Mason Lee",
+      "customerEmail": "mason.lee@example.com",
+      "subject": "Invoice mismatch",
+      "status": "pending",
+      "priority": "Medium",
+      "createdAt": "2026-03-24T09:18:00.000Z",
+      "updatedAt": "2026-03-27T11:05:00.000Z",
+      "product": "Billing dashboard",
+      "description": "Invoice total does not match the contract price. Customer requests updated invoice and correction.",
+      "messages": [
+        {
+          "id": "msg-1009-1",
+          "author": "Customer",
+          "visibility": "customer",
+          "timestamp": "2026-03-24T09:18:00.000Z",
+          "content": "The total on invoice #118 is higher than expected."
+        },
+        {
+          "id": "msg-1009-2",
+          "author": "Agent",
+          "visibility": "agent",
+          "timestamp": "2026-03-24T11:05:00.000Z",
+          "content": "Reviewing line items and contract terms now."
+        }
+      ]
+    },
+    {
+      "id": "TCK-1004",
+      "customer": "Jada Rivera",
+      "customerEmail": "jada.rivera@example.com",
+      "subject": "Website update request",
+      "status": "resolved",
+      "priority": "Low",
+      "createdAt": "2026-03-20T14:30:00.000Z",
+      "updatedAt": "2026-03-25T09:12:00.000Z",
+      "product": "Website CMS",
+      "description": "Customer requested a homepage hero image update and content tweak, completed successfully.",
+      "messages": [
+        {
+          "id": "msg-1004-1",
+          "author": "Customer",
+          "visibility": "customer",
+          "timestamp": "2026-03-20T14:30:00.000Z",
+          "content": "Please update the hero image and CTA text to match new branding."
+        },
+        {
+          "id": "msg-1004-2",
+          "author": "Agent",
+          "visibility": "agent",
+          "timestamp": "2026-03-21T09:12:00.000Z",
+          "content": "Implemented the requested content changes and published the page."
+        }
+      ]
+    },
+    {
+      "id": "TCK-1015",
+      "customer": "Harper Wells",
+      "customerEmail": "harper.wells@example.com",
+      "subject": "Broken form submission",
+      "status": "open",
+      "priority": "High",
+      "createdAt": "2026-03-28T08:54:00.000Z",
+      "updatedAt": "2026-03-28T09:20:00.000Z",
+      "product": "Contact form",
+      "description": "Form submissions are failing with a 500 error. Customer needs urgent fix for lead capture.",
+      "messages": [
+        {
+          "id": "msg-1015-1",
+          "author": "Customer",
+          "visibility": "customer",
+          "timestamp": "2026-03-28T08:54:00.000Z",
+          "content": "My form is returning an error after submit and leads are not getting captured."
+        },
+        {
+          "id": "msg-1015-2",
+          "author": "Agent",
+          "visibility": "agent",
+          "timestamp": "2026-03-28T09:20:00.000Z",
+          "content": "Investigating server error logs and validation rules."
+        }
+      ]
+    }
+  ],
+  "auditLog": [
+    {
+      "id": "0e54439b-ae56-42ef-afcd-34c2d8a43c0e",
+      "action": "support.login",
+      "title": "Kyle Creativesolutions signed in",
+      "description": "System Administrator session started for kyle.creativesolutions@gmail.com.",
+      "actorEmail": "kyle.creativesolutions@gmail.com",
+      "actorName": "Kyle Creativesolutions",
+      "actorRole": "System Administrator",
+      "targetType": "support-user",
+      "targetId": "kyle.creativesolutions@gmail.com",
+      "createdAt": "2026-04-02T07:18:47.172Z"
+    },
+    {
+      "id": "66d9c80f-3ab4-4d31-b296-4c02b59ce053",
+      "action": "support.login",
+      "title": "Kyle Creativesolutions signed in",
+      "description": "System Administrator session started for kyle.creativesolutions@gmail.com.",
+      "actorEmail": "kyle.creativesolutions@gmail.com",
+      "actorName": "Kyle Creativesolutions",
+      "actorRole": "System Administrator",
+      "targetType": "support-user",
+      "targetId": "kyle.creativesolutions@gmail.com",
+      "createdAt": "2026-04-02T07:09:30.854Z"
+    },
+    {
+      "id": "a310e861-bb4d-4821-a0a2-9017e60c4996",
+      "action": "support.login",
+      "title": "Kyle Creativesolutions signed in",
+      "description": "System Administrator session started for kyle.creativesolutions@gmail.com.",
+      "actorEmail": "kyle.creativesolutions@gmail.com",
+      "actorName": "Kyle Creativesolutions",
+      "actorRole": "System Administrator",
+      "targetType": "support-user",
+      "targetId": "kyle.creativesolutions@gmail.com",
+      "createdAt": "2026-04-02T07:09:10.803Z"
+    },
+    {
+      "id": "1cc273ab-d73b-4de7-92e3-dbc38477ed3b",
+      "action": "support.login",
+      "title": "Kyle Creativesolutions signed in",
+      "description": "System Administrator session started for kyle.creativesolutions@gmail.com.",
+      "actorEmail": "kyle.creativesolutions@gmail.com",
+      "actorName": "Kyle Creativesolutions",
+      "actorRole": "System Administrator",
+      "targetType": "support-user",
+      "targetId": "kyle.creativesolutions@gmail.com",
+      "createdAt": "2026-04-02T07:09:02.792Z"
+    }
+  ]
+}

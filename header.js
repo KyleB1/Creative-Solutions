@@ -15,7 +15,7 @@
 
   function activePage(pathname) {
     const file = (pathname || '').split('/').pop().toLowerCase();
-    if (!file || file === 'index.htm') return 'home';
+    if (!file || file === 'index.htm' || file === 'index.html') return 'home';
     if (file === 'services.html') return 'services';
     if (file === 'layout-lab.html') return 'layout';
     return '';
@@ -88,8 +88,9 @@
       if (supportBtn) supportBtn.style.display = 'none';
       if (crmBtn) crmBtn.style.display = 'inline-flex';
       if (primaryBtn) {
-        primaryBtn.textContent = 'Support Portal';
-        primaryBtn.href = 'support-portal.html';
+        const isAdmin = support.role === 'System Administrator';
+        primaryBtn.textContent = isAdmin ? 'Admin Console' : 'Support Portal';
+        primaryBtn.href = isAdmin ? 'system-admin.html' : 'support-portal.html';
       }
       if (signupBtn) signupBtn.style.display = 'none';
     }

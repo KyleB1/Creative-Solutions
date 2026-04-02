@@ -11,7 +11,6 @@
 require('dotenv').config();
 
 const express = require('express');
-const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const path = require('path');
@@ -67,6 +66,7 @@ function buildCorsOptions(req) {
   ]);
   const requestOrigin = normalizeOrigin(req.get('origin'));
   const isAllowedOrigin = !requestOrigin
+    || requestOrigin === 'null'
     || allowedOrigins.has(requestOrigin)
     || isLocalDevelopmentOrigin(requestOrigin);
 
@@ -94,12 +94,38 @@ app.use(helmet({
 }));
 
 // CORS configuration
-app.use(cors((req, callback) => {
-  callback(null, buildCorsOptions(req));
-}));
-app.options('*', cors((req, callback) => {
-  callback(null, buildCorsOptions(req));
-}));
+app.use((req, res, next) => {
+  const requestOrigin = normalizeOrigin(req.get('origin'));
+  const configuredOrigins = getConfiguredOrigins();
+  const inferredOrigin = normalizeOrigin(`${req.protocol}://${req.get('host')}`);
+  const allowedOrigins = new Set([
+    inferredOrigin,
+    'http://localhost:3100',
+    'http://127.0.0.1:3100',
+    'http://localhost:3000',
+    'https://kyleb1.github.io',
+    ...configuredOrigins
+  ]);
+
+  const isAllowedOrigin = !requestOrigin
+    || requestOrigin === 'null'
+    || allowedOrigins.has(requestOrigin)
+    || isLocalDevelopmentOrigin(requestOrigin);
+
+  if (isAllowedOrigin && requestOrigin) {
+    res.setHeader('Access-Control-Allow-Origin', requestOrigin);
+    res.setHeader('Vary', 'Origin');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,PATCH,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Admin-Token,X-Customer-Id');
+  }
+
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
 
 // Rate limiting for payment endpoints
 const paymentLimiter = rateLimit({

@@ -389,6 +389,11 @@
       <p class="alt-link">Don’t have an account? <a href="signup.html">Create one</a></p>
     </main>
   </div>
+  <script>
+    if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      window.CWS_API_BASE = 'http://localhost:3100';
+    }
+  </script>
   <script src="auth.js"></script>
   <script defer src="header.js"></script>
   <script>
@@ -456,7 +461,10 @@
 
     (async () => {
       await checkApiConnectivity();
-      if (await SiteAuth.redirectIfSupport('support-portal.html')) {
+      await SiteAuth.init();
+      const activeSupport = SiteAuth.getSupport();
+      if (activeSupport) {
+        window.location.href = activeSupport.role === 'System Administrator' ? 'system-admin.html' : 'support-portal.html';
         return;
       }
       await SiteAuth.redirectIfCustomer('customer-portal.html');
