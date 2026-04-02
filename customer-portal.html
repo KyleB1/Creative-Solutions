@@ -305,6 +305,59 @@
       transform: translateY(-1px);
     }
 
+    .support-request-card {
+      display: grid;
+      gap: 0.9rem;
+      margin-bottom: 1rem;
+      padding: 1.25rem;
+      border-radius: 22px;
+      background: var(--surface-alt);
+      border: 1px solid rgba(229, 231, 235, 0.8);
+    }
+
+    .support-request-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .support-request-card input,
+    .support-request-card select,
+    .support-request-card textarea {
+      width: 100%;
+      padding: 0.9rem;
+      border-radius: 14px;
+      border: 1px solid #d1d5db;
+      font: inherit;
+      background: #ffffff;
+      color: #111827;
+    }
+
+    .support-request-card textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .support-request-card input:focus,
+    .support-request-card select:focus,
+    .support-request-card textarea:focus {
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12);
+      border-color: #7c3aed;
+    }
+
+    .support-request-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .support-request-status {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+
     .theme-toggle,
     .logout-button {
       padding: 0.75rem 1rem;
@@ -382,6 +435,7 @@
     body.dark-mode .invoice-card,
     body.dark-mode .message-card,
     body.dark-mode .setting-card,
+    body.dark-mode .support-request-card,
     body.dark-mode .activity-row,
     body.dark-mode .task-row,
     body.dark-mode .status-card .card {
@@ -397,7 +451,10 @@
 
     body.dark-mode .payment-card input,
     body.dark-mode .setting-card input,
-    body.dark-mode .setting-card select {
+    body.dark-mode .setting-card select,
+    body.dark-mode .support-request-card input,
+    body.dark-mode .support-request-card select,
+    body.dark-mode .support-request-card textarea {
       background: #0f172a !important;
       color: #e5e7eb !important;
       border-color: #334155 !important;
@@ -609,7 +666,34 @@
         </section>
 
         <section class="content-section panel" id="messagesSection">
-          <h2>Messages</h2>
+          <h2>Support desk</h2>
+          <div class="support-request-card">
+            <strong>Open a new support ticket</strong>
+            <span>Send a new issue directly into the support queue and track it from this page.</span>
+            <div class="support-request-grid">
+              <input id="ticketSubjectInput" type="text" placeholder="Short issue summary">
+              <select id="ticketProductSelect">
+                <option value="Client portal">Client portal</option>
+                <option value="Billing dashboard">Billing dashboard</option>
+                <option value="Website CMS">Website CMS</option>
+                <option value="Contact form">Contact form</option>
+                <option value="General support">General support</option>
+              </select>
+            </div>
+            <div class="support-request-grid">
+              <select id="ticketPrioritySelect">
+                <option value="Low">Low priority</option>
+                <option value="Medium" selected>Medium priority</option>
+                <option value="High">High priority</option>
+              </select>
+              <div></div>
+            </div>
+            <textarea id="ticketDescriptionInput" placeholder="Describe the issue, what you expected, and anything support should know."></textarea>
+            <div class="support-request-actions">
+              <button id="createTicketBtn" style="padding:0.95rem 1.25rem; border:none; border-radius:18px; background:#7c3aed; color:#fff; font-weight:700; cursor:pointer;">Create ticket</button>
+              <span id="ticketRequestStatus" class="support-request-status">No new ticket submitted in this session.</span>
+            </div>
+          </div>
           <div class="message-list" id="messageList"></div>
         </section>
 
@@ -668,6 +752,14 @@
     const paymentStatusMsg = document.getElementById('paymentStatusMsg');
     const paymentHistoryList = document.getElementById('paymentHistoryList');
     const settingsStatusMsg = document.getElementById('settingsStatusMsg');
+    const ticketSubjectInput = document.getElementById('ticketSubjectInput');
+    const ticketProductSelect = document.getElementById('ticketProductSelect');
+    const ticketPrioritySelect = document.getElementById('ticketPrioritySelect');
+    const ticketDescriptionInput = document.getElementById('ticketDescriptionInput');
+    const createTicketBtn = document.getElementById('createTicketBtn');
+    const ticketRequestStatus = document.getElementById('ticketRequestStatus');
+
+    let customerTickets = [];
 
     const getStoredPayments = () => {
       const stored = JSON.parse(localStorage.getItem('customerPayments') || '[]');
@@ -693,6 +785,17 @@
       if (/^5[1-5]/.test(digits)) return 'Mastercard';
       if (/^3[47]/.test(digits)) return 'American Express';
       return 'Card';
+    };
+
+    const formatDate = (value) => {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value || '—';
+      return date.toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    };
+
+    const loadCustomerTickets = async () => {
+      const payload = await SiteAuth.apiRequest('/api/auth/customer/tickets', { method: 'GET' });
+      customerTickets = Array.isArray(payload && payload.tickets) ? payload.tickets : [];
     };
 
     const renderPaymentHistory = () => {
@@ -775,12 +878,6 @@
       { number: '#120', amount: '$2,340', due: 'Jun 15', status: 'Upcoming' }
     ];
 
-    const customerMessages = [
-      { from: 'Mason', subject: 'Strategy review call', time: '1h ago', status: 'Action needed' },
-      { from: 'Avery', subject: 'Design approval', time: 'Yesterday', status: 'Waiting' },
-      { from: 'Support Team', subject: 'Invoice details', time: '2 days ago', status: 'Answered' }
-    ];
-
     const showSection = (section) => {
       contentSections.forEach(sec => sec.classList.toggle('active', sec.id === `${section}Section`));
       navLinks.forEach(link => link.classList.toggle('active', link.dataset.section === section));
@@ -819,21 +916,27 @@
     const renderMessages = () => {
       const list = document.getElementById('messageList');
       list.innerHTML = '';
-      customerMessages.forEach(message => {
+      customerTickets.forEach(message => {
         const card = document.createElement('div');
         card.className = 'message-card';
         card.innerHTML = `
-          <strong>${message.subject}</strong>
-          <span>From ${message.from} • ${message.time}</span>
-          <span>Status: ${message.status}</span>
+          <strong>${message.subject} (${message.id})</strong>
+          <span>${message.product} • Updated ${formatDate(message.updatedAt)}</span>
+          <span>Status: ${message.status} • Priority: ${message.priority}</span>
+          <span>${message.description}</span>
         `;
         list.appendChild(card);
       });
+      if (!customerTickets.length) {
+        list.innerHTML = '<div class="message-card"><strong>No support tickets yet</strong><span>Create your first ticket to contact support.</span></div>';
+      }
     };
 
     renderProjects();
     renderInvoices();
+    await loadCustomerTickets();
     renderMessages();
+    document.getElementById('supportTickets').textContent = customerTickets.length;
 
     navLinks.forEach(link => {
       link.addEventListener('click', (event) => {
@@ -860,6 +963,48 @@
     const logoutBtn = document.getElementById('logoutBtn');
     logoutBtn.addEventListener('click', async () => {
       await SiteAuth.logoutCustomer('login.html');
+    });
+
+    createTicketBtn.addEventListener('click', async () => {
+      const subject = ticketSubjectInput.value.trim();
+      const product = ticketProductSelect.value;
+      const priority = ticketPrioritySelect.value;
+      const description = ticketDescriptionInput.value.trim();
+
+      if (!subject || !description) {
+        ticketRequestStatus.textContent = 'Subject and description are required.';
+        ticketRequestStatus.style.color = '#dc2626';
+        return;
+      }
+
+      createTicketBtn.disabled = true;
+      createTicketBtn.textContent = 'Creating...';
+      try {
+        const payload = await SiteAuth.apiRequest('/api/auth/customer/tickets', {
+          method: 'POST',
+          body: JSON.stringify({ subject, product, priority, description })
+        });
+        if (payload && payload.ticket) {
+          customerTickets.unshift(payload.ticket);
+        }
+        if (payload && payload.user) {
+          Object.assign(customerData, payload.user);
+        }
+        document.getElementById('supportTickets').textContent = customerTickets.length;
+        ticketSubjectInput.value = '';
+        ticketDescriptionInput.value = '';
+        ticketPrioritySelect.value = 'Medium';
+        ticketProductSelect.value = 'Client portal';
+        ticketRequestStatus.textContent = 'Support ticket created successfully.';
+        ticketRequestStatus.style.color = '#16a34a';
+        renderMessages();
+      } catch (error) {
+        ticketRequestStatus.textContent = error.message || 'Unable to create a support ticket.';
+        ticketRequestStatus.style.color = '#dc2626';
+      } finally {
+        createTicketBtn.disabled = false;
+        createTicketBtn.textContent = 'Create ticket';
+      }
     });
 
     settingsSaveBtn.addEventListener('click', async () => {

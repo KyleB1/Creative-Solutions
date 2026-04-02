@@ -246,6 +246,8 @@
       ));
     };
 
+    const getSupportDestination = (role) => role === 'System Administrator' ? 'system-admin.html' : 'support-portal.html';
+
     const addOnlineAgent = (email) => {
       const roster = getSupportOnlineAgents();
       const normalized = String(email).toLowerCase();
@@ -311,9 +313,9 @@
 
       try {
         loginError.textContent = '';
-        await SiteAuth.loginSupport({ email, password });
+        const supportUser = await SiteAuth.loginSupport({ email, password });
         addOnlineAgent(email);
-        window.location.href = 'support-portal.html';
+        window.location.href = getSupportDestination((supportUser && supportUser.supportRole) || role);
       } catch (error) {
         loginError.textContent = error.message || 'Unable to access the support portal.';
       }
@@ -321,7 +323,11 @@
 
     (async () => {
       await checkApiConnectivity();
-      await SiteAuth.redirectIfSupport('support-portal.html');
+      await SiteAuth.init();
+      const activeSupport = SiteAuth.getSupport();
+      if (activeSupport) {
+        window.location.href = getSupportDestination(activeSupport.role);
+      }
     })();
   </script>
 </body>

@@ -577,6 +577,7 @@
         <a href="index.htm">Home</a>
         <a href="support-login.html">Agent Login</a>
         <a href="customer-portal.html">Customer Portal</a>
+        <a id="adminConsoleLink" href="system-admin.html" hidden>Admin Console</a>
       </nav>
       <div class="profile-pill" id="staffPill" hidden>
         <div class="profile-pill-text">
@@ -809,26 +810,11 @@
     if (staffData.role === 'System Administrator') {
       const adminSection = document.querySelector('.admin-overview');
       if (adminSection) adminSection.style.display = 'grid';
+      const adminConsoleLink = document.getElementById('adminConsoleLink');
+      if (adminConsoleLink) adminConsoleLink.hidden = false;
     }
 
-    const supportTickets = [
-      { id: 'TCK-1012', customer: 'Avery Francis', subject: 'Login not working', status: 'open', priority: 'High', created: 'Mar 27', updated: 'Mar 28', product: 'Client portal', description: 'Customer cannot access their account after password reset. They receive a generic error on login.', messages: [
-        { author: 'Customer', timestamp: 'Mar 27, 10:12', content: 'The reset link keeps failing and I cannot sign in.' },
-        { author: 'Agent', timestamp: 'Mar 27, 10:42', content: 'Checked the reset flow; looks like a token expiry issue. Need to patch the login handler.' }
-      ] },
-      { id: 'TCK-1009', customer: 'Mason Lee', subject: 'Invoice mismatch', status: 'pending', priority: 'Medium', created: 'Mar 24', updated: 'Mar 27', product: 'Billing dashboard', description: 'Invoice total does not match the contract price. Customer requests updated invoice and correction.', messages: [
-        { author: 'Customer', timestamp: 'Mar 24, 09:18', content: 'The total on invoice #118 is higher than expected.' },
-        { author: 'Agent', timestamp: 'Mar 24, 11:05', content: 'Reviewing line items and contract terms now.' }
-      ] },
-      { id: 'TCK-1004', customer: 'Jada Rivera', subject: 'Website update request', status: 'resolved', priority: 'Low', created: 'Mar 20', updated: 'Mar 25', product: 'Website CMS', description: 'Customer requested a homepage hero image update and content tweak, completed successfully.', messages: [
-        { author: 'Customer', timestamp: 'Mar 20, 14:30', content: 'Please update the hero image and CTA text to match new branding.' },
-        { author: 'Agent', timestamp: 'Mar 21, 09:12', content: 'Implemented the requested content changes and published the page.' }
-      ] },
-      { id: 'TCK-1015', customer: 'Harper Wells', subject: 'Broken form submission', status: 'open', priority: 'High', created: 'Mar 28', updated: 'Mar 28', product: 'Contact form', description: 'Form submissions are failing with a 500 error. Customer needs urgent fix for lead capture.', messages: [
-        { author: 'Customer', timestamp: 'Mar 28, 08:54', content: 'My form is returning an error after submit and leads are not getting captured.' },
-        { author: 'Agent', timestamp: 'Mar 28, 09:20', content: 'Investigating server error logs and validation rules.' }
-      ] }
-    ];
+    let supportTickets = [];
 
     const filterButtons = document.querySelectorAll('.filter-btn');
     const ticketBarChart = document.getElementById('ticketBarChart');
@@ -863,7 +849,7 @@
     const statusActionButtons = document.querySelectorAll('.status-action');
 
     let activeFilter = 'all';
-    let selectedTicket = supportTickets[0];
+    let selectedTicket = null;
 
     const ticketStatusValues = [
       { key: 'open', label: 'Open', color: '#7c3aed' },
@@ -872,6 +858,42 @@
       { key: 'pending', label: 'Pending', color: '#8b5cf6' },
       { key: 'resolved', label: 'Resolved', color: '#16a34a' }
     ];
+
+    const formatDate = (value) => {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value || '—';
+      return date.toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    };
+
+    const loadSupportTickets = async () => {
+      const payload = await SiteAuth.apiRequest('/api/auth/support/tickets', { method: 'GET' });
+      supportTickets = Array.isArray(payload && payload.tickets) ? payload.tickets : [];
+      selectedTicket = supportTickets.find((ticket) => selectedTicket && ticket.id === selectedTicket.id) || supportTickets[0] || null;
+    };
+
+    const persistTicketChanges = async (ticketId, changes) => {
+      const payload = await SiteAuth.apiRequest(`/api/auth/support/tickets/${encodeURIComponent(ticketId)}`, {
+        method: 'PATCH',
+        body: JSON.stringify(changes)
+      });
+      if (payload && payload.ticket) {
+        supportTickets = supportTickets.map((ticket) => ticket.id === payload.ticket.id ? payload.ticket : ticket);
+        selectedTicket = payload.ticket;
+      }
+      return payload && payload.ticket;
+    };
+
+    const addTicketMessage = async (ticketId, content, visibility) => {
+      const payload = await SiteAuth.apiRequest(`/api/auth/support/tickets/${encodeURIComponent(ticketId)}/messages`, {
+        method: 'POST',
+        body: JSON.stringify({ content, visibility })
+      });
+      if (payload && payload.ticket) {
+        supportTickets = supportTickets.map((ticket) => ticket.id === payload.ticket.id ? payload.ticket : ticket);
+        selectedTicket = payload.ticket;
+      }
+      return payload && payload.ticket;
+    };
 
     const renderCounts = () => {
       const counts = ticketStatusValues.reduce((acc, type) => {
@@ -953,7 +975,7 @@
           <span>${ticket.priority} priority</span>
         </div>
       `;
-      if (selectedTicket.id === ticket.id) wrapper.classList.add('active');
+      if (selectedTicket && selectedTicket.id === ticket.id) wrapper.classList.add('active');
       wrapper.addEventListener('click', () => {
         selectedTicket = ticket;
         renderTickets();
@@ -966,30 +988,35 @@
       ticketListEl.innerHTML = '';
       const filtered = supportTickets.filter(ticket => activeFilter === 'all' ? true : ticket.status === activeFilter);
       filtered.forEach(ticket => ticketListEl.appendChild(buildTicketCard(ticket)));
-      if (!filtered.find(ticket => ticket.id === selectedTicket.id)) {
+      if (!selectedTicket || !filtered.find(ticket => ticket.id === selectedTicket.id)) {
         selectedTicket = filtered[0] || supportTickets[0];
       }
-      if (selectedTicket) showTicketDetails(selectedTicket);
+      if (selectedTicket) {
+        showTicketDetails(selectedTicket);
+      } else {
+        detailSubject.textContent = 'Select a ticket to view details';
+        detailDescription.textContent = 'Choose any ticket from the queue to inspect the issue, recent activity, and next steps.';
+      }
     };
 
-    const updateTicketStatus = (ticket, status) => {
-      ticket.status = status;
-      ticket.updated = 'Now';
-      ticket.messages.push({ author: 'Internal Note', timestamp: 'Now', content: `Status changed to ${getStatusLabel(status)} by ${staffData.name}.` });
+    const updateTicketStatus = async (ticket, status) => {
+      if (!ticket) return;
+      const updatedTicket = await persistTicketChanges(ticket.id, { status });
+      if (!updatedTicket) return;
       renderCounts();
       renderTickets();
-      showTicketDetails(ticket);
+      showTicketDetails(updatedTicket);
     };
 
     const renderTicketHistory = (ticket) => {
       ticketHistoryEl.innerHTML = '';
       ticket.messages.forEach(entry => {
         const historyItem = document.createElement('div');
-        const typeClass = entry.author === 'Customer' ? 'customer' : entry.author === 'Agent' ? 'agent' : 'internal';
+        const typeClass = entry.visibility === 'customer' ? 'customer' : entry.visibility === 'agent' ? 'agent' : 'internal';
         historyItem.className = `history-entry ${typeClass}`;
         historyItem.innerHTML = `
           <strong>${entry.author}</strong>
-          <span>${entry.timestamp}</span>
+          <span>${formatDate(entry.timestamp)}</span>
           <p>${entry.content}</p>
         `;
         ticketHistoryEl.appendChild(historyItem);
@@ -1038,8 +1065,8 @@
       detailSubject.textContent = `${ticket.subject} (${ticket.id})`;
       detailDescription.textContent = ticket.description;
       detailCustomer.textContent = ticket.customer;
-      detailCreated.textContent = ticket.created;
-      detailUpdated.textContent = ticket.updated;
+      detailCreated.textContent = formatDate(ticket.createdAt);
+      detailUpdated.textContent = formatDate(ticket.updatedAt);
       detailPriority.textContent = ticket.priority;
       prioritySelect.value = ticket.priority;
       detailProduct.textContent = ticket.product;
@@ -1055,41 +1082,47 @@
     });
 
     statusActionButtons.forEach(button => {
-      button.addEventListener('click', () => {
+      button.addEventListener('click', async () => {
         if (!selectedTicket) return;
-        updateTicketStatus(selectedTicket, button.dataset.status);
+        await updateTicketStatus(selectedTicket, button.dataset.status);
       });
     });
 
-    resolveTicketBtn.addEventListener('click', () => {
+    resolveTicketBtn.addEventListener('click', async () => {
+      if (!selectedTicket) return;
       if (selectedTicket.status === 'resolved') return;
-      updateTicketStatus(selectedTicket, 'resolved');
+      await updateTicketStatus(selectedTicket, 'resolved');
     });
 
     replyTicketBtn.addEventListener('click', () => { chatInput.focus(); });
 
-    prioritySelect.addEventListener('change', () => {
+    prioritySelect.addEventListener('change', async () => {
       if (!selectedTicket) return;
-      selectedTicket.priority = prioritySelect.value;
-      selectedTicket.updated = 'Now';
-      selectedTicket.messages.push({ author: 'Internal Note', timestamp: 'Now', content: `Priority updated to ${prioritySelect.value} by ${staffData.name}.` });
+      await persistTicketChanges(selectedTicket.id, { priority: prioritySelect.value });
+      renderCounts();
       renderTickets();
       showTicketDetails(selectedTicket);
     });
 
-    addNoteBtn.addEventListener('click', () => {
+    addNoteBtn.addEventListener('click', async () => {
+      if (!selectedTicket) return;
       const note = noteInput.value.trim();
       if (!note) return;
-      selectedTicket.messages.push({ author: 'Internal Note', timestamp: 'Now', content: note });
+      await addTicketMessage(selectedTicket.id, note, 'internal');
       noteInput.value = '';
+      renderCounts();
+      renderTickets();
       renderTicketHistory(selectedTicket);
     });
 
-    sendChatBtn.addEventListener('click', () => {
+    sendChatBtn.addEventListener('click', async () => {
+      if (!selectedTicket) return;
       const message = chatInput.value.trim();
       if (!message) return;
-      selectedTicket.messages.push({ author: staffData.name, timestamp: 'Now', content: message });
+      await addTicketMessage(selectedTicket.id, message, 'customer');
       chatInput.value = '';
+      renderCounts();
+      renderTickets();
       renderTicketHistory(selectedTicket);
     });
 
@@ -1129,6 +1162,7 @@
       applyTheme(nextTheme);
     });
 
+    await loadSupportTickets();
     renderCounts();
     renderTickets();
     renderAgentChat();

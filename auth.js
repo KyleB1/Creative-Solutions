@@ -379,6 +379,8 @@
     SUPPORT_ROLES,
     safeParse,
     normalizeEmail,
+    buildApiUrl,
+    apiRequest,
     getAuthorizedSupportEmails,
     getSupportRoleForEmail,
     getSupportOnlineAgents,

@@ -573,6 +573,7 @@
         <a href="index.htm">Home</a>
         <a href="services.html">Services</a>
         <a href="support-login.html">Support Login</a>
+        <a id="crmAdminLink" href="system-admin.html" hidden>Admin Console</a>
         <div class="crm-session" id="crmSession" hidden>
           <strong id="crmSessionName">Support Agent</strong>
           <span id="crmSessionRole">Session active</span>
@@ -949,6 +950,10 @@
         crmLogoutButton.hidden = false;
         crmSessionName.textContent = supportUser.name || supportUser.email || 'Support Agent';
         crmSessionRole.textContent = supportUser.role || 'Session active';
+        if (supportUser.role === 'System Administrator') {
+          const crmAdminLink = document.getElementById('crmAdminLink');
+          if (crmAdminLink) crmAdminLink.hidden = false;
+        }
       }
     })();
   </script>

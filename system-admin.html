@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System Admin Console | Creative Web Solutions</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <style>
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(124, 58, 237, 0.16), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(56, 189, 248, 0.12), transparent 24%),
+        linear-gradient(180deg, #f4efff 0%, #edf2ff 100%);
+      color: #111827;
+      font-family: "Segoe UI", system-ui, sans-serif;
+    }
+    .admin-shell { max-width: 1380px; margin: 0 auto; padding: 1.75rem; }
+    .admin-topbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .admin-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+    .admin-brand::before {
+      content: '';
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: #7c3aed;
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.14);
+    }
+    .admin-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    .admin-nav a,
+    .admin-nav button {
+      padding: 0.75rem 1rem;
+      border-radius: 999px;
+      border: 1px solid #dbeafe;
+      background: rgba(255,255,255,0.9);
+      color: #4b5563;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .admin-nav a:hover,
+    .admin-nav button:hover {
+      background: #eef2ff;
+      color: #4338ca;
+    }
+    .admin-session {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.75rem 1rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid #dbeafe;
+      color: #4b5563;
+      font-weight: 600;
+    }
+    .admin-session-text {
+      display: grid;
+      gap: 0.08rem;
+      line-height: 1.2;
+    }
+    .admin-session strong { color: #111827; font-size: 0.92rem; }
+    .admin-session span { color: #6b7280; font-size: 0.84rem; }
+    .hero-panel,
+    .admin-section {
+      background: rgba(255,255,255,0.92);
+      border: 1px solid #e5e7eb;
+      border-radius: 28px;
+      padding: 1.5rem;
+      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.06);
+      backdrop-filter: blur(8px);
+    }
+    .hero-panel {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.95fr);
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .hero-copy { display: grid; gap: 0.85rem; }
+    .hero-kicker {
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.76rem;
+      color: #7c3aed;
+      font-weight: 700;
+    }
+    .hero-copy h1 { margin: 0; font-size: clamp(2rem, 3vw, 2.9rem); }
+    .hero-copy p { margin: 0; color: #6b7280; line-height: 1.8; }
+    .hero-note {
+      padding: 0.95rem 1rem;
+      border-radius: 18px;
+      background: #f8f6ff;
+      border: 1px solid rgba(124, 58, 237, 0.12);
+      color: #4338ca;
+      font-weight: 600;
+    }
+    .hero-side {
+      display: grid;
+      gap: 0.8rem;
+      align-content: start;
+    }
+    .refresh-card {
+      display: grid;
+      gap: 0.35rem;
+      padding: 1rem;
+      border-radius: 20px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8f6ff 100%);
+      border: 1px solid #e5e7eb;
+    }
+    .refresh-card span { color: #6b7280; font-size: 0.88rem; }
+    .refresh-card strong { font-size: 1.05rem; }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .metric-card {
+      display: grid;
+      gap: 0.75rem;
+      padding: 1.25rem;
+      border-radius: 22px;
+      border: 1px solid #e5e7eb;
+      background: linear-gradient(180deg, #ffffff 0%, #f8f6ff 100%);
+    }
+    .metric-card span { color: #6b7280; font-size: 0.92rem; }
+    .metric-card strong { font-size: 2rem; line-height: 1; }
+    .admin-grid {
+      display: grid;
+      grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.25fr);
+      gap: 1.5rem;
+    }
+    .stack { display: grid; gap: 1.5rem; }
+    .section-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: end;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .section-head h2 { margin: 0; font-size: 1.15rem; }
+    .section-head p { margin: 0.25rem 0 0; color: #6b7280; }
+    .section-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.45rem 0.8rem;
+      border-radius: 999px;
+      background: #ede9fe;
+      color: #5b21b6;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .roster-list,
+    .activity-list,
+    .session-list,
+    .customer-list,
+    .ticket-list,
+    .control-list { display: grid; gap: 0.85rem; }
+    .roster-item,
+    .activity-item,
+    .session-item,
+    .customer-item,
+    .ticket-item,
+    .control-item {
+      display: grid;
+      gap: 0.45rem;
+      padding: 1rem;
+      border-radius: 20px;
+      border: 1px solid #e5e7eb;
+      background: linear-gradient(180deg, #fbf8ff 0%, #ffffff 100%);
+    }
+    .roster-item strong,
+    .activity-item strong,
+    .session-item strong,
+    .customer-item strong,
+    .ticket-item strong,
+    .control-item strong { color: #111827; }
+    .roster-item p,
+    .activity-item p,
+    .session-item p,
+    .customer-item p,
+    .ticket-item p,
+    .control-item p { margin: 0; color: #6b7280; line-height: 1.65; }
+    .item-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      align-items: center;
+    }
+    .item-meta.spread {
+      justify-content: space-between;
+    }
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 0.9rem;
+    }
+    .filter-row input,
+    .filter-row select {
+      min-width: 180px;
+      padding: 0.75rem 0.9rem;
+      border-radius: 14px;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: #111827;
+      font: inherit;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+    .pill.online { background: #dcfce7; color: #166534; }
+    .pill.offline { background: #fee2e2; color: #991b1b; }
+    .pill.admin { background: #ede9fe; color: #5b21b6; }
+    .pill.support { background: #dbeafe; color: #3730a3; }
+    .pill.customer { background: #fef3c7; color: #92400e; }
+    .pill.ticket { background: #e0f2fe; color: #075985; }
+    .inline-form {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 0.45rem;
+    }
+    .inline-field,
+    .inline-form select,
+    .inline-form input {
+      width: 100%;
+      padding: 0.8rem 0.9rem;
+      border-radius: 14px;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: #111827;
+      font: inherit;
+    }
+    .inline-field:focus,
+    .inline-form select:focus,
+    .inline-form input:focus {
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12);
+      border-color: #7c3aed;
+    }
+    .inline-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    .inline-button {
+      padding: 0.75rem 1rem;
+      border-radius: 14px;
+      border: 1px solid #dbeafe;
+      background: #ffffff;
+      color: #4338ca;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .inline-button.primary {
+      background: #7c3aed;
+      border-color: #7c3aed;
+      color: #ffffff;
+    }
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      color: #4b5563;
+      font-weight: 600;
+    }
+    .quick-links {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.9rem;
+    }
+    .quick-link {
+      display: grid;
+      gap: 0.4rem;
+      text-decoration: none;
+      color: inherit;
+      padding: 1rem;
+      border-radius: 20px;
+      border: 1px solid #e5e7eb;
+      background: linear-gradient(180deg, #ffffff 0%, #f8f6ff 100%);
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .quick-link:hover {
+      transform: translateY(-2px);
+      border-color: rgba(124, 58, 237, 0.22);
+      box-shadow: 0 14px 28px rgba(124, 58, 237, 0.09);
+    }
+    .quick-link span { color: #6b7280; }
+    .status-banner {
+      margin-bottom: 1rem;
+      padding: 0.85rem 1rem;
+      border-radius: 16px;
+      border: 1px solid transparent;
+      font-size: 0.94rem;
+      line-height: 1.5;
+    }
+    .status-banner.info { background: #eef2ff; border-color: #c7d2fe; color: #3730a3; }
+    .status-banner.ok { background: #ecfdf3; border-color: #a7f3d0; color: #065f46; }
+    .status-banner.error { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+    @media (max-width: 1100px) {
+      .hero-panel,
+      .admin-grid,
+      .metric-grid,
+      .quick-links { grid-template-columns: 1fr 1fr; }
+      .admin-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .admin-topbar,
+      .hero-panel,
+      .metric-grid,
+      .quick-links { grid-template-columns: 1fr; }
+      .quick-links,
+      .metric-grid { display: grid; }
+      .admin-nav { justify-content: center; }
+    }
+    body.dark-mode {
+      background: #0b1222;
+      color: #f1f5f9;
+    }
+    body.dark-mode .hero-panel,
+    body.dark-mode .admin-section,
+    body.dark-mode .metric-card,
+    body.dark-mode .refresh-card,
+    body.dark-mode .roster-item,
+    body.dark-mode .activity-item,
+    body.dark-mode .session-item,
+    body.dark-mode .customer-item,
+    body.dark-mode .ticket-item,
+    body.dark-mode .control-item,
+    body.dark-mode .quick-link {
+      background: #111827;
+      border-color: #334155;
+      color: #f1f5f9;
+    }
+    body.dark-mode .admin-nav a,
+    body.dark-mode .admin-nav button,
+    body.dark-mode .admin-session {
+      background: #1f2937;
+      color: #e5e7eb;
+      border-color: #4b5563;
+    }
+    body.dark-mode .admin-session strong,
+    body.dark-mode .roster-item strong,
+    body.dark-mode .activity-item strong,
+    body.dark-mode .session-item strong,
+    body.dark-mode .customer-item strong,
+    body.dark-mode .ticket-item strong,
+    body.dark-mode .control-item strong { color: #f1f5f9; }
+    body.dark-mode .admin-session span,
+    body.dark-mode .hero-copy p,
+    body.dark-mode .hero-note,
+    body.dark-mode .refresh-card span,
+    body.dark-mode .metric-card span,
+    body.dark-mode .section-head p,
+    body.dark-mode .roster-item p,
+    body.dark-mode .activity-item p,
+    body.dark-mode .session-item p,
+    body.dark-mode .customer-item p,
+    body.dark-mode .ticket-item p,
+    body.dark-mode .control-item p,
+    body.dark-mode .quick-link span { color: #b8c4d6; }
+    body.dark-mode .hero-note { background: #182235; border-color: #334155; }
+    body.dark-mode .section-chip { background: #312e81; color: #c7d2fe; }
+    body.dark-mode .pill.online { background: #14532d; color: #d1fae5; }
+    body.dark-mode .pill.offline { background: #7f1d1d; color: #fee2e7; }
+    body.dark-mode .pill.admin { background: #312e81; color: #c7d2fe; }
+    body.dark-mode .pill.support { background: #1e3a8a; color: #dbeafe; }
+    body.dark-mode .pill.customer { background: #78350f; color: #fde68a; }
+    body.dark-mode .pill.ticket { background: #0f3a55; color: #bae6fd; }
+    body.dark-mode .inline-field,
+    body.dark-mode .inline-form select,
+    body.dark-mode .inline-form input,
+    body.dark-mode .filter-row input,
+    body.dark-mode .filter-row select,
+    body.dark-mode .inline-button {
+      background: #1f2937;
+      color: #e5e7eb;
+      border-color: #4b5563;
+    }
+    body.dark-mode .inline-button.primary {
+      background: #8b5cf6;
+      border-color: #8b5cf6;
+      color: #ffffff;
+    }
+    body.dark-mode .toggle-row { color: #cbd5e1; }
+    body.dark-mode .status-banner.info { background: #1f2937; border-color: #374151; color: #c7d2fe; }
+    body.dark-mode .status-banner.ok { background: #052e24; border-color: #065f46; color: #a7f3d0; }
+    body.dark-mode .status-banner.error { background: #3f1d1d; border-color: #7f1d1d; color: #fecaca; }
+  </style>
+</head>
+<body>
+  <div class="admin-shell">
+    <div class="admin-topbar">
+      <div class="admin-brand">System Admin Console</div>
+      <div class="admin-nav">
+        <a href="index.htm">Home</a>
+        <a href="support-portal.html">Support Portal</a>
+        <a href="crm.html">CRM</a>
+        <div class="admin-session" id="adminSession" hidden>
+          <div class="admin-session-text">
+            <strong id="adminSessionName">System Administrator</strong>
+            <span id="adminSessionRole">Session active</span>
+          </div>
+        </div>
+        <button id="adminLogoutButton" type="button" hidden>Log Out</button>
+        <button id="themeToggle" type="button">Dark Mode</button>
+      </div>
+    </div>
+
+    <section class="hero-panel">
+      <div class="hero-copy">
+        <p class="hero-kicker">Global visibility</p>
+        <h1>Track sessions, customers, and support operations from one admin surface.</h1>
+        <p>Use this console to monitor account growth, live agent activity, active sessions, and recent operational movement across the site.</p>
+        <div class="hero-note" id="snapshotNote">Waiting for the latest system snapshot...</div>
+      </div>
+      <div class="hero-side">
+        <div class="refresh-card">
+          <span>Snapshot refreshed</span>
+          <strong id="snapshotTimestamp">Pending</strong>
+        </div>
+        <div class="refresh-card">
+          <span>Support login</span>
+          <strong id="supportConfigState">Checking</strong>
+        </div>
+        <div class="refresh-card">
+          <span>Auto refresh</span>
+          <strong>Every 30 seconds</strong>
+        </div>
+      </div>
+    </section>
+
+    <div id="adminStatusBanner" class="status-banner info" role="status" aria-live="polite">Loading the admin overview...</div>
+
+    <section class="metric-grid">
+      <article class="metric-card"><span>Customer accounts</span><strong id="metricCustomers">0</strong></article>
+      <article class="metric-card"><span>Active sessions</span><strong id="metricSessions">0</strong></article>
+      <article class="metric-card"><span>Support staff online</span><strong id="metricSupport">0</strong></article>
+      <article class="metric-card"><span>Tracked tickets</span><strong id="metricTickets">0</strong></article>
+    </section>
+
+    <div class="admin-grid">
+      <div class="stack">
+        <section class="admin-section">
+          <div class="section-head">
+            <div>
+              <h2>Support roster</h2>
+              <p>Who can access support and who is online right now.</p>
+            </div>
+            <span class="section-chip" id="rosterChip">0 online</span>
+          </div>
+          <div class="roster-list" id="supportRosterList"></div>
+        </section>
+
+        <section class="admin-section">
+          <div class="section-head">
+            <div>
+              <h2>Audit trail</h2>
+              <p>Persisted login, ticket, and admin actions in timestamp order.</p>
+            </div>
+            <span class="section-chip">Latest 10</span>
+          </div>
+          <div class="filter-row">
+            <input id="auditSearchInput" type="search" placeholder="Search audit trail">
+          </div>
+          <div class="activity-list" id="recentActivityList"></div>
+        </section>
+
+        <section class="admin-section">
+          <div class="section-head">
+            <div>
+              <h2>Admin controls</h2>
+              <p>Manage accounts, revoke sessions, and rotate the support password.</p>
+            </div>
+          </div>
+          <div class="control-list">
+            <article class="control-item">
+              <strong>Rotate support password</strong>
+              <p>Set a new shared password for support staff sign-in. This overrides the server default password for future support logins.</p>
+              <form class="inline-form" id="passwordRotationForm">
+                <input id="supportPasswordInput" type="password" class="inline-field" placeholder="New support password" required>
+                <div class="inline-actions">
+                  <button class="inline-button primary" type="submit">Rotate password</button>
+                  <span id="passwordRotationStatus">No recent rotation in this session.</span>
+                </div>
+              </form>
+            </article>
+          </div>
+        </section>
+      </div>
+
+      <div class="stack">
+        <section class="admin-section">
+          <div class="section-head">
+            <div>
+              <h2>Active sessions</h2>
+              <p>Every currently tracked user or support session.</p>
+            </div>
+            <span class="section-chip" id="sessionChip">0 sessions</span>
+          </div>
+          <div class="filter-row">
+            <input id="sessionSearchInput" type="search" placeholder="Search sessions">
+            <select id="sessionRoleFilter">
+              <option value="all">All roles</option>
+              <option value="admin">Admins</option>
+              <option value="support">Support</option>
+              <option value="customer">Customers</option>
+            </select>
+          </div>
+          <div class="session-list" id="activeSessionList"></div>
+        </section>
+
+        <section class="admin-section">
+          <div class="section-head">
+            <div>
+              <h2>Customer accounts</h2>
+              <p>Newest customer profiles and stored account health signals.</p>
+            </div>
+            <span class="section-chip" id="customerChip">0 records</span>
+          </div>
+          <div class="filter-row">
+            <input id="customerSearchInput" type="search" placeholder="Search customers">
+            <select id="customerPlanFilter">
+              <option value="all">All plans</option>
+              <option value="Starter">Starter</option>
+              <option value="Growth plan">Growth plan</option>
+              <option value="Scale">Scale</option>
+              <option value="Enterprise">Enterprise</option>
+            </select>
+          </div>
+          <div class="customer-list" id="customerList"></div>
+        </section>
+
+        <section class="admin-section">
+          <div class="section-head">
+            <div>
+              <h2>Support ticket feed</h2>
+              <p>Live ticket state from the backend, ordered by last update.</p>
+            </div>
+            <span class="section-chip" id="ticketChip">0 tickets</span>
+          </div>
+          <div class="filter-row">
+            <input id="ticketSearchInput" type="search" placeholder="Search tickets">
+            <select id="ticketStatusFilter">
+              <option value="all">All statuses</option>
+              <option value="open">Open</option>
+              <option value="inprogress">In progress</option>
+              <option value="waiting">Waiting</option>
+              <option value="pending">Pending</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </div>
+          <div class="ticket-list" id="supportTicketList"></div>
+        </section>
+
+        <section class="admin-section">
+          <div class="section-head">
+            <div>
+              <h2>Quick links</h2>
+              <p>Jump into the main operational surfaces.</p>
+            </div>
+          </div>
+          <div class="quick-links">
+            <a class="quick-link" href="support-portal.html"><strong>Support Portal</strong><span>Ticket queue and support operations</span></a>
+            <a class="quick-link" href="crm.html"><strong>CRM Board</strong><span>Pipeline and account movement</span></a>
+            <a class="quick-link" href="customer-portal.html"><strong>Customer Portal</strong><span>Customer-facing account surface</span></a>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script defer src="header.js"></script>
+  <script>
+    const themeToggle = document.getElementById('themeToggle');
+    const adminSession = document.getElementById('adminSession');
+    const adminSessionName = document.getElementById('adminSessionName');
+    const adminSessionRole = document.getElementById('adminSessionRole');
+    const adminLogoutButton = document.getElementById('adminLogoutButton');
+    const adminStatusBanner = document.getElementById('adminStatusBanner');
+    const snapshotTimestamp = document.getElementById('snapshotTimestamp');
+    const snapshotNote = document.getElementById('snapshotNote');
+    const supportConfigState = document.getElementById('supportConfigState');
+    const metricCustomers = document.getElementById('metricCustomers');
+    const metricSessions = document.getElementById('metricSessions');
+    const metricSupport = document.getElementById('metricSupport');
+    const metricTickets = document.getElementById('metricTickets');
+    const rosterChip = document.getElementById('rosterChip');
+    const sessionChip = document.getElementById('sessionChip');
+    const customerChip = document.getElementById('customerChip');
+    const ticketChip = document.getElementById('ticketChip');
+    const supportRosterList = document.getElementById('supportRosterList');
+    const recentActivityList = document.getElementById('recentActivityList');
+    const activeSessionList = document.getElementById('activeSessionList');
+    const customerList = document.getElementById('customerList');
+    const supportTicketList = document.getElementById('supportTicketList');
+    const passwordRotationForm = document.getElementById('passwordRotationForm');
+    const supportPasswordInput = document.getElementById('supportPasswordInput');
+    const passwordRotationStatus = document.getElementById('passwordRotationStatus');
+    const auditSearchInput = document.getElementById('auditSearchInput');
+    const sessionSearchInput = document.getElementById('sessionSearchInput');
+    const sessionRoleFilter = document.getElementById('sessionRoleFilter');
+    const customerSearchInput = document.getElementById('customerSearchInput');
+    const customerPlanFilter = document.getElementById('customerPlanFilter');
+    const ticketSearchInput = document.getElementById('ticketSearchInput');
+    const ticketStatusFilter = document.getElementById('ticketStatusFilter');
+
+    let currentOverview = null;
+
+    const setBanner = (state, message) => {
+      adminStatusBanner.classList.remove('info', 'ok', 'error');
+      adminStatusBanner.classList.add(state);
+      adminStatusBanner.textContent = message;
+    };
+
+    const savedTheme = localStorage.getItem('siteTheme');
+    const applyTheme = (theme) => {
+      document.body.classList.toggle('dark-mode', theme === 'dark');
+      themeToggle.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
+      localStorage.setItem('siteTheme', theme);
+    };
+
+    themeToggle.addEventListener('click', () => {
+      const nextTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+      applyTheme(nextTheme);
+    });
+    if (savedTheme === 'dark') applyTheme('dark'); else applyTheme('light');
+
+    adminLogoutButton.addEventListener('click', async () => {
+      adminLogoutButton.disabled = true;
+      adminLogoutButton.textContent = 'Logging out...';
+      await SiteAuth.logoutSupport('support-login.html');
+    });
+
+    const formatDateTime = (value) => {
+      if (!value) {
+        return 'Unavailable';
+      }
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) {
+        return 'Unavailable';
+      }
+      return date.toLocaleString();
+    };
+
+    const adminRequest = (path, options) => SiteAuth.apiRequest(path, options);
+
+    const renderSupportRoster = (roster) => {
+      rosterChip.textContent = `${roster.filter((entry) => entry.isOnline).length} online`;
+      supportRosterList.innerHTML = roster.map((entry) => `
+        <article class="roster-item">
+          <strong>${entry.email}</strong>
+          <p>${entry.supportRole}</p>
+          <div class="item-meta">
+            <span class="pill ${entry.isOnline ? 'online' : 'offline'}">${entry.isOnline ? 'Online' : 'Offline'}</span>
+            <span>${entry.activeUntil ? `Active until ${formatDateTime(entry.activeUntil)}` : 'No active session'}</span>
+          </div>
+        </article>
+      `).join('') || '<article class="roster-item"><strong>No support accounts</strong><p>No support roster data is available.</p></article>';
+    };
+
+    const renderActivity = (activity) => {
+      const query = auditSearchInput.value.trim().toLowerCase();
+      const filtered = activity.filter((entry) => {
+        if (!query) return true;
+        return [entry.title, entry.description, entry.action, entry.actorEmail].some((value) => String(value || '').toLowerCase().includes(query));
+      });
+      recentActivityList.innerHTML = activity.map((entry) => `
+        <article class="activity-item">
+          <strong>${entry.title}</strong>
+          <p>${entry.description}</p>
+          <div class="item-meta">
+            <span class="pill ${entry.action && entry.action.startsWith('support.') ? 'support' : entry.action && entry.action.startsWith('customer.') ? 'customer' : 'admin'}">${entry.action || 'event'}</span>
+            <span>${formatDateTime(entry.createdAt)}</span>
+          </div>
+        </article>
+      `).join('') || '<article class="activity-item"><strong>No recent activity</strong><p>The system has not recorded any recent changes yet.</p></article>';
+      recentActivityList.innerHTML = filtered.map((entry) => `
+        <article class="activity-item">
+          <strong>${entry.title}</strong>
+          <p>${entry.description}</p>
+          <div class="item-meta">
+            <span class="pill ${entry.action && entry.action.startsWith('support.') ? 'support' : entry.action && entry.action.startsWith('customer.') ? 'customer' : 'admin'}">${entry.action || 'event'}</span>
+            <span>${formatDateTime(entry.createdAt)}</span>
+          </div>
+        </article>
+      `).join('') || '<article class="activity-item"><strong>No matching activity</strong><p>Try a different search term.</p></article>';
+    };
+
+    const renderSessions = (sessions) => {
+      const query = sessionSearchInput.value.trim().toLowerCase();
+      const role = sessionRoleFilter.value;
+      const filtered = sessions.filter((entry) => {
+        const matchesQuery = !query || [entry.name, entry.email, entry.supportRole, entry.role].some((value) => String(value || '').toLowerCase().includes(query));
+        const matchesRole = role === 'all' || entry.role === role;
+        return matchesQuery && matchesRole;
+      });
+      sessionChip.textContent = `${filtered.length} sessions`;
+      activeSessionList.innerHTML = filtered.map((entry) => `
+        <article class="session-item">
+          <strong>${entry.name || entry.email || 'Unknown user'}</strong>
+          <p>${entry.email || 'No email on session'}</p>
+          <div class="item-meta spread">
+            <div class="item-meta">
+            <span class="pill ${entry.role === 'admin' ? 'admin' : entry.role === 'customer' ? 'customer' : 'support'}">${entry.supportRole || entry.role || 'Session'}</span>
+            ${currentOverview && currentOverview.currentSessionId === entry.sessionId ? '<span class="pill admin">Current session</span>' : ''}
+            <span>Expires ${formatDateTime(entry.expiresAt)}</span>
+            </div>
+            <button class="inline-button" type="button" data-session-revoke="${entry.sessionId}">Force sign out</button>
+          </div>
+        </article>
+      `).join('') || '<article class="session-item"><strong>No matching sessions</strong><p>No sessions match the current filters.</p></article>';
+
+      activeSessionList.querySelectorAll('[data-session-revoke]').forEach((button) => {
+        button.addEventListener('click', async () => {
+          const isCurrentSession = currentOverview && currentOverview.currentSessionId === button.dataset.sessionRevoke;
+          const confirmationMessage = isCurrentSession
+            ? 'This is your current admin session. Revoking it will sign you out immediately. Continue?'
+            : 'Revoke this session and force the user to sign in again?';
+          if (!window.confirm(confirmationMessage)) {
+            return;
+          }
+          button.disabled = true;
+          button.textContent = 'Revoking...';
+          try {
+            await adminRequest(`/api/auth/admin/sessions/${encodeURIComponent(button.dataset.sessionRevoke)}/revoke`, { method: 'POST' });
+            if (isCurrentSession) {
+              await SiteAuth.logoutSupport('support-login.html');
+              return;
+            }
+            passwordRotationStatus.textContent = 'Session revoked successfully.';
+            await loadOverview();
+          } catch (error) {
+            button.disabled = false;
+            button.textContent = 'Force sign out';
+            setBanner('error', error.message || 'Unable to revoke the session.');
+          }
+        });
+      });
+    };
+
+    const renderCustomers = (customers) => {
+      const query = customerSearchInput.value.trim().toLowerCase();
+      const plan = customerPlanFilter.value;
+      const filtered = customers.filter((entry) => {
+        const matchesQuery = !query || [entry.name, entry.email].some((value) => String(value || '').toLowerCase().includes(query));
+        const matchesPlan = plan === 'all' || entry.plan === plan;
+        return matchesQuery && matchesPlan;
+      });
+      customerChip.textContent = `${filtered.length} records`;
+      customerList.innerHTML = filtered.slice(0, 12).map((entry) => `
+        <article class="customer-item">
+          <strong>${entry.name}</strong>
+          <p>${entry.email}</p>
+          <div class="item-meta">
+            <span class="pill customer">${entry.plan}</span>
+            <span>${entry.supportTickets} tickets</span>
+            <span>${entry.activeProjects} active projects</span>
+          </div>
+          <p>Created ${formatDateTime(entry.createdAt)} • Renewal ${entry.renewal || 'Not set'} • ${entry.monthlySpend} monthly spend</p>
+          <form class="inline-form" data-customer-form="${entry.email}">
+            <select name="plan">
+              <option value="Starter" ${entry.plan === 'Starter' ? 'selected' : ''}>Starter</option>
+              <option value="Growth plan" ${entry.plan === 'Growth plan' ? 'selected' : ''}>Growth plan</option>
+              <option value="Scale" ${entry.plan === 'Scale' ? 'selected' : ''}>Scale</option>
+              <option value="Enterprise" ${entry.plan === 'Enterprise' ? 'selected' : ''}>Enterprise</option>
+            </select>
+            <label class="toggle-row"><input type="checkbox" name="notifications" ${entry.notifications ? 'checked' : ''}> Notifications enabled</label>
+            <div class="inline-actions">
+              <button class="inline-button" type="submit">Save account</button>
+            </div>
+          </form>
+        </article>
+      `).join('') || '<article class="customer-item"><strong>No matching customers</strong><p>No customer records match the current filters.</p></article>';
+
+      customerList.querySelectorAll('[data-customer-form]').forEach((form) => {
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault();
+          const email = form.dataset.customerForm;
+          const formData = new FormData(form);
+          const button = form.querySelector('button[type="submit"]');
+          button.disabled = true;
+          button.textContent = 'Saving...';
+          try {
+            await adminRequest(`/api/auth/admin/customers/${encodeURIComponent(email)}`, {
+              method: 'PATCH',
+              body: JSON.stringify({
+                plan: formData.get('plan'),
+                notifications: formData.get('notifications') === 'on'
+              })
+            });
+            passwordRotationStatus.textContent = `Updated account settings for ${email}.`;
+            await loadOverview();
+          } catch (error) {
+            button.disabled = false;
+            button.textContent = 'Save account';
+            setBanner('error', error.message || 'Unable to save the customer account.');
+          }
+        });
+      });
+    };
+
+    const renderSupportTickets = (tickets) => {
+      const query = ticketSearchInput.value.trim().toLowerCase();
+      const status = ticketStatusFilter.value;
+      const filtered = tickets.filter((entry) => {
+        const matchesQuery = !query || [entry.subject, entry.customer, entry.id, entry.product, entry.description].some((value) => String(value || '').toLowerCase().includes(query));
+        const matchesStatus = status === 'all' || entry.status === status;
+        return matchesQuery && matchesStatus;
+      });
+      ticketChip.textContent = `${filtered.length} tickets`;
+      supportTicketList.innerHTML = filtered.slice(0, 12).map((entry) => `
+        <article class="ticket-item">
+          <strong>${entry.subject} (${entry.id})</strong>
+          <p>${entry.customer} • ${entry.product}</p>
+          <div class="item-meta">
+            <span class="pill ticket">${entry.priority}</span>
+            <span class="pill ${entry.status === 'resolved' ? 'online' : entry.status === 'pending' ? 'support' : 'admin'}">${entry.status}</span>
+            <span>Updated ${formatDateTime(entry.updatedAt)}</span>
+          </div>
+          <p>${entry.description}</p>
+        </article>
+      `).join('') || '<article class="ticket-item"><strong>No matching tickets</strong><p>No tickets match the current filters.</p></article>';
+    };
+
+    const renderOverview = (overview) => {
+      currentOverview = overview;
+      snapshotTimestamp.textContent = formatDateTime(overview.generatedAt);
+      supportConfigState.textContent = overview.supportLoginConfigured ? 'Configured' : 'Missing password';
+      snapshotNote.textContent = `Tracking ${overview.totals.activeSessions} live sessions, ${overview.totals.supportTickets} persisted tickets, and ${overview.totals.onlineSupportAccounts} online support staff.`;
+      metricCustomers.textContent = String(overview.totals.customers);
+      metricSessions.textContent = String(overview.totals.activeSessions);
+      metricSupport.textContent = String(overview.totals.onlineSupportAccounts);
+      metricTickets.textContent = String(overview.totals.supportTickets);
+      renderSupportRoster(overview.supportRoster || []);
+      renderActivity(overview.auditLog || []);
+      renderSessions(overview.activeSessions || []);
+      renderCustomers(overview.customers || []);
+      renderSupportTickets(overview.supportTickets || []);
+      passwordRotationStatus.textContent = overview.supportPasswordUpdatedAt
+        ? `Last rotated ${formatDateTime(overview.supportPasswordUpdatedAt)}.`
+        : 'Using the server default support password.';
+      setBanner('ok', 'Admin overview is live. Snapshot refreshes every 30 seconds.');
+    };
+
+    const loadOverview = async () => {
+      try {
+        const overview = await adminRequest('/api/auth/admin/overview', { method: 'GET' });
+        renderOverview(overview);
+      } catch (error) {
+        setBanner('error', error.message || 'Unable to load the admin overview.');
+      }
+    };
+
+    passwordRotationForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const password = supportPasswordInput.value.trim();
+      if (!password) {
+        setBanner('error', 'Enter a new support password before rotating it.');
+        return;
+      }
+
+      const button = passwordRotationForm.querySelector('button[type="submit"]');
+      button.disabled = true;
+      button.textContent = 'Rotating...';
+      try {
+        const result = await adminRequest('/api/auth/admin/support-password', {
+          method: 'POST',
+          body: JSON.stringify({ password })
+        });
+        supportPasswordInput.value = '';
+        passwordRotationStatus.textContent = `Password rotated ${formatDateTime(result.updatedAt)}.`;
+        await loadOverview();
+      } catch (error) {
+        setBanner('error', error.message || 'Unable to rotate the support password.');
+      } finally {
+        button.disabled = false;
+        button.textContent = 'Rotate password';
+      }
+    });
+
+    [auditSearchInput, sessionSearchInput, sessionRoleFilter, customerSearchInput, customerPlanFilter, ticketSearchInput, ticketStatusFilter].forEach((element) => {
+      element.addEventListener('input', () => {
+        if (currentOverview) {
+          renderOverview(currentOverview);
+        }
+      });
+      element.addEventListener('change', () => {
+        if (currentOverview) {
+          renderOverview(currentOverview);
+        }
+      });
+    });
+
+    (async () => {
+      await SiteAuth.init();
+      if (SiteAuth.isCustomerLoggedIn()) {
+        window.location.href = 'index.htm';
+        return;
+      }
+
+      const supportUser = SiteAuth.getSupport();
+      if (!supportUser) {
+        window.location.href = 'support-login.html';
+        return;
+      }
+
+      if (supportUser.role !== 'System Administrator') {
+        window.location.href = 'support-portal.html';
+        return;
+      }
+
+      adminSession.hidden = false;
+      adminLogoutButton.hidden = false;
+      adminSessionName.textContent = supportUser.name || supportUser.email || 'System Administrator';
+      adminSessionRole.textContent = supportUser.role || 'Session active';
+
+      await loadOverview();
+      window.setInterval(loadOverview, 30000);
+    })();
+  </script>
+</body>
+</html>
