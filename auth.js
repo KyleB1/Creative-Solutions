@@ -41,8 +41,10 @@
       return DEFAULT_HOSTED_API_BASE;
     }
 
-    if (isLocalHostName(normalizedHost) && port && port !== '3000') {
-      return 'http://localhost:3000';
+    // When the site is opened from a local static server, route auth calls to
+    // the Node backend on port 3100. When already on 3100, use same-origin.
+    if (isLocalHostName(normalizedHost) && port && port !== '3100') {
+      return `http://${normalizedHost}:3100`;
     }
 
     return '';

@@ -148,7 +148,7 @@
     }
 
     .admin-overview {
-      display: grid;
+      display: none;
       gap: 1rem;
       background: var(--surface);
       border: 1px solid var(--border);
@@ -758,6 +758,11 @@
     const staffPill = document.getElementById('staffPill');
     staffPill.textContent = `${staffData.name} • ${staffData.role}`;
     addOnlineAgent(staffData.email);
+
+    if (staffData.role === 'System Administrator') {
+      const adminSection = document.querySelector('.admin-overview');
+      if (adminSection) adminSection.style.display = 'grid';
+    }
 
     const supportTickets = [
       { id: 'TCK-1012', customer: 'Avery Francis', subject: 'Login not working', status: 'open', priority: 'High', created: 'Mar 27', updated: 'Mar 28', product: 'Client portal', description: 'Customer cannot access their account after password reset. They receive a generic error on login.', messages: [
