@@ -197,6 +197,33 @@
       text-align: center;
     }
 
+    .status-banner {
+      margin: 0 0 1rem;
+      padding: 0.75rem 0.9rem;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      line-height: 1.45;
+      border: 1px solid transparent;
+    }
+
+    .status-banner.info {
+      background: #eef2ff;
+      border-color: #c7d2fe;
+      color: #3730a3;
+    }
+
+    .status-banner.ok {
+      background: #ecfdf3;
+      border-color: #a7f3d0;
+      color: #065f46;
+    }
+
+    .status-banner.error {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+
     .alt-link a {
       color: #7c3aed;
       font-weight: 700;
@@ -245,6 +272,24 @@
     body.dark-mode .alt-link,
     body.dark-mode .alt-link a {
       color: #d1d5db;
+    }
+
+    body.dark-mode .status-banner.info {
+      background: #1f2937;
+      border-color: #374151;
+      color: #c7d2fe;
+    }
+
+    body.dark-mode .status-banner.ok {
+      background: #052e24;
+      border-color: #065f46;
+      color: #a7f3d0;
+    }
+
+    body.dark-mode .status-banner.error {
+      background: #3f1d1d;
+      border-color: #7f1d1d;
+      color: #fecaca;
     }
 
     body.dark-mode input {
@@ -318,6 +363,7 @@
       </div>
       <h2>Sign in to your account</h2>
       <p>Enter your credentials below to access your workspace.</p>
+      <p id="apiStatusBanner" class="status-banner info" role="status" aria-live="polite">Checking login server availability...</p>
       <form>
         <div class="form-group">
           <label for="email">Email address</label>
@@ -346,6 +392,7 @@
     const loginForm = document.querySelector('form');
     const themeToggle = document.getElementById('themeToggle');
     const loginError = document.getElementById('loginError');
+    const apiStatusBanner = document.getElementById('apiStatusBanner');
     const storedTheme = localStorage.getItem('siteTheme') || 'light';
 
     const applyTheme = (theme) => {
@@ -369,6 +416,34 @@
       }
     });
 
+    const setBannerState = (state, message) => {
+      apiStatusBanner.classList.remove('info', 'ok', 'error');
+      apiStatusBanner.classList.add(state);
+      apiStatusBanner.textContent = message;
+    };
+
+    const checkApiConnectivity = async () => {
+      setBannerState('info', 'Checking login server availability...');
+
+      const timeoutMs = 6500;
+      const timeoutPromise = new Promise((_, reject) => {
+        const timer = setTimeout(() => {
+          clearTimeout(timer);
+          reject(new Error('timeout'));
+        }, timeoutMs);
+      });
+
+      try {
+        await Promise.race([
+          SiteAuth.hasRegisteredAccounts(),
+          timeoutPromise
+        ]);
+        setBannerState('ok', 'Login server is online. You can sign in now.');
+      } catch (_error) {
+        setBannerState('error', 'Login server is unreachable right now. If you are testing locally, start the Node backend, or configure window.CWS_API_BASE to your API URL.');
+      }
+    };
+
     themeToggle.addEventListener('click', () => {
       const nextTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
       applyTheme(nextTheme);
@@ -377,6 +452,7 @@
     applyTheme(storedTheme);
 
     (async () => {
+      await checkApiConnectivity();
       if (await SiteAuth.redirectIfSupport('support-portal.html')) {
         return;
       }

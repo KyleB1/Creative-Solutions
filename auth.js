@@ -14,21 +14,52 @@
     loadingPromise: null
   };
 
+  const DEFAULT_HOSTED_API_BASE = 'https://creative-solutions.onrender.com';
+
+  function isLocalHostName(hostname) {
+    const normalized = String(hostname || '').toLowerCase();
+    return normalized === 'localhost' || normalized === '127.0.0.1';
+  }
+
   function getApiBase() {
     const explicitBase = typeof window !== 'undefined' ? window.CWS_API_BASE : '';
     if (explicitBase) {
       return String(explicitBase).replace(/\/+$/, '');
     }
 
-    if (typeof window !== 'undefined' && window.location && window.location.hostname === 'kyleb1.github.io') {
-      return 'https://creative-solutions.onrender.com';
+    if (typeof window === 'undefined' || !window.location) {
+      return '';
+    }
+
+    const { protocol, hostname, port } = window.location;
+    const normalizedHost = String(hostname || '').toLowerCase();
+
+    if (normalizedHost === 'kyleb1.github.io') {
+      return DEFAULT_HOSTED_API_BASE;
+    }
+
+    if (protocol === 'file:' || normalizedHost.endsWith('.github.io')) {
+      return DEFAULT_HOSTED_API_BASE;
+    }
+
+    if (isLocalHostName(normalizedHost) && port && port !== '3000') {
+      return 'http://localhost:3000';
     }
 
     return '';
   }
 
   function getRequestCredentials() {
-    return getApiBase() ? 'include' : 'same-origin';
+    const base = getApiBase();
+    if (!base || typeof window === 'undefined' || !window.location) {
+      return 'same-origin';
+    }
+
+    try {
+      return new URL(base).origin === window.location.origin ? 'same-origin' : 'include';
+    } catch (_error) {
+      return 'include';
+    }
   }
 
   function buildApiUrl(path) {
@@ -117,7 +148,15 @@
       requestOptions.headers['Content-Type'] = 'application/json';
     }
 
-    const response = await fetch(buildApiUrl(path), requestOptions);
+    const requestUrl = buildApiUrl(path);
+    let response;
+    try {
+      response = await fetch(requestUrl, requestOptions);
+    } catch (_networkError) {
+      const configuredBase = getApiBase();
+      const target = configuredBase || 'same-origin backend';
+      throw new Error(`Unable to reach the login server (${target}). If you are running the site locally, start the Node backend or set window.CWS_API_BASE to your API URL.`);
+    }
     const payload = response.status === 204 ? null : await response.json().catch(() => ({}));
 
     if (!response.ok) {

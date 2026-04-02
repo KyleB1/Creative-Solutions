@@ -106,6 +106,17 @@
     .page-footnote { margin-top: 1.5rem; color: #6b7280; font-size: 0.95rem; }
     .page-footnote a { color: #7c3aed; text-decoration: none; font-weight: 600; }
     .error-message { margin-top: 1rem; color: #b91c1c; font-size: 0.95rem; font-weight: 600; }
+    .status-banner {
+      margin: 0 0 1rem;
+      padding: 0.75rem 0.9rem;
+      border-radius: 12px;
+      font-size: 0.92rem;
+      line-height: 1.45;
+      border: 1px solid transparent;
+    }
+    .status-banner.info { background: #eef2ff; border-color: #c7d2fe; color: #3730a3; }
+    .status-banner.ok { background: #ecfdf3; border-color: #a7f3d0; color: #065f46; }
+    .status-banner.error { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
     body.dark-mode .error-message { color: #fecaca; }
 
     .theme-toggle { position: fixed; top: 1rem; right: 1rem; z-index: 1000; padding: 0.75rem 1rem; border-radius: 999px; border: 1px solid rgba(124, 58, 237, 0.25); background: #ffffff; color: #5b4b96; font-weight: 600; cursor: pointer; transition: background 0.2s ease, transform 0.2s ease; }
@@ -127,6 +138,9 @@
     body.dark-mode .theme-toggle { background: #1f2937; color: #e5e7eb; border-color: rgba(148, 163, 184, 0.45); }
     body.dark-mode .agent-count { background: #1f2937; border-color: #334155; color: #e5e7eb; }
     body.dark-mode .agent-count span { color: #9ca3af; }
+    body.dark-mode .status-banner.info { background: #1f2937; border-color: #374151; color: #c7d2fe; }
+    body.dark-mode .status-banner.ok { background: #052e24; border-color: #065f46; color: #a7f3d0; }
+    body.dark-mode .status-banner.error { background: #3f1d1d; border-color: #7f1d1d; color: #fecaca; }
 
     body.dark-mode a,
     body.dark-mode button,
@@ -173,6 +187,7 @@
       </div>
       <h2>Agent sign in</h2>
       <p>Enter your staff credentials to access the support portal.</p>
+      <p id="apiStatusBanner" class="status-banner info" role="status" aria-live="polite">Checking login server availability...</p>
       <form id="supportLoginForm">
         <div class="form-group">
           <label for="supportEmail">Work email</label>
@@ -248,7 +263,37 @@
     };
 
     const loginError = document.getElementById('loginError');
+    const apiStatusBanner = document.getElementById('apiStatusBanner');
     updateAgentCounts();
+
+    const setBannerState = (state, message) => {
+      apiStatusBanner.classList.remove('info', 'ok', 'error');
+      apiStatusBanner.classList.add(state);
+      apiStatusBanner.textContent = message;
+    };
+
+    const checkApiConnectivity = async () => {
+      setBannerState('info', 'Checking login server availability...');
+
+      const timeoutMs = 6500;
+      const timeoutPromise = new Promise((_, reject) => {
+        const timer = setTimeout(() => {
+          clearTimeout(timer);
+          reject(new Error('timeout'));
+        }, timeoutMs);
+      });
+
+      try {
+        await Promise.race([
+          SiteAuth.hasRegisteredAccounts(),
+          timeoutPromise
+        ]);
+        setBannerState('ok', 'Login server is online. You can sign in now.');
+      } catch (_error) {
+        setBannerState('error', 'Login server is unreachable right now. If you are testing locally, start the Node backend, or configure window.CWS_API_BASE to your API URL.');
+      }
+    };
+
     const supportLoginForm = document.getElementById('supportLoginForm');
     supportLoginForm.addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -275,6 +320,7 @@
     });
 
     (async () => {
+      await checkApiConnectivity();
       await SiteAuth.redirectIfSupport('support-portal.html');
     })();
   </script>
