@@ -1,0 +1,56 @@
+{
+  "failures": 4,
+  "totalChecks": 8,
+  "suites": [
+    {
+      "label": "Same-origin support login",
+      "checks": [
+        {
+          "name": "Login page loads",
+          "status": "PASS",
+          "detail": "http://127.0.0.1:3100/support-login.html rendered."
+        },
+        {
+          "name": "API status banner",
+          "status": "FAIL",
+          "detail": "Unexpected banner text: \"Checking login server availability...\""
+        },
+        {
+          "name": "API routing",
+          "status": "PASS",
+          "detail": "Auth calls targeted /api/auth/session."
+        },
+        {
+          "name": "Unexpected error",
+          "status": "FAIL",
+          "detail": "page.waitForURL: Timeout 12000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"**/support-portal.html\" until \"domcontentloaded\"\n============================================================\n    at runFlow (C:\\Users\\Kyles\\OneDrive\\Documents\\KyleB1.github.io\\Creative-Solutions\\scripts\\support-login-e2e.cjs:79:16)\n    at async C:\\Users\\Kyles\\OneDrive\\Documents\\KyleB1.github.io\\Creative-Solutions\\scripts\\support-login-e2e.cjs:136:20"
+        }
+      ]
+    },
+    {
+      "label": "Cross-origin support login",
+      "checks": [
+        {
+          "name": "Login page loads",
+          "status": "PASS",
+          "detail": "http://127.0.0.1:31001/support-login.html rendered."
+        },
+        {
+          "name": "API status banner",
+          "status": "FAIL",
+          "detail": "Unexpected banner text: \"Checking login server availability...\""
+        },
+        {
+          "name": "API routing",
+          "status": "PASS",
+          "detail": "Auth calls targeted http://127.0.0.1:3100/api/auth/session."
+        },
+        {
+          "name": "Unexpected error",
+          "status": "FAIL",
+          "detail": "page.waitForURL: Timeout 12000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"**/support-portal.html\" until \"domcontentloaded\"\n============================================================\n    at runFlow (C:\\Users\\Kyles\\OneDrive\\Documents\\KyleB1.github.io\\Creative-Solutions\\scripts\\support-login-e2e.cjs:79:16)\n    at async C:\\Users\\Kyles\\OneDrive\\Documents\\KyleB1.github.io\\Creative-Solutions\\scripts\\support-login-e2e.cjs:136:20"
+        }
+      ]
+    }
+  ]
+}

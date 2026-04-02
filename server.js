@@ -42,22 +42,40 @@ function normalizeOrigin(origin) {
   }
 }
 
+function isLocalDevelopmentOrigin(origin) {
+  if (!origin) return false;
+
+  try {
+    const parsed = new URL(origin);
+    const hostname = String(parsed.hostname || '').toLowerCase();
+    return hostname === 'localhost' || hostname === '127.0.0.1';
+  } catch (_error) {
+    return false;
+  }
+}
+
 function buildCorsOptions(req) {
   const configuredOrigins = getConfiguredOrigins();
   const inferredOrigin = normalizeOrigin(`${req.protocol}://${req.get('host')}`);
   const allowedOrigins = new Set([
     inferredOrigin,
+    'http://localhost:3100',
+    'http://127.0.0.1:3100',
     'http://localhost:3000',
     'https://kyleb1.github.io',
     ...configuredOrigins
   ]);
   const requestOrigin = normalizeOrigin(req.get('origin'));
+  const isAllowedOrigin = !requestOrigin
+    || allowedOrigins.has(requestOrigin)
+    || isLocalDevelopmentOrigin(requestOrigin);
 
   return {
-    origin: !requestOrigin || allowedOrigins.has(requestOrigin),
+    origin: isAllowedOrigin ? (requestOrigin || true) : false,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Admin-Token', 'X-Customer-Id']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Admin-Token', 'X-Customer-Id'],
+    optionsSuccessStatus: 204
   };
 }
 
@@ -68,6 +86,9 @@ app.use(helmet({
 
 // CORS configuration
 app.use(cors((req, callback) => {
+  callback(null, buildCorsOptions(req));
+}));
+app.options('*', cors((req, callback) => {
   callback(null, buildCorsOptions(req));
 }));
 
