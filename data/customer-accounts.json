@@ -15,6 +15,27 @@
       "passwordSalt": "adc7ad1377e2171a54d42cc7377af26e",
       "passwordHash": "820f45ab4bfcedf9b7e180072e3fc75afae229437a44b2e18899e4ab5d891a4dbb5f641ee86d68cd2d8c0bbeca6e102477ce3eedffe66360665237993298e2ce",
       "createdAt": "2026-04-02T02:10:03.424Z"
+    },
+    "permtest_1775123769048@example.com": {
+      "role": "customer",
+      "plan": "Growth plan",
+      "renewal": "May 18",
+      "activeProjects": 8,
+      "newLeads": 24,
+      "supportTickets": 3,
+      "monthlySpend": "$2.4K",
+      "notifications": false,
+      "customerId": "56c11000-fba9-4141-94c5-ecd4e8f44c38",
+      "name": "Perm Test",
+      "email": "permtest_1775123769048@example.com",
+      "passwordSalt": "1eaedec5c0de50e35f62d3bcea412495",
+      "passwordHash": "5c598c3b766df0ea8291bd585b908524a49e2910a51adf20f0a32780735fcbd646603447b9b3b08c8524c804805d09151362025f9ab5d85e040dc468f9178563",
+      "emailVerified": true,
+      "emailVerificationTokenHash": null,
+      "emailVerificationExpiresAt": null,
+      "passwordResetTokenHash": null,
+      "passwordResetExpiresAt": null,
+      "createdAt": "2026-04-02T09:56:09.137Z"
     }
   }
 }

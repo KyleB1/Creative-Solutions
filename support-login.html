@@ -228,7 +228,7 @@
     applyTheme(storedTheme);
 
     if (!SiteAuth.isSupportLoggedIn() && SiteAuth.isCustomerLoggedIn()) {
-      window.location.href = 'customer-portal.html';
+      window.location.href = SiteAuth.toAppUrl('customer-portal.html');
     }
 
     const authorizedSupportEmails = SiteAuth.getAuthorizedSupportEmails();
@@ -251,7 +251,7 @@
       ));
     };
 
-    const getSupportDestination = (role) => role === 'System Administrator' ? 'system-admin.html' : 'support-portal.html';
+    const getSupportDestination = (role) => SiteAuth.getSupportLandingUrl(role);
 
     const addOnlineAgent = (email) => {
       const roster = getSupportOnlineAgents();

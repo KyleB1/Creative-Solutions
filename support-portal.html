@@ -812,7 +812,7 @@
     staffRole.textContent = staffData.role || 'Session active';
     addOnlineAgent(staffData.email);
 
-    if (staffData.role === 'System Administrator') {
+    if (SiteAuth.isSystemAdministrator(staffData)) {
       const adminSection = document.querySelector('.admin-overview');
       if (adminSection) adminSection.style.display = 'grid';
       const adminConsoleLink = document.getElementById('adminConsoleLink');

@@ -88,9 +88,13 @@
       if (supportBtn) supportBtn.style.display = 'none';
       if (crmBtn) crmBtn.style.display = 'inline-flex';
       if (primaryBtn) {
-        const isAdmin = support.role === 'System Administrator';
+        const isAdmin = window.SiteAuth && typeof window.SiteAuth.isSystemAdministrator === 'function'
+          ? window.SiteAuth.isSystemAdministrator(support)
+          : support.role === 'System Administrator';
         primaryBtn.textContent = isAdmin ? 'Admin Console' : 'Support Portal';
-        primaryBtn.href = isAdmin ? 'system-admin.html' : 'support-portal.html';
+        primaryBtn.href = isAdmin
+          ? (window.SiteAuth && window.SiteAuth.toAppUrl ? window.SiteAuth.toAppUrl('system-admin.html') : 'system-admin.html')
+          : (window.SiteAuth && window.SiteAuth.toAppUrl ? window.SiteAuth.toAppUrl('support-portal.html') : 'support-portal.html');
       }
       if (signupBtn) signupBtn.style.display = 'none';
     }

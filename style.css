@@ -16,7 +16,7 @@ body.dark-mode {
   --surface: #111827;
   --surface-alt: #182235;
   --text: #f1f5f9;
-  --muted: #b8c4d6;
+  --muted: #7699ce;
   --primary: #82aaff;
   --primary-soft: #1e2a5b;
   --surface-contrast: rgba(148, 163, 184, 0.16);
@@ -168,7 +168,7 @@ footer.footer,
 }
 
 .contact-form {
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(13, 44, 116, 0.08);
 }
 
 footer.footer {

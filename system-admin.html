@@ -928,18 +928,18 @@
     (async () => {
       await SiteAuth.init();
       if (SiteAuth.isCustomerLoggedIn()) {
-        window.location.href = 'index.htm';
+        window.location.href = SiteAuth.toAppUrl('index.htm');
         return;
       }
 
       const supportUser = SiteAuth.getSupport();
       if (!supportUser) {
-        window.location.href = 'support-login.html';
+        window.location.href = SiteAuth.toAppUrl('support-login.html');
         return;
       }
 
-      if (supportUser.role !== 'System Administrator') {
-        window.location.href = 'support-portal.html';
+      if (!SiteAuth.isSystemAdministrator(supportUser)) {
+        window.location.href = SiteAuth.getSupportLandingUrl(supportUser);
         return;
       }
 

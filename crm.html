@@ -946,16 +946,16 @@
     (async () => {
       await SiteAuth.init();
       if (SiteAuth.isCustomerLoggedIn()) {
-        window.location.href = 'index.htm';
+        window.location.href = SiteAuth.toAppUrl('index.htm');
       } else if (!SiteAuth.getSupport()) {
-        window.location.href = 'support-login.html';
+        window.location.href = SiteAuth.toAppUrl('support-login.html');
       } else {
         const supportUser = SiteAuth.getSupport();
         crmSession.hidden = false;
         crmLogoutButton.hidden = false;
         crmSessionName.textContent = supportUser.name || supportUser.email || 'Support Agent';
         crmSessionRole.textContent = supportUser.role || 'Session active';
-        if (supportUser.role === 'System Administrator') {
+        if (SiteAuth.isSystemAdministrator(supportUser)) {
           const crmAdminLink = document.getElementById('crmAdminLink');
           if (crmAdminLink) crmAdminLink.hidden = false;
         }

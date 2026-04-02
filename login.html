@@ -418,7 +418,7 @@
           email: document.getElementById('email').value,
           password: document.getElementById('password').value
         });
-        window.location.href = 'customer-portal.html';
+        window.location.href = SiteAuth.toAppUrl('customer-portal.html');
       } catch (error) {
         loginError.textContent = error.message || 'Unable to log in right now.';
       }
@@ -464,7 +464,7 @@
       await SiteAuth.init();
       const activeSupport = SiteAuth.getSupport();
       if (activeSupport) {
-        window.location.href = activeSupport.role === 'System Administrator' ? 'system-admin.html' : 'support-portal.html';
+        window.location.href = SiteAuth.getSupportLandingUrl(activeSupport);
         return;
       }
       await SiteAuth.redirectIfCustomer('customer-portal.html');

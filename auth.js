@@ -103,6 +103,55 @@
     return SUPPORT_ROLES[normalizeEmail(email)] || null;
   }
 
+  function toAppUrl(path) {
+    const target = String(path || '').trim();
+    if (!target) return '';
+    if (/^(?:[a-z]+:)?\/\//i.test(target) || target.startsWith('#')) {
+      return target;
+    }
+
+    const normalizedPath = target.replace(/^\/+/, '');
+    if (typeof window === 'undefined' || !window.location) {
+      return normalizedPath;
+    }
+
+    if (window.location.protocol === 'file:' && window.CWS_API_BASE) {
+      const base = String(window.CWS_API_BASE).replace(/\/+$/, '');
+      return `${base}/${normalizedPath}`;
+    }
+
+    return normalizedPath;
+  }
+
+  function isSystemAdministrator(value) {
+    if (!value) return false;
+    if (typeof value === 'string') {
+      return value === 'System Administrator';
+    }
+
+    if (value.supportRole) {
+      return value.supportRole === 'System Administrator';
+    }
+
+    if (value.role === 'admin' || value.role === 'System Administrator') {
+      return true;
+    }
+
+    if (value.email) {
+      return getSupportRoleForEmail(value.email) === 'System Administrator';
+    }
+
+    return false;
+  }
+
+  function getSupportLandingPage(value) {
+    return isSystemAdministrator(value) ? 'system-admin.html' : 'support-portal.html';
+  }
+
+  function getSupportLandingUrl(value) {
+    return toAppUrl(getSupportLandingPage(value));
+  }
+
   function getSupportOnlineAgents() {
     const stored = safeParse(localStorage.getItem('supportOnlineAgents') || '[]', []);
     if (!Array.isArray(stored)) return [];
@@ -300,7 +349,7 @@
     const customer = await init();
     if (!customer || customer.role !== 'customer') {
       clearCustomer();
-      if (redirectTo) window.location.href = redirectTo;
+      if (redirectTo) window.location.href = toAppUrl(redirectTo);
       return null;
     }
     return customer;
@@ -310,7 +359,7 @@
     const support = await init();
     if (!isSupportSession(support)) {
       clearSupport();
-      if (redirectTo) window.location.href = redirectTo;
+      if (redirectTo) window.location.href = toAppUrl(redirectTo);
       return null;
     }
     addOnlineAgent(support.email);
@@ -320,7 +369,7 @@
   async function redirectIfCustomer(redirectTo) {
     const user = await init();
     if (user && user.role === 'customer' && redirectTo) {
-      window.location.href = redirectTo;
+      window.location.href = toAppUrl(redirectTo);
       return true;
     }
     return false;
@@ -329,7 +378,7 @@
   async function redirectIfSupport(redirectTo) {
     const user = await init();
     if (isSupportSession(user) && redirectTo) {
-      window.location.href = redirectTo;
+      window.location.href = toAppUrl(redirectTo);
       return true;
     }
     return false;
@@ -425,7 +474,7 @@
     }
     setCurrentUser(null);
     if (redirectTo) {
-      window.location.href = redirectTo;
+      window.location.href = toAppUrl(redirectTo);
     }
   }
 
@@ -441,9 +490,13 @@
     safeParse,
     normalizeEmail,
     buildApiUrl,
+    toAppUrl,
     apiRequest,
     getAuthorizedSupportEmails,
     getSupportRoleForEmail,
+    isSystemAdministrator,
+    getSupportLandingPage,
+    getSupportLandingUrl,
     getSupportOnlineAgents,
     saveSupportOnlineAgents,
     addOnlineAgent,
