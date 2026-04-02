@@ -16,7 +16,7 @@ body.dark-mode {
   --surface: #111827;
   --surface-alt: #182235;
   --text: #f1f5f9;
-  --muted: #7699ce;
+  --muted: #c2cffd;
   --primary: #82aaff;
   --primary-soft: #1e2a5b;
   --surface-contrast: rgba(148, 163, 184, 0.16);
@@ -83,6 +83,15 @@ body.dark-mode .contact-form {
 
 body.dark-mode .text-muted {
   color: var(--muted) !important;
+}
+
+body.dark-mode a:not(.btn):not(.gh-btn) {
+  color: #cbd5ff;
+}
+
+body.dark-mode a:not(.btn):not(.gh-btn):hover,
+body.dark-mode a:not(.btn):not(.gh-btn):focus {
+  color: #e2e8ff;
 }
 
 body.dark-mode .navbar-light .navbar-toggler-icon {

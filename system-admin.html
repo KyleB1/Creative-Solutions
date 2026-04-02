@@ -321,7 +321,7 @@
       font-size: 0.94rem;
       line-height: 1.5;
     }
-    .status-banner.info { background: #eef2ff; border-color: #c7d2fe; color: #3730a3; }
+    .status-banner.info { background: #eef2ff; border-color: #cbd5ff; color: #3730a3; }
     .status-banner.ok { background: #ecfdf3; border-color: #a7f3d0; color: #065f46; }
     .status-banner.error { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
     @media (max-width: 1100px) {
@@ -385,13 +385,13 @@
     body.dark-mode .customer-item p,
     body.dark-mode .ticket-item p,
     body.dark-mode .control-item p,
-    body.dark-mode .quick-link span { color: #b8c4d6; }
+    body.dark-mode .quick-link span { color: #c2cffd; }
     body.dark-mode .hero-note { background: #182235; border-color: #334155; }
-    body.dark-mode .section-chip { background: #312e81; color: #c7d2fe; }
+    body.dark-mode .section-chip { background: #312e81; color: #cbd5ff; }
     body.dark-mode .pill.online { background: #14532d; color: #d1fae5; }
     body.dark-mode .pill.offline { background: #7f1d1d; color: #fee2e7; }
-    body.dark-mode .pill.admin { background: #312e81; color: #c7d2fe; }
-    body.dark-mode .pill.support { background: #1e3a8a; color: #dbeafe; }
+    body.dark-mode .pill.admin { background: #312e81; color: #cbd5ff; }
+    body.dark-mode .pill.support { background: #1e3a8a; color: #cbd5ff; }
     body.dark-mode .pill.customer { background: #78350f; color: #fde68a; }
     body.dark-mode .pill.ticket { background: #0f3a55; color: #bae6fd; }
     body.dark-mode .inline-field,
@@ -410,7 +410,7 @@
       color: #ffffff;
     }
     body.dark-mode .toggle-row { color: #cbd5e1; }
-    body.dark-mode .status-banner.info { background: #1f2937; border-color: #374151; color: #c7d2fe; }
+    body.dark-mode .status-banner.info { background: #1f2937; border-color: #374151; color: #cbd5ff; }
     body.dark-mode .status-banner.ok { background: #052e24; border-color: #065f46; color: #a7f3d0; }
     body.dark-mode .status-banner.error { background: #3f1d1d; border-color: #7f1d1d; color: #fecaca; }
   </style>
@@ -790,7 +790,7 @@
             <span>${entry.supportTickets} tickets</span>
             <span>${entry.activeProjects} active projects</span>
           </div>
-          <p>Created ${formatDateTime(entry.createdAt)} • Renewal ${entry.renewal || 'Not set'} • ${entry.monthlySpend} monthly spend</p>
+          <p>Created ${formatDateTime(entry.createdAt)} Ã¢â‚¬Â¢ Renewal ${entry.renewal || 'Not set'} Ã¢â‚¬Â¢ ${entry.monthlySpend} monthly spend</p>
           <form class="inline-form" data-customer-form="${entry.email}">
             <select name="plan">
               <option value="Starter" ${entry.plan === 'Starter' ? 'selected' : ''}>Starter</option>
@@ -845,7 +845,7 @@
       supportTicketList.innerHTML = filtered.slice(0, 12).map((entry) => `
         <article class="ticket-item">
           <strong>${entry.subject} (${entry.id})</strong>
-          <p>${entry.customer} • ${entry.product}</p>
+          <p>${entry.customer} Ã¢â‚¬Â¢ ${entry.product}</p>
           <div class="item-meta">
             <span class="pill ticket">${entry.priority}</span>
             <span class="pill ${entry.status === 'resolved' ? 'online' : entry.status === 'pending' ? 'support' : 'admin'}">${entry.status}</span>

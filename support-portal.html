@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -332,8 +332,8 @@
       border: 1px solid rgba(229, 231, 235, 0.9);
     }
 
-    .history-entry.internal { background: #eef4ff; border-color: #c7d2fe; }
-    .history-entry.agent { background: #f8fafc; border-color: #dbeafe; }
+    .history-entry.internal { background: #eef4ff; border-color: #cbd5ff; }
+    .history-entry.agent { background: #f8fafc; border-color: #cbd5ff; }
     .history-entry.customer { background: #ffffff; border-color: #e5e7eb; }
 
     .history-entry strong { display: block; margin-bottom: 0.35rem; color: #111827; }
@@ -540,22 +540,22 @@
       border-color: #334155;
     }
 
-    body.dark-mode .pill.status-open { background: #3730a3; color: #c7d2fe; }
+    body.dark-mode .pill.status-open { background: #3730a3; color: #cbd5ff; }
     body.dark-mode .pill.status-inprogress { background: #78350f; color: #fde68a; }
     body.dark-mode .pill.status-waiting { background: #78350f; color: #fde68a; }
-    body.dark-mode .pill.status-pending { background: #1e3a8a; color: #dbeafe; }
+    body.dark-mode .pill.status-pending { background: #1e3a8a; color: #cbd5ff; }
     body.dark-mode .pill.status-resolved { background: #14532d; color: #d1fae5; }
 
     body.dark-mode .bar-track { background: #1f2937; }
     body.dark-mode .bar.active .bar-track { box-shadow: inset 0 0 0 2px rgba(148, 163, 184, 0.35); }
-    body.dark-mode .bar-count { color: #eef2ff; }
+    body.dark-mode .bar-count { color: #cbd5ff; }
     body.dark-mode .detail-copy,
     body.dark-mode .history-entry p,
     body.dark-mode .history-entry span,
     body.dark-mode .ticket-card span,
     body.dark-mode .meta-block span,
     body.dark-mode .ticket-details dd {
-      color: #b8c4d6;
+      color: #c2cffd;
     }
     body.dark-mode .filter-btn { background: #1f2937; color: #e5e7eb; border-color: #4b5563; }
     body.dark-mode .filter-btn.active { background: #7c3aed; color: #fff; }
@@ -564,7 +564,7 @@
     body.dark-mode .action-btn.secondary.status-action { background: #1f2937; color: #e5e7eb; border-color: rgba(148, 163, 184, 0.25); }
     body.dark-mode .profile-pill { background: #1f2937; color: #e5e7eb; border-color: rgba(148, 163, 184, 0.35); }
     body.dark-mode .profile-pill strong { color: #f1f5f9; }
-    body.dark-mode .profile-pill span { color: #b8c4d6; }
+    body.dark-mode .profile-pill span { color: #c2cffd; }
     body.dark-mode .theme-toggle,
     body.dark-mode .logout-button { background: #1f2937; color: #e5e7eb; border-color: rgba(148, 163, 184, 0.45); }
   </style>
@@ -675,11 +675,11 @@
               </div>
               <div class="meta-block">
                 <span>Customer</span>
-                <strong id="detailCustomer">—</strong>
+                <strong id="detailCustomer">â€”</strong>
               </div>
               <div class="meta-block">
                 <span>Priority</span>
-                <strong id="detailPriority">—</strong>
+                <strong id="detailPriority">â€”</strong>
                 <select id="prioritySelect" class="select-field">
                   <option value="Low">Low</option>
                   <option value="Medium">Medium</option>
@@ -692,17 +692,17 @@
 
           <div class="meta-block">
             <span>Product</span>
-            <strong id="detailProduct">—</strong>
+            <strong id="detailProduct">â€”</strong>
           </div>
 
           <div class="cards-row">
             <div class="meta-block">
               <span>Created</span>
-              <strong id="detailCreated">—</strong>
+              <strong id="detailCreated">â€”</strong>
             </div>
             <div class="meta-block">
               <span>Last update</span>
-              <strong id="detailUpdated">—</strong>
+              <strong id="detailUpdated">â€”</strong>
             </div>
           </div>
 
@@ -866,7 +866,7 @@
 
     const formatDate = (value) => {
       const date = new Date(value);
-      if (Number.isNaN(date.getTime())) return value || '—';
+      if (Number.isNaN(date.getTime())) return value || 'â€”';
       return date.toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
     };
 
@@ -974,7 +974,7 @@
       wrapper.className = 'ticket-card';
       wrapper.innerHTML = `
         <strong>${ticket.subject}</strong>
-        <span>${ticket.customer} • ${ticket.product}</span>
+        <span>${ticket.customer} â€¢ ${ticket.product}</span>
         <div class="ticket-meta">
           <span class="pill ${getStatusClass(ticket.status)}">${getStatusLabel(ticket.status)}</span>
           <span>${ticket.priority} priority</span>
