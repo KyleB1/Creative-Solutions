@@ -306,11 +306,6 @@
       event.preventDefault();
       const email = SiteAuth.normalizeEmail(document.getElementById('supportEmail').value);
       const password = document.getElementById('supportPassword').value.trim();
-      const role = SiteAuth.getSupportRoleForEmail(email);
-      if (!role) {
-        loginError.textContent = 'Access denied. This account does not have support portal permissions.';
-        return;
-      }
       if (!password) {
         loginError.textContent = 'Please enter your password.';
         return;
@@ -319,8 +314,10 @@
       try {
         loginError.textContent = '';
         const supportUser = await SiteAuth.loginSupport({ email, password });
-        addOnlineAgent(email);
-        window.location.href = getSupportDestination((supportUser && supportUser.supportRole) || role);
+        if (supportUser && supportUser.email) {
+          addOnlineAgent(supportUser.email);
+        }
+        window.location.href = getSupportDestination((supportUser && supportUser.supportRole) || 'Support Agent');
       } catch (error) {
         loginError.textContent = error.message || 'Unable to access the support portal.';
       }

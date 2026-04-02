@@ -121,6 +121,66 @@
   ],
   "auditLog": [
     {
+      "id": "733624f8-6b9b-4baa-b1f6-cd72e9e49a2b",
+      "action": "support.login",
+      "title": "Kyle Creativesolutions signed in",
+      "description": "System Administrator session started for kyle.creativesolutions@gmail.com.",
+      "actorEmail": "kyle.creativesolutions@gmail.com",
+      "actorName": "Kyle Creativesolutions",
+      "actorRole": "System Administrator",
+      "targetType": "support-user",
+      "targetId": "kyle.creativesolutions@gmail.com",
+      "createdAt": "2026-04-02T10:18:34.368Z"
+    },
+    {
+      "id": "3403ebac-e28d-4ff5-9395-c11699ae9868",
+      "action": "support.login",
+      "title": "Kyle Creativesolutions signed in",
+      "description": "System Administrator session started for kyle.creativesolutions@gmail.com.",
+      "actorEmail": "kyle.creativesolutions@gmail.com",
+      "actorName": "Kyle Creativesolutions",
+      "actorRole": "System Administrator",
+      "targetType": "support-user",
+      "targetId": "kyle.creativesolutions@gmail.com",
+      "createdAt": "2026-04-02T10:14:39.443Z"
+    },
+    {
+      "id": "67f47779-6f74-461b-9d1f-52110cc71a96",
+      "action": "support.login",
+      "title": "Kyle Creativesolutions signed in",
+      "description": "System Administrator session started for kyle.creativesolutions@gmail.com.",
+      "actorEmail": "kyle.creativesolutions@gmail.com",
+      "actorName": "Kyle Creativesolutions",
+      "actorRole": "System Administrator",
+      "targetType": "support-user",
+      "targetId": "kyle.creativesolutions@gmail.com",
+      "createdAt": "2026-04-02T10:13:55.856Z"
+    },
+    {
+      "id": "c94d11ab-44ac-4566-acbb-e02096b83006",
+      "action": "support.login",
+      "title": "Support signed in",
+      "description": "Support Agent session started for support@creativewebsolutions.com.",
+      "actorEmail": "support@creativewebsolutions.com",
+      "actorName": "Support",
+      "actorRole": "Support Agent",
+      "targetType": "support-user",
+      "targetId": "support@creativewebsolutions.com",
+      "createdAt": "2026-04-02T10:13:17.890Z"
+    },
+    {
+      "id": "4faeebc1-14d3-4c78-a437-d400336f0725",
+      "action": "support.login",
+      "title": "Kyle Creativesolutions signed in",
+      "description": "System Administrator session started for kyle.creativesolutions@gmail.com.",
+      "actorEmail": "kyle.creativesolutions@gmail.com",
+      "actorName": "Kyle Creativesolutions",
+      "actorRole": "System Administrator",
+      "targetType": "support-user",
+      "targetId": "kyle.creativesolutions@gmail.com",
+      "createdAt": "2026-04-02T10:11:55.286Z"
+    },
+    {
       "id": "74f96847-689e-4ba2-8aa0-fc3b91868e3a",
       "action": "support.login",
       "title": "Kyle Creativesolutions signed in",
