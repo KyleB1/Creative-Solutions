@@ -181,13 +181,26 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
-const server = app.listen(PORT, async () => {
+// Start server — auto-increment port if the preferred one is already in use
+function startServer(port) {
+  const s = app.listen(port, onListening.bind(null, port));
+  s.on('error', err => {
+    if (err.code === 'EADDRINUSE') {
+      console.warn(`Port ${port} in use, trying ${port + 1}…`);
+      startServer(port + 1);
+    } else {
+      throw err;
+    }
+  });
+  return s;
+}
+
+async function onListening(port) {
   console.log('\n╔════════════════════════════════════════════════════════════════╗');
   console.log('║                   STRIPE PAYMENT SERVER                        ║');
   console.log('╚════════════════════════════════════════════════════════════════╝\n');
   
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${port}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`Mode: ${process.env.STRIPE_SECRET_KEY?.startsWith('sk_test') ? 'TEST' : 'LIVE'}\n`);
   console.log(`Customer store: ${process.env.CUSTOMER_STORE_PATH || path.join(__dirname, 'data', 'customer-accounts.json')}`);
@@ -216,15 +229,17 @@ const server = app.listen(PORT, async () => {
   console.log('  GET    /api/billing/payments          - Payment history');
   console.log('  POST   /api/billing/refund            - Refund (admin only)');
   console.log('  POST   /api/billing/webhook           - Stripe webhook\n');
-});
+}
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
   console.log('SIGTERM received, shutting down gracefully...');
-  server.close(() => {
+  startServer.instance && startServer.instance.close(() => {
     console.log('Server closed');
     process.exit(0);
   });
 });
+
+startServer(PORT);
 
 module.exports = app;
