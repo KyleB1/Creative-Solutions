@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 :root {
   color-scheme: light;
   --bg: #f5f3ff;
@@ -207,3 +208,517 @@ footer.footer p {
     padding-top: 2rem;
   }
 }
+=======
+
+/* Footer Styles */
+footer {
+  background: var(--surface);
+  border-top: 1px solid var(--surface-alt);
+  margin-top: 4rem;
+  padding: 3rem 1.5rem 1.5rem;
+  color: var(--text);
+}
+
+footer a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+footer a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+}
+
+.footer-section h4 {
+  font-family: 'Sora', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  color: var(--text);
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.footer-section ul li a {
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.footer-section ul li a:hover {
+  color: var(--primary);
+}
+
+.footer-section p {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 0 0 1rem 0;
+}
+
+.footer-newsletter {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.footer-newsletter input {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--surface-alt);
+  border-radius: var(--radius-pill);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease;
+}
+
+.footer-newsletter input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.footer-newsletter button {
+  padding: 0.75rem 1.5rem;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.footer-newsletter button:hover:not(:disabled) {
+  background: var(--accent);
+}
+
+.footer-newsletter button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.footer-bottom {
+  max-width: 1200px;
+  margin: 2rem auto 0;
+  padding-top: 2rem;
+  border-top: 1px solid var(--surface-alt);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.copyright {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+
+.footer-links a {
+  color: var(--muted);
+}
+
+.footer-links a:hover {
+  color: var(--primary);
+}
+
+.footer-links .separator {
+  color: var(--surface-alt);
+}
+
+@media (max-width: 768px) {
+  footer {
+    padding: 2rem 1rem 1rem;
+    margin-top: 2rem;
+  }
+
+  .footer-content {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .footer-links {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .footer-content {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-newsletter {
+    flex-direction: column;
+  }
+
+  .footer-newsletter button {
+    padding: 0.75rem 1rem;
+  }
+}
+
+/* Dark mode footer overrides */
+body.dark-mode footer {
+  background: var(--surface);
+  border-top-color: var(--surface-alt);
+}
+
+body.dark-mode .footer-newsletter input {
+  background: var(--bg);
+  border-color: var(--surface-alt);
+  color: var(--text);
+}
+
+body.dark-mode .footer-newsletter input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--ring);
+}
+
+body.dark-mode .footer-newsletter input::placeholder {
+  color: var(--muted);
+}
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap');
+
+:root {
+  color-scheme: light;
+  --bg: #f4f8ff;
+  --surface: #ffffff;
+  --surface-alt: #ecf4ff;
+  --text: #10213b;
+  --muted: #526581;
+  --primary: #0f6fff;
+  --primary-soft: #dbeafe;
+  --accent: #ff7a18;
+  --surface-contrast: rgba(15, 111, 255, 0.14);
+  --ring: rgba(15, 111, 255, 0.24);
+  --shadow-soft: 0 12px 35px rgba(15, 23, 42, 0.08);
+  --shadow-lift: 0 20px 45px rgba(15, 23, 42, 0.12);
+  --radius-card: 18px;
+  --radius-pill: 999px;
+}
+
+body.dark-mode {
+  color-scheme: dark;
+  --bg: #091222;
+  --surface: #0f1b2f;
+  --surface-alt: #14233b;
+  --text: #e7efff;
+  --muted: #9bb0cf;
+  --primary: #63a4ff;
+  --primary-soft: #1a2f4d;
+  --accent: #ff9b4a;
+  --surface-contrast: rgba(99, 164, 255, 0.2);
+  --ring: rgba(99, 164, 255, 0.26);
+  --shadow-soft: 0 12px 28px rgba(3, 7, 18, 0.4);
+  --shadow-lift: 0 22px 50px rgba(3, 7, 18, 0.55);
+}
+
+body.dark-mode .navbar,
+body.dark-mode .hero-section,
+body.dark-mode .section-bg,
+body.dark-mode .service-card,
+body.dark-mode .portfolio-card,
+body.dark-mode .contact-form,
+body.dark-mode .hero-card,
+body.dark-mode .feature-box,
+body.dark-mode footer.footer {
+  background: var(--surface) !important;
+}
+
+body.dark-mode .hero-section {
+  background: radial-gradient(circle at top left, rgba(130, 170, 255, 0.14), transparent 48%),
+              linear-gradient(180deg, #111827 0%, #0f172a 100%);
+}
+
+body.dark-mode .section-bg {
+  background: var(--bg);
+}
+
+body.dark-mode .feature-box {
+  background: var(--surface-alt);
+  border-color: rgba(148, 163, 184, 0.25);
+}
+
+body.dark-mode .navbar-brand,
+body.dark-mode .nav-link,
+body.dark-mode .navbar-toggler-icon,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode p,
+body.dark-mode a,
+body.dark-mode span,
+body.dark-mode label,
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select,
+body.dark-mode button,
+body.dark-mode .form-label,
+body.dark-mode .form-control,
+body.dark-mode .form-control::placeholder,
+body.dark-mode .btn,
+body.dark-mode .btn-outline-secondary,
+body.dark-mode .btn-outline-primary,
+body.dark-mode .list-unstyled,
+body.dark-mode .list-unstyled li,
+body.dark-mode .card,
+body.dark-mode .panel,
+body.dark-mode section,
+body.dark-mode article,
+body.dark-mode .service-card,
+body.dark-mode .feature-box,
+body.dark-mode .hero-card,
+body.dark-mode .contact-form {
+  color: var(--text) !important;
+}
+
+body.dark-mode .text-muted {
+  color: var(--muted) !important;
+}
+
+body.dark-mode .navbar-light .navbar-toggler-icon {
+  filter: invert(1) brightness(1.5);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  background: #f2f5fb;
+  color: var(--text);
+}
+
+body {
+  padding-top: 0;
+  background:
+    radial-gradient(circle at 8% -10%, rgba(15, 111, 255, 0.16), transparent 32%),
+    radial-gradient(circle at 95% 12%, rgba(255, 122, 24, 0.12), transparent 34%),
+    linear-gradient(180deg, #f8fbff 0%, #edf4ff 48%, #e7f0ff 100%);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Sora", "Segoe UI", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+p {
+  color: var(--muted);
+}
+
+a {
+  color: var(--primary);
+}
+
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--ring);
+}
+
+header:not(.global-header) {
+  margin-bottom: 1rem;
+}
+
+.hero-section {
+  background:
+    radial-gradient(circle at 15% -5%, rgba(15, 111, 255, 0.18), transparent 40%),
+    linear-gradient(180deg, #f8fbff 0%, #edf4ff 42%, #e6f0ff 100%);
+}
+
+.hero-section .eyebrow {
+  letter-spacing: .24em;
+  color: var(--primary);
+}
+
+.hero-card {
+  background: var(--surface);
+}
+
+.navbar,
+footer.footer,
+.service-card,
+.portfolio-card,
+.contact-form,
+.hero-card {
+  transition: background .28s ease, color .28s ease, border-color .28s ease, box-shadow .28s ease, transform .28s ease;
+}
+
+.panel,
+.service-card,
+.portfolio-card,
+.contact-form,
+.hero-card,
+.project-card,
+.invoice-card,
+.message-card,
+.setting-card,
+.crm-card,
+.pipeline,
+.contacts {
+  border-radius: var(--radius-card);
+  border: 1px solid var(--surface-contrast);
+  box-shadow: var(--shadow-soft);
+}
+
+.panel:hover,
+.service-card:hover,
+.portfolio-card:hover,
+.contact-form:hover,
+.hero-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lift);
+}
+
+.feature-box {
+  background: var(--surface-alt);
+  border: 1px solid var(--surface-contrast);
+}
+
+.section-bg {
+  background: linear-gradient(180deg, #f8fbff 0%, #edf4ff 100%);
+}
+
+#services .service-card,
+#portfolio .portfolio-card,
+.contact-form {
+  background: var(--surface);
+}
+
+.service-card h3,
+.portfolio-card h3 {
+  margin-bottom: .75rem;
+}
+
+.service-card p,
+.portfolio-card p {
+  color: var(--muted);
+}
+
+.section-bg h2,
+#portfolio h2,
+#contact h2 {
+  color: var(--text);
+}
+
+.contact-form {
+  border: 1px solid var(--surface-contrast);
+}
+
+footer.footer {
+  background: transparent;
+}
+
+footer.footer p {
+  margin: 0;
+  font-size: .95rem;
+}
+
+@media (max-width: 992px) {
+  .hero-section {
+    padding-top: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .service-card,
+  .portfolio-card,
+  .contact-form,
+  .hero-card {
+    padding: 1.5rem;
+  }
+
+  .hero-section {
+    padding-top: 2rem;
+  }
+}
+
+.btn,
+button,
+.gh-btn {
+  border-radius: var(--radius-pill);
+}
+
+body.dark-mode {
+  background:
+    radial-gradient(circle at 12% -10%, rgba(99, 164, 255, 0.18), transparent 32%),
+    radial-gradient(circle at 92% 10%, rgba(255, 155, 74, 0.14), transparent 34%),
+    linear-gradient(180deg, #0a1427 0%, #0a1323 52%, #09101e 100%);
+}
+
+body.dark-mode .hero-section {
+  background:
+    radial-gradient(circle at 10% -8%, rgba(99, 164, 255, 0.18), transparent 42%),
+    linear-gradient(180deg, #0f1b2f 0%, #0a1427 100%);
+}
+
+/* ── Dark mode: html root background ──────────────────────────── */
+html:has(body.dark-mode) {
+  background: #091222;
+  color-scheme: dark;
+}
+
+/* ── Dark mode: form inputs – color alone was set but not background,
+   causing near-white text on white browser-default bg = invisible ── */
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+  background-color: var(--surface-alt) !important;
+  border-color: var(--surface-contrast) !important;
+  color: var(--text) !important;
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+  color: var(--muted) !important;
+  opacity: 1;
+}
+
+/* ── Dark mode: semantic status colors
+   Light-mode values (#166534, #92400e, #991b1b) are near-black
+   on dark backgrounds — essentially invisible ── */
+body.dark-mode .ok  { color: #4ade80 !important; }
+body.dark-mode .warn { color: #fbbf24 !important; }
+body.dark-mode .fail { color: #f87171 !important; }
+>>>>>>> Stashed changes

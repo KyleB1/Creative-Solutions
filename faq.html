@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Frequently asked questions about our web services, support, and turnaround times.">
+  <meta name="title" content="FAQ - Creative Web Solutions">
+  <title>FAQ - Creative Web Solutions</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .wrap { max-width: 900px; margin: 0 auto; padding: 1rem; }
+    .faq-hero { text-align: center; margin-bottom: 2.5rem; }
+    .faq-hero h1 { font-size: 2.2rem; margin: 0 0 0.5rem; }
+    .faq-hero p { font-size: 1rem; color: var(--muted); margin: 0; }
+    .faq-categories { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; margin: 2rem 0; }
+    .faq-cat-btn { padding: 0.75rem 1rem; background: var(--surface-alt); border: 1px solid var(--surface-contrast); border-radius: 12px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+    .faq-cat-btn.active { background: #2563eb; color: white; border-color: #2563eb; }
+    .faq-cat-btn:hover { border-color: var(--primary); }
+    .faq-section { margin: 2rem 0; }
+    .faq-section h2 { font-size: 1.3rem; margin: 0 0 1rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--surface-contrast); }
+    .faq-item { margin-bottom: 1.25rem; }
+    .faq-q { font-weight: 600; color: var(--text); cursor: pointer; padding: 0.75rem; background: var(--surface-alt); border-radius: 8px; margin-bottom: 0.5rem; transition: all 0.2s; display: flex; align-items: center; gap: 0.5rem; }
+    .faq-q:hover { background: var(--surface-contrast); }
+    .faq-q .arrow { display: inline-block; transition: transform 0.3s; }
+    .faq-a { padding: 1rem 0.75rem; color: var(--muted); line-height: 1.8; background: rgba(99, 164, 255, 0.03); border-left: 3px solid var(--primary); border-radius: 4px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    .faq-item.open .faq-q { background: var(--primary-soft); }
+    .faq-item.open .faq-q .arrow { transform: rotate(180deg); }
+    .faq-item.open .faq-a { max-height: 600px; }
+    @media (max-width: 768px) { .faq-categories { grid-template-columns: repeat(2, 1fr); } }
+  </style>
+</head>
+<body>
+  <main class="wrap" id="main">
+    <section class="faq-hero">
+      <h1>Frequently Asked Questions</h1>
+      <p>Got questions? We've got answers. Find everything you need to know below.</p>
+    </section>
+
+    <div class="faq-categories">
+      <button class="faq-cat-btn active" onclick="filterFAQ('all')">All</button>
+      <button class="faq-cat-btn" onclick="filterFAQ('service')">Services</button>
+      <button class="faq-cat-btn" onclick="filterFAQ('timeline')">Timeline</button>
+      <button class="faq-cat-btn" onclick="filterFAQ('support')">Support</button>
+      <button class="faq-cat-btn" onclick="filterFAQ('process')">Process</button>
+    </div>
+
+    <!-- Services Section -->
+    <section class="faq-section" data-category="all service">
+      <h2>About Our Services</h2>
+      <div class="faq-item">
+        <div class="faq-q"><span class="arrow">▼</span> What exactly do you build?</div>
+        <div class="faq-a">We specialize in three main areas: (1) Conversion-focused landing pages and websites designed to turn visitors into leads, (2) Secure client portals with ticketing systems and project tracking, and (3) Operational automation tools that reduce manual work.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span class="arrow">▼</span> Can you integrate with my existing tools?</div>
+        <div class="faq-a">Yes. We work with Stripe, Zapier, Mailchimp, Salesforce, and most popular business tools. If your tool has an API, we can likely integrate it. Custom integrations may cost extra.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span class="arrow">▼</span> Do you handle hosting and domain setup?</div>
+        <div class="faq-a">We recommend hosting providers and can assist with DNS configuration. You can use your existing host or we can help you choose one. Hosting costs are separate from our fees.</div>
+      </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section class="faq-section" data-category="all timeline">
+      <h2>Timeline & Turnaround</h2>
+      <div class="faq-item">
+        <div class="faq-q"><span class="arrow">▼</span> How long does a typical project take?</div>
+        <div class="faq-a">Starter projects: 3-4 weeks. Professional: 5-8 weeks. Enterprise: 8-12 weeks or longer. Timeline depends on scope, your feedback speed, and design complexity. Rush options available (+20% fee).</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span class="arrow">▼</span> Can I see progress during development?</div>
+        <div class="faq-a">Absolutely. We provide weekly updates, demo links, and review sessions. You'll have a dedicated Slack channel or email thread for real-time communication.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span class="arrow">▼</span> What's your revision policy?</div>
+        <div class="faq-a">Each tier includes a set number of revision rounds (typically 2-3). Beyond that, we charge $75/hour. We're committed to getting it right, so major feedback is usually accommodated included in scope.</div>
+      </div>
+    </section>
+
+    <!-- Support Section -->
+    <section class="faq-section" data-category="all support">
+      <h2>Support & Maintenance</h2>
+      <div class="faq-item">
+        <div class="faq-q"><span class="arrow">▼</span> What happens after launch?</div>
+        <div class="faq-a">Your pricing includes support for a set period (1-3 months depending on tier). After that, you can purchase ongoing support plans starting at $500/month for monitoring and updates.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span class="arrow">▼</span> Do you provide training?</div>
+        <div class="faq-a">Yes. We include a brief training session on site basics. For more complex features, we offer extended training at $125/hour or include it in your support plan.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span class="arrow">▼</span> What if I find a bug after launch?</div>
+        <div class="faq-a">Critical bugs (breaks functionality) are fixed immediately. Minor bugs are prioritized based on your support plan. Emergency fixes outside support hours are billed at $200/hour.</div>
+      </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="faq-section" data-category="all process">
+      <h2>How We Work</h2>
+      <div class="faq-item">
+        <div class="faq-q"><span class="arrow">▼</span> What's the first step?</div>
+        <div class="faq-a">Schedule a free 30-minute consultation. We'll discuss your goals, timeline, and budget. No pressure—we're primarily here to understand your needs and see if we're a good fit.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span class="arrow">▼</span> Do you need specific information from me to start?</div>
+        <div class="faq-a">Yes! We'll ask for your brand guidelines, content, target audience, competitors' websites for inspiration, and any existing assets (logos, photos, copy). The more you provide upfront, the faster we move.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span class="arrow">▼</span> Do I own the final website?</div>
+        <div class="faq-a">Completely. You own all code, content, and design. We provide you with full source files and can transfer hosting to you at any time.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span class="arrow">▼</span> Can you redesign an existing site?</div>
+        <div class="faq-a">Yes. Redesign projects often start at $3,500-$8,000 depending on complexity. We can migrate your content or start fresh based on your preference.</div>
+      </div>
+    </section>
+  </main>
+
+  <script src="auth.js"></script>
+  <script src="header.js"></script>
+  <script src="site-enhancements.js"></script>
+  <script>
+    function filterFAQ(category) {
+      document.querySelectorAll('.faq-cat-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      document.querySelectorAll('.faq-section').forEach(section => {
+        const cats = section.dataset.category.split(' ');
+        section.style.display = cats.includes(category) ? 'block' : 'none';
+      });
+      
+      if (window.gtag) gtag('event', 'faq_filter', { category: category });
+    }
+    
+    document.querySelectorAll('.faq-item').forEach(item => {
+      item.querySelector('.faq-q').addEventListener('click', function() {
+        item.classList.toggle('open');
+      });
+    });
+  </script>
+
+  <footer></footer>
+
+  <script src="footer.js"></script>
+</body>
+</html>

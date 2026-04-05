@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -271,3 +272,236 @@
     </script>
 </body>
 </html>
+=======
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up | Creative Web Solutions</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .wrap{max-width:780px;margin:0 auto;padding:1rem;}
+    .card{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--surface-contrast);border-radius:20px;padding:1.25rem;}
+    .card::before{content:"";position:absolute;inset:0;background:linear-gradient(130deg,rgba(15,111,255,0.13),rgba(255,122,24,0.1) 45%,transparent 70%);}
+    .card::after{content:"";position:absolute;width:280px;height:280px;left:-120px;top:-140px;border-radius:50%;background:radial-gradient(circle,rgba(15,111,255,0.28),transparent 70%);}
+    .grid{display:grid;gap:.9rem;grid-template-columns:repeat(2,minmax(0,1fr));}
+    .field{display:grid;gap:.35rem;position:relative;}
+    .field label { display: block; font-weight: 500; }
+    input,select,button{min-height:2.65rem;border-radius:12px;border:1px solid #cbd5e1;padding:0 .75rem;font:inherit;transition:border-color 0.2s, box-shadow 0.2s;}
+    input:focus, select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+    input.error { border-color: #ef4444; }
+    input.error:focus { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1); }
+    input.valid { border-color: #10b981; }
+    .field-error { font-size: 0.85rem; color: #ef4444; margin-top: -0.2rem; display: none; }
+    .field-error.show { display: block; }
+    .field-hint { font-size: 0.85rem; color: var(--muted); margin-top: -0.2rem; }
+    .full{grid-column:1 / -1;}
+    .btn{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:700;cursor:pointer;transition:opacity 0.2s;}
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .msg{min-height:1.25rem;font-weight:700;}
+    .msg.error { color: #ef4444; }
+    .msg.success { color: #10b981; }
+    .card > *{position:relative;z-index:1;}
+    @media(max-width:760px){.grid{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+  <main class="wrap" id="main">
+    <section class="card panel">
+      <h1>Create your account</h1>
+      <p>Enhanced signup with client-side hashing and saved form drafts.</p>
+      <form id="signupForm" class="grid">
+        <label class="field">
+          <span>Full name</span>
+          <input id="fullName" name="fullName" required>
+          <span class="field-error" id="fullNameError"></span>
+          <span class="field-hint">Required. Your first and last name.</span>
+        </label>
+        <label class="field">
+          <span>Company</span>
+          <input id="companyName" name="companyName">
+          <span class="field-hint">Optional. Your business name.</span>
+        </label>
+        <label class="field full">
+          <span>Email address</span>
+          <input id="email" name="email" type="email" required>
+          <span class="field-error" id="emailError"></span>
+          <span class="field-hint">We'll use this to log in and send updates.</span>
+        </label>
+        <label class="field">
+          <span>Password</span>
+          <input id="password" name="password" type="password" required minlength="8">
+          <span class="field-error" id="passwordError"></span>
+          <span class="field-hint">At least 8 characters. Use a mix of letters and numbers.</span>
+        </label>
+        <label class="field">
+          <span>Confirm password</span>
+          <input id="passwordConfirm" name="passwordConfirm" type="password" required>
+          <span class="field-error" id="passwordConfirmError"></span>
+        </label>
+        <label class="field full">
+          <span>Project type</span>
+          <select id="plan" name="plan">
+            <option value="">-- Select a project type --</option>
+            <option value="starter">Starter (Landing Page)</option>
+            <option value="professional">Professional (Portal)</option>
+            <option value="enterprise">Enterprise (Automation)</option>
+          </select>
+          <span class="field-error" id="planError"></span>
+        </label>
+        <button class="btn full" type="submit" id="submitBtn">Create Account</button>
+        <p id="signupMessage" class="msg full"></p>
+      </form>
+      <p>Already registered? <a href="login.html">Log in</a></p>
+    </section>
+  </main>
+  <script src="auth.js"></script>
+  <script src="header.js"></script>
+  <script src="site-enhancements.js"></script>
+  <script>
+    const form = document.getElementById('signupForm');
+    const msg = document.getElementById('signupMessage');
+    const fields = {
+      fullName: document.getElementById('fullName'),
+      email: document.getElementById('email'),
+      password: document.getElementById('password'),
+      passwordConfirm: document.getElementById('passwordConfirm'),
+      plan: document.getElementById('plan')
+    };
+    const errors = {
+      fullName: document.getElementById('fullNameError'),
+      email: document.getElementById('emailError'),
+      password: document.getElementById('passwordError'),
+      passwordConfirm: document.getElementById('passwordConfirmError'),
+      plan: document.getElementById('planError')
+    };
+
+    function validateField(name) {
+      const field = fields[name];
+      const error = errors[name];
+      let isValid = true;
+      let errorMsg = '';
+
+      if (name === 'fullName') {
+        if (!field.value.trim()) {
+          isValid = false;
+          errorMsg = 'Full name is required.';
+        } else if (field.value.trim().split(' ').length < 2) {
+          isValid = false;
+          errorMsg = 'Please enter both first and last name.';
+        }
+      } else if (name === 'email') {
+        const email = SiteAuth.normalizeEmail(field.value);
+        if (!field.value) {
+          isValid = false;
+          errorMsg = 'Email is required.';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          isValid = false;
+          errorMsg = 'Please enter a valid email address.';
+        } else {
+          const accounts = SiteAuth.safeParse(localStorage.getItem('registeredAccounts') || '{}', {});
+          if (accounts[email]) {
+            isValid = false;
+            errorMsg = 'Email already registered. Please log in.';
+          }
+        }
+      } else if (name === 'password') {
+        if (!field.value) {
+          isValid = false;
+          errorMsg = 'Password is required.';
+        } else if (field.value.length < 8) {
+          isValid = false;
+          errorMsg = 'Password must be at least 8 characters.';
+        } else if (!/[a-z]/.test(field.value) || !/[0-9]/.test(field.value)) {
+          isValid = false;
+          errorMsg = 'Use both letters and numbers for security.';
+        }
+      } else if (name === 'passwordConfirm') {
+        if (!field.value) {
+          isValid = false;
+          errorMsg = 'Please confirm your password.';
+        } else if (field.value !== fields.password.value) {
+          isValid = false;
+          errorMsg = 'Passwords do not match.';
+        }
+      } else if (name === 'plan') {
+        if (!field.value) {
+          isValid = false;
+          errorMsg = 'Please select a project type.';
+        }
+      }
+
+      field.classList.toggle('error', !isValid);
+      field.classList.toggle('valid', isValid && field.value);
+      if (error) {
+        error.textContent = errorMsg;
+        error.classList.toggle('show', !isValid);
+      }
+
+      return isValid;
+    }
+
+    // Real-time validation on blur and input
+    Object.keys(fields).forEach(name => {
+      fields[name].addEventListener('blur', () => validateField(name));
+      fields[name].addEventListener('input', () => {
+        if (fields[name].classList.contains('error')) {
+          validateField(name);
+        }
+      });
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msg.textContent = '';
+      msg.className = 'msg full';
+
+      // Validate all fields
+      const isAllValid = Object.keys(fields).every(name => validateField(name));
+      if (!isAllValid) {
+        msg.textContent = 'Please fix the errors above.';
+        msg.classList.add('error');
+        return;
+      }
+
+      try {
+        const email = SiteAuth.normalizeEmail(fields.email.value);
+        const password = fields.password.value;
+        
+        const accounts = SiteAuth.safeParse(localStorage.getItem('registeredAccounts') || '{}', {});
+        
+        const salt = SiteAuth.generateSessionToken().slice(0, 16);
+        const hash = await SiteAuth.hashPasswordWithSalt(salt, password);
+        accounts[email] = {
+          email,
+          passwordHash: `${salt}:${hash}`,
+          name: fields.fullName.value.trim(),
+          company: document.getElementById('companyName').value.trim(),
+          plan: fields.plan.value,
+          createdAt: new Date().toISOString()
+        };
+        
+        localStorage.setItem('registeredAccounts', JSON.stringify(accounts));
+        SiteAuth.setCustomer(SiteAuth.buildCustomerSession(accounts[email]));
+        
+        msg.textContent = '✓ Account created! Redirecting...';
+        msg.classList.add('success');
+        document.getElementById('submitBtn').disabled = true;
+        
+        if (window.gtag) gtag('event', 'signup_complete', { plan: fields.plan.value });
+        
+        setTimeout(() => { window.location.href = 'customer-portal.html'; }, 1500);
+      } catch (err) {
+        msg.textContent = 'Error creating account. Please try again.';
+        msg.classList.add('error');
+      }
+    });
+  </script>
+
+  <footer></footer>
+
+  <script src="footer.js"></script>
+</body>
+</html>
+>>>>>>> Stashed changes
