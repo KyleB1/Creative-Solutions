@@ -701,7 +701,7 @@
           <h2>Settings</h2>
           <div class="setting-card">
             <strong>Account details</strong>
-            <span id="settingsDetails">Email: <span id="settingsEmail"></span> ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Plan: <span id="settingsPlan"></span></span>
+            <span id="settingsDetails">Email: <span id="settingsEmail"></span> | Plan: <span id="settingsPlan"></span></span>
           </div>
           <div class="setting-card">
             <strong>Manage preferences</strong>
@@ -732,7 +732,7 @@
   </div>
   <script>
     if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      window.CWS_API_BASE = 'http://localhost:3100';
+      window.CWS_API_BASE = 'http://localhost:3000';
     }
   </script>
   <script src="auth.js"></script>
@@ -793,7 +793,7 @@
 
     const formatDate = (value) => {
       const date = new Date(value);
-      if (Number.isNaN(date.getTime())) return value || 'ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â';
+      if (Number.isNaN(date.getTime())) return value || '--';
       return date.toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
     };
 
@@ -814,7 +814,7 @@
             <strong>${payment.status || 'Processed'}</strong>
             <span>${formatDate(payment.date)}</span>
           </div>
-          <p style="margin:0.75rem 0 0; color:#4b5563;">${payment.currency || 'USD'} ${Number(payment.amount || 0).toFixed(2)} ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ ${payment.id || 'Transaction'}</p>
+          <p style="margin:0.75rem 0 0; color:#4b5563;">${payment.currency || 'USD'} ${Number(payment.amount || 0).toFixed(2)} | ${payment.id || 'Transaction'}</p>
         </div>`).join('');
     };
 
@@ -889,7 +889,7 @@
         card.className = 'project-card';
         card.innerHTML = `
           <strong>${project.title}</strong>
-          <span>${project.owner} ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Due ${project.due}</span>
+          <span>${project.owner} | Due ${project.due}</span>
           <span>Status: ${project.status}</span>
         `;
         list.appendChild(card);
@@ -904,7 +904,7 @@
         card.className = 'invoice-card';
         card.innerHTML = `
           <strong>Invoice ${invoice.number}</strong>
-          <span>${invoice.amount} ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Due ${invoice.due}</span>
+          <span>${invoice.amount} | Due ${invoice.due}</span>
           <span>Status: ${invoice.status}</span>
         `;
         list.appendChild(card);
@@ -919,8 +919,8 @@
         card.className = 'message-card';
         card.innerHTML = `
           <strong>${message.subject} (${message.id})</strong>
-          <span>${message.product} ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Updated ${formatDate(message.updatedAt)}</span>
-          <span>Status: ${message.status} ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ Priority: ${message.priority}</span>
+          <span>${message.product} | Updated ${formatDate(message.updatedAt)}</span>
+          <span>Status: ${message.status} | Priority: ${message.priority}</span>
           <span>${message.description}</span>
         `;
         list.appendChild(card);

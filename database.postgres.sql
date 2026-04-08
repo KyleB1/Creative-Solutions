@@ -139,10 +139,29 @@ GROUP BY c.customer_id, c.email, c.full_name, c.plan_name, c.status, c.role_name
 INSERT INTO customers (email, password_hash, full_name, company_name, status, plan_name, role_name)
 VALUES
     ('admin@creativewebsolutions.com', crypt('AdminPassword123!', gen_salt('bf', 12)), 'Admin User', 'Creative Web Solutions', 'active', 'enterprise', 'admin'),
-    ('kyle.creativesolutions@gmail.com', crypt('AdminPassword123!', gen_salt('bf', 12)), 'Kyle Creative', 'Creative Web Solutions', 'active', 'enterprise', 'system_admin');
+    ('support@creativewebsolutions.com', crypt('AdminPassword123!', gen_salt('bf', 12)), 'Support User', 'Creative Web Solutions', 'active', 'enterprise', 'support'),
+    ('kyle.creativesolutions@gmail.com', crypt('8eL4Gmuoftj3Zqb1Q90M', gen_salt('bf', 12)), 'Kyle Creative', 'Creative Web Solutions', 'active', 'enterprise', 'system_admin');
 
 -- Notes:
 -- 1) Always hash passwords using a strong algorithm like bcrypt, argon2, or scrypt.
 -- 2) Never store raw passwords in the database.
 -- 3) Use HTTPS + secure cookies for session tokens on the client.
 -- 4) Apply row-level security in production for customer isolation.
+--    For example, enable RLS on tables like projects, support_tickets, payments, payment_methods
+--    so that each customer can only see their own rows:
+--    ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
+--    CREATE POLICY customer_isolation ON projects
+--      USING (customer_id = current_setting('app.current_customer_id')::uuid);
+--    ALTER TABLE support_tickets ENABLE ROW LEVEL SECURITY;
+--    CREATE POLICY customer_isolation ON support_tickets
+--      USING (customer_id = current_setting('app.current_customer_id')::uuid);
+--    ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
+--    CREATE POLICY customer_isolation ON payments
+--      USING (customer_id = current_setting('app.current_customer_id')::uuid);
+--    ALTER TABLE payment_methods ENABLE ROW LEVEL SECURITY;
+--    CREATE POLICY customer_isolation ON payment_methods
+--      USING (customer_id = current_setting('app.current_customer_id')::uuid);
+--    Make sure to set the current customer context at the start of each request/session so that
+--    the RLS policies can evaluate current_setting('app.current_customer_id')::uuid correctly
+--    for example, in your backend request handling code, you would do something like:
+--    EXECUTE format('SET app.current_customer_id = %L', currentCustomerId);'

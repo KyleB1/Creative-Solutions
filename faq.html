@@ -37,11 +37,11 @@
     </section>
 
     <div class="faq-categories">
-      <button class="faq-cat-btn active" onclick="filterFAQ('all')">All</button>
-      <button class="faq-cat-btn" onclick="filterFAQ('service')">Services</button>
-      <button class="faq-cat-btn" onclick="filterFAQ('timeline')">Timeline</button>
-      <button class="faq-cat-btn" onclick="filterFAQ('support')">Support</button>
-      <button class="faq-cat-btn" onclick="filterFAQ('process')">Process</button>
+      <button class="faq-cat-btn active" onclick="filterFAQ('all', event)">All</button>
+      <button class="faq-cat-btn" onclick="filterFAQ('service', event)">Services</button>
+      <button class="faq-cat-btn" onclick="filterFAQ('timeline', event)">Timeline</button>
+      <button class="faq-cat-btn" onclick="filterFAQ('support', event)">Support</button>
+      <button class="faq-cat-btn" onclick="filterFAQ('process', event)">Process</button>
     </div>
 
     <!-- Services Section -->
@@ -121,9 +121,9 @@
   <script src="header.js"></script>
   <script src="site-enhancements.js"></script>
   <script>
-    function filterFAQ(category) {
+    function filterFAQ(category, event) {
       document.querySelectorAll('.faq-cat-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
+      if (event && event.target) event.target.classList.add('active');
       
       document.querySelectorAll('.faq-section').forEach(section => {
         const cats = section.dataset.category.split(' ');

@@ -31,7 +31,7 @@ const { chromium } = require('playwright');
     console.log('SUPPORT_LOGIN_RESPONSE', response.status(), response.url(), body);
   });
 
-  await page.goto('http://127.0.0.1:3100/support-login.html', { waitUntil: 'domcontentloaded' });
+  await page.goto('http://localhost:3000/support-login.html', { waitUntil: 'domcontentloaded' });
   await page.fill('#supportEmail', 'kyle.creativesolutions@gmail.com');
   await page.fill('#supportPassword', 'N6vTyyad9y2M2sUoop%!!GBa');
   await page.click('button[type="submit"]');

@@ -41,5 +41,7 @@ Files added for deployment:
 
 1. Install dependencies with `npm install`.
 2. Copy `.env.example` to `.env` and fill in the required values.
-3. Start the server with `npm start`.
+3. Start the server:
+	- Standard: `npm start`
+	- Windows PowerShell (execution-policy safe): `./start-local.cmd`
 4. Open `http://localhost:3000`.

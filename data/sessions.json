@@ -1,13 +1,132 @@
 {
   "sessions": {
-    "74c48d874941e206a88867eb29de7af687d0d5f0368b83c7105f0765ed9c57a3": {
+    "6ca89e19c2802a12bca25524ba5b08b22aa5fe62db555bb58bdc7310256d597b": {
       "user": {
-        "role": "admin",
-        "email": "kyle.creativesolutions@gmail.com",
-        "name": "Kyle Creativesolutions",
-        "supportRole": "System Administrator"
+        "role": "customer",
+        "email": "kylebinfet@gmail.com",
+        "name": "Kyle Binfet",
+        "plan": "Growth plan",
+        "renewal": "May 18",
+        "activeProjects": 8,
+        "newLeads": 24,
+        "supportTickets": 3,
+        "monthlySpend": "$2.4K",
+        "notifications": false,
+        "customerId": "1290ca25-4ea5-434d-85f3-61c15bb38036"
       },
-      "expiresAt": 1775168314366
+      "expiresAt": 1775734474628
+    },
+    "c5c3f2e7df46e817d9c64176dcafd7dbd948bfaed8d6f35589c1e45355b46154": {
+      "user": {
+        "role": "customer",
+        "email": "kylebinfet@gmail.com",
+        "name": "Kyle Binfet",
+        "plan": "Growth plan",
+        "renewal": "May 18",
+        "activeProjects": 8,
+        "newLeads": 24,
+        "supportTickets": 3,
+        "monthlySpend": "$2.4K",
+        "notifications": false,
+        "customerId": "1290ca25-4ea5-434d-85f3-61c15bb38036"
+      },
+      "expiresAt": 1775734505276
+    },
+    "e69bb00e5de3fa08a8c69718bcd21090e8658b3f395c3acb22901b1ae57bf5e4": {
+      "user": {
+        "role": "customer",
+        "email": "jordan.modern.1775691431748@example.com",
+        "name": "Jordan Modern",
+        "plan": "Growth plan",
+        "renewal": "May 18",
+        "activeProjects": 8,
+        "newLeads": 24,
+        "supportTickets": 3,
+        "monthlySpend": "$2.4K",
+        "notifications": false,
+        "customerId": "e4ee3e05-c5bd-4536-bf0d-c7c7fa73305e"
+      },
+      "expiresAt": 1775734710763
+    },
+    "b1efbca5a9ee0b117dfb9e528a3af5d40f77ac7e33ee453657fb896894335b8b": {
+      "user": {
+        "role": "customer",
+        "email": "jordan.modern.1775691462579@example.com",
+        "name": "Jordan Modern",
+        "plan": "Growth plan",
+        "renewal": "May 18",
+        "activeProjects": 8,
+        "newLeads": 24,
+        "supportTickets": 3,
+        "monthlySpend": "$2.4K",
+        "notifications": false,
+        "customerId": "fc8187ae-60b7-45ad-84ce-975117594f23"
+      },
+      "expiresAt": 1775734710769
+    },
+    "32731b6140667b4d73b05d429bc47b3d92b07eaae04b57bbd4b7ab4de5f6f9e7": {
+      "user": {
+        "role": "customer",
+        "email": "jordan.modern.1775691519110@example.com",
+        "name": "Jordan Modern",
+        "plan": "Growth plan",
+        "renewal": "May 18",
+        "activeProjects": 8,
+        "newLeads": 24,
+        "supportTickets": 3,
+        "monthlySpend": "$2.4K",
+        "notifications": false,
+        "customerId": "fc8cb77a-41c2-4ca1-b392-1c902ad7360f"
+      },
+      "expiresAt": 1775734723278
+    },
+    "cfdd1f61dbca93c52add1762e3a3852bc2d94ab7e89b6756c716860e59a7e1fa": {
+      "user": {
+        "role": "customer",
+        "email": "token.test.1775691627002@example.com",
+        "name": "Token Test",
+        "plan": "Growth plan",
+        "renewal": "May 18",
+        "activeProjects": 8,
+        "newLeads": 24,
+        "supportTickets": 3,
+        "monthlySpend": "$2.4K",
+        "notifications": false,
+        "customerId": "6c79245a-0869-4ba6-8b95-554799867122"
+      },
+      "expiresAt": 1775734829022
+    },
+    "92deda19f5c0b64d433e85b5809d67585455602ff5231ba7764d9c9a7a7726c9": {
+      "user": {
+        "role": "customer",
+        "email": "token.test.1775691627002@example.com",
+        "name": "Token Test",
+        "plan": "Growth plan",
+        "renewal": "May 18",
+        "activeProjects": 8,
+        "newLeads": 24,
+        "supportTickets": 3,
+        "monthlySpend": "$2.4K",
+        "notifications": false,
+        "customerId": "6c79245a-0869-4ba6-8b95-554799867122"
+      },
+      "expiresAt": 1775734830633
+    },
+    "c4e1a897576f14790ed62bdfc1b1e0b11d3a65e11e35f6293f72adfd465e6ec1": {
+      "user": {
+        "role": "customer",
+        "email": "kylebinfet@gmail.com",
+        "name": "Kyle Binfet",
+        "plan": "Growth plan",
+        "renewal": "May 18",
+        "activeProjects": 8,
+        "newLeads": 24,
+        "supportTickets": 3,
+        "monthlySpend": "$2.4K",
+        "notifications": false,
+        "customerId": "1290ca25-4ea5-434d-85f3-61c15bb38036"
+      },
+      "expiresAt": 1775734896053
     }
   }
 }

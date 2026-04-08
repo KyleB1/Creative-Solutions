@@ -1,159 +1,56 @@
-<<<<<<< Updated upstream
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create your Creative Web Solutions account to get started with your project, access your portal, and track progress.">
     <title>Sign Up | Creative Web Solutions</title>
-    <style>
-        :root {
-            color-scheme: light;
-            font-family: "Inter", system-ui, sans-serif;
-            background: #eff3fb;
-            color: #0f172a;
-        }
-        * { box-sizing: border-box; }
-        html, body { margin: 0; min-height: 100%; background: linear-gradient(180deg, #eef2ff 0%, #f8fafc 100%); }
-        body { display: flex; align-items: center; justify-content: center; padding: 2rem; }
-        .signup-shell {
-            width: min(980px, 100%);
-            display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            gap: 2rem;
-            background: rgba(255,255,255,0.92);
-            border: 1px solid rgba(15,23,42,0.08);
-            border-radius: 28px;
-            box-shadow: 0 30px 80px rgba(15,23,42,0.12);
-            overflow: hidden;
-        }
-        .signup-intro { padding: 3rem; display: flex; flex-direction: column; justify-content: center; background: linear-gradient(180deg, #eef2ff 0%, #ffffff 100%); }
-        .signup-intro h1 { margin: 0 0 1rem; font-size: clamp(2.2rem,2.8vw,3.3rem); line-height: 1.05; }
-        .signup-intro p { margin: 0; color: #64748b; max-width: 38rem; font-size: 1rem; line-height: 1.8; }
-        .signup-visual {
-            margin-top: 2rem;
-            border-radius: 22px;
-            overflow: hidden;
-            border: 1px solid rgba(37, 99, 235, 0.16);
-            box-shadow: 0 18px 40px rgba(37, 99, 235, 0.14);
-            background: #ffffff;
-        }
-        .signup-visual img {
-            display: block;
-            width: 100%;
-            height: min(300px, 34vh);
-            object-fit: cover;
-        }
-        .signup-visual figcaption {
-            margin: 0;
-            padding: 0.85rem 1rem;
-            font-size: 0.92rem;
-            color: #475569;
-            background: rgba(248, 250, 252, 0.95);
-        }
-        .highlight { color: #2563eb; font-weight: 700; }
-        .signup-card { padding: 2.5rem; display: flex; flex-direction: column; justify-content: space-between; }
-        .step-label { display: inline-flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; font-size: 0.95rem; color: #475569; }
-        .step-badge { width: 2rem; height: 2rem; display: inline-grid; place-items: center; border-radius: 999px; background: #e0e7ff; color: #1d4ed8; font-weight: 700; }
-        .form-group { margin-bottom: 1.25rem; }
-        label { display: block; font-size: 0.95rem; margin-bottom: 0.5rem; color: #334155; }
-        input { width: 100%; min-height: 3.1rem; padding: 0.95rem 1rem; border-radius: 16px; border: 1px solid #cbd5e1; font-size: 1rem; color: #0f172a; background: #fff; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
-        input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 4px rgba(59,130,246,0.12); }
-        .hint, .error { display: block; margin-top: 0.6rem; font-size: 0.9rem; line-height: 1.5; }
-        .hint { color: #64748b; }
-        .error { color: #dc2626; }
-        .password-strength { margin-top: 0.8rem; height: 8px; border-radius: 999px; overflow: hidden; background: #e2e8f0; }
-        .password-strength div { height: 100%; transition: width 0.2s ease; }
-        .weak { width: 33%; background: #f97316; }
-        .medium { width: 66%; background: #facc15; }
-        .strong { width: 100%; background: #22c55e; }
-        .primary-btn { width: 100%; border: none; border-radius: 16px; padding: 1rem 1.1rem; background: #2563eb; color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer; transition: transform 0.2s ease, background 0.2s ease; }
-        .primary-btn:hover { background: #1d4ed8; transform: translateY(-1px); }
-        .back-btn { display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; padding: 0.75rem 1rem; border-radius: 999px; border: 1px solid rgba(37,99,235,0.24); background: #ffffff; color: #334155; font-size: 0.95rem; text-decoration: none; transition: background 0.2s ease, transform 0.2s ease; }
-        .back-btn:hover { background: rgba(37,99,235,0.08); transform: translateY(-0.1rem); }
-        .message { min-height: 1.5rem; margin-top: 1rem; font-weight: 600; }
-        .message.success { color: #16a34a; }
-        .message.error { color: #dc2626; }
-        .form-footer { margin-top: 1.5rem; font-size: 0.95rem; color: #64748b; }
-        .form-footer a { color: #2563eb; text-decoration: none; font-weight: 600; }
-        .layout-selection { margin: 0 0 1rem; padding: 0.75rem 0.9rem; border-radius: 12px; border: 1px solid #cbd5e1; background: #f8fafc; color: #334155; font-size: 0.9rem; }
-        .theme-toggle { position: fixed; top: 1rem; right: 1rem; z-index: 1000; padding: 0.75rem 1rem; border-radius: 999px; border: 1px solid rgba(37,99,235,0.25); background: #ffffff; color: #374151; font-weight: 600; cursor: pointer; transition: background 0.2s ease; }
-        .theme-toggle:hover { background: rgba(37,99,235,0.08); }
-        body.dark-mode { background: #0b1222; color: #f1f5f9; }
-        body.dark-mode .signup-shell { background: #111827; border-color: #334155; }
-        body.dark-mode .signup-intro { background: linear-gradient(180deg, #182235 0%, #111827 100%); }
-        body.dark-mode .signup-card { background: #111827; }
-        body.dark-mode .signup-intro p, body.dark-mode .step-label, body.dark-mode .step-badge { color: #c2cffd; }
-        body.dark-mode .signup-visual {
-            background: #0f172a;
-            border-color: #334155;
-            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
-        }
-        body.dark-mode .signup-visual figcaption {
-            color: #e2e8f0;
-            background: rgba(15, 23, 42, 0.95);
-        }
-        body.dark-mode label, body.dark-mode input, body.dark-mode .form-footer, body.dark-mode .hint { color: #e2e8f0; }
-        body.dark-mode input { background: #0f172a; border-color: #334155; }
-        body.dark-mode .layout-selection { background: #0f172a; border-color: #334155; color: #e2e8f0; }
-        body.dark-mode input::placeholder { color: #b8c7ea; }
-        body.dark-mode .primary-btn { background: #7c3aed; }
-        body.dark-mode .back-btn { background: #111827; border-color: #4f46e5; color: #e2e8f0; }
-        body.dark-mode .theme-toggle { background: #1f2937; color: #e5e7eb; border-color: rgba(148,163,184,0.45); }
-        body.dark-mode a, body.dark-mode button, body.dark-mode textarea, body.dark-mode select { color: #e2e8f0; }
-        @media (max-width: 900px) {
-            .signup-shell { grid-template-columns: 1fr; }
-            .signup-visual img { height: 240px; }
-        }
-        @media (max-width: 600px) { body { padding: 1.5rem; } .signup-intro, .signup-card { padding: 1.8rem; } }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <button id="themeToggle" class="theme-toggle" type="button">Dark Mode</button>
-    <div class="signup-shell">
-        <div class="signup-intro">
-            <span class="step-label"><span class="step-badge">1</span> Create your account</span>
+    <button id="themeToggle" class="ghost-btn theme-fab" type="button">Dark Mode</button>
+    <div class="split-shell" style="margin: 5.5rem auto 2rem;">
+        <div class="split-intro">
+            <div class="pill-row"><span class="pill-chip">Step 1: Create your account</span></div>
             <h1>Sign up for <span class="highlight">Creative Web Solutions</span></h1>
-            <p>Join now and get access to beautiful templates, fast onboarding, and ongoing support for your next web project.</p>
-            <figure class="signup-visual">
-                <img
-                    loading="lazy"
-                    src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1400&q=80"
-                    alt="Creative team planning a modern website launch"
-                >
-                <figcaption>Built for bold ideas, quick launches, and polished client experiences.</figcaption>
-            </figure>
+            <p>Join our community and unlock access to powerful tools, expert guidance, and 24/7 support for your web projects.</p>
+            <div class="pill-row">
+                <span class="pill-chip">Fast onboarding</span>
+                <span class="pill-chip">Secure auth</span>
+                <span class="pill-chip">Portal + support</span>
+            </div>
         </div>
  
-        <div class="signup-card">
-            <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;margin-bottom:1rem;">
-                <a href="javascript:history.back()" class="back-btn">Ã¢â€ Â Back</a>
-                <a href="index.htm" class="back-btn">Ã°Å¸ÂÂ  Home</a>
+        <div class="split-form">
+            <div class="action-row">
+                <a href="javascript:history.back()" class="ghost-btn">&larr; Back</a>
+                <a href="index.htm" class="ghost-btn">Home</a>
             </div>
             <p id="layoutSelection" class="layout-selection" style="display:none;"></p>
-            <form id="signupForm">
-                <div class="form-group">
+            <form id="signupForm" class="auth-form">
+                <div class="auth-field">
                     <label for="username">Full name</label>
                     <input type="text" id="username" name="username" required placeholder="Jane Doe">
                 </div>
-                <div class="form-group">
+                <div class="auth-field">
                     <label for="email">Email address</label>
                     <input type="email" id="email" name="email" required placeholder="you@example.com" autocomplete="email">
                 </div>
-                <div class="form-group">
+                <div class="auth-field">
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" required placeholder="Create a secure password" autocomplete="new-password">
                     <span class="hint" id="passwordHint">At least 8 characters, upper/lowercase, number, and symbol.</span>
                     <span id="passwordError" class="error"></span>
                     <div class="password-strength" id="passwordStrength"></div>
                 </div>
-                <div class="form-group">
+                <div class="auth-field">
                     <label for="confirmPassword">Confirm password</label>
                     <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Repeat your password" autocomplete="new-password">
                     <span id="confirmPasswordError" class="error"></span>
                 </div>
-                <button type="submit" class="primary-btn">Create Account</button>
+                <button type="submit" class="auth-submit">Create Account</button>
                 <p id="message" class="message"></p>
-                <p class="form-footer">Already have an account? <a href="login.html">Sign in</a></p>
+                <p class="auth-meta">Already have an account? <a href="login.html">Sign in</a></p>
             </form>
         </div>
     </div>
@@ -161,7 +58,7 @@
     <script defer src="theme.js"></script>
     <script>
         if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            window.CWS_API_BASE = 'http://localhost:3100';
+            window.CWS_API_BASE = 'http://localhost:3000';
         }
     </script>
     <script src="auth.js"></script>
@@ -270,238 +167,8 @@
             passwordStrength.appendChild(bar);
         }
     </script>
-</body>
-</html>
-=======
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign Up | Creative Web Solutions</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    .wrap{max-width:780px;margin:0 auto;padding:1rem;}
-    .card{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--surface-contrast);border-radius:20px;padding:1.25rem;}
-    .card::before{content:"";position:absolute;inset:0;background:linear-gradient(130deg,rgba(15,111,255,0.13),rgba(255,122,24,0.1) 45%,transparent 70%);}
-    .card::after{content:"";position:absolute;width:280px;height:280px;left:-120px;top:-140px;border-radius:50%;background:radial-gradient(circle,rgba(15,111,255,0.28),transparent 70%);}
-    .grid{display:grid;gap:.9rem;grid-template-columns:repeat(2,minmax(0,1fr));}
-    .field{display:grid;gap:.35rem;position:relative;}
-    .field label { display: block; font-weight: 500; }
-    input,select,button{min-height:2.65rem;border-radius:12px;border:1px solid #cbd5e1;padding:0 .75rem;font:inherit;transition:border-color 0.2s, box-shadow 0.2s;}
-    input:focus, select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-    input.error { border-color: #ef4444; }
-    input.error:focus { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1); }
-    input.valid { border-color: #10b981; }
-    .field-error { font-size: 0.85rem; color: #ef4444; margin-top: -0.2rem; display: none; }
-    .field-error.show { display: block; }
-    .field-hint { font-size: 0.85rem; color: var(--muted); margin-top: -0.2rem; }
-    .full{grid-column:1 / -1;}
-    .btn{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:700;cursor:pointer;transition:opacity 0.2s;}
-    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .msg{min-height:1.25rem;font-weight:700;}
-    .msg.error { color: #ef4444; }
-    .msg.success { color: #10b981; }
-    .card > *{position:relative;z-index:1;}
-    @media(max-width:760px){.grid{grid-template-columns:1fr;}}
-  </style>
-</head>
-<body>
-  <main class="wrap" id="main">
-    <section class="card panel">
-      <h1>Create your account</h1>
-      <p>Enhanced signup with client-side hashing and saved form drafts.</p>
-      <form id="signupForm" class="grid">
-        <label class="field">
-          <span>Full name</span>
-          <input id="fullName" name="fullName" required>
-          <span class="field-error" id="fullNameError"></span>
-          <span class="field-hint">Required. Your first and last name.</span>
-        </label>
-        <label class="field">
-          <span>Company</span>
-          <input id="companyName" name="companyName">
-          <span class="field-hint">Optional. Your business name.</span>
-        </label>
-        <label class="field full">
-          <span>Email address</span>
-          <input id="email" name="email" type="email" required>
-          <span class="field-error" id="emailError"></span>
-          <span class="field-hint">We'll use this to log in and send updates.</span>
-        </label>
-        <label class="field">
-          <span>Password</span>
-          <input id="password" name="password" type="password" required minlength="8">
-          <span class="field-error" id="passwordError"></span>
-          <span class="field-hint">At least 8 characters. Use a mix of letters and numbers.</span>
-        </label>
-        <label class="field">
-          <span>Confirm password</span>
-          <input id="passwordConfirm" name="passwordConfirm" type="password" required>
-          <span class="field-error" id="passwordConfirmError"></span>
-        </label>
-        <label class="field full">
-          <span>Project type</span>
-          <select id="plan" name="plan">
-            <option value="">-- Select a project type --</option>
-            <option value="starter">Starter (Landing Page)</option>
-            <option value="professional">Professional (Portal)</option>
-            <option value="enterprise">Enterprise (Automation)</option>
-          </select>
-          <span class="field-error" id="planError"></span>
-        </label>
-        <button class="btn full" type="submit" id="submitBtn">Create Account</button>
-        <p id="signupMessage" class="msg full"></p>
-      </form>
-      <p>Already registered? <a href="login.html">Log in</a></p>
-    </section>
-  </main>
-  <script src="auth.js"></script>
-  <script src="header.js"></script>
-  <script src="site-enhancements.js"></script>
-  <script>
-    const form = document.getElementById('signupForm');
-    const msg = document.getElementById('signupMessage');
-    const fields = {
-      fullName: document.getElementById('fullName'),
-      email: document.getElementById('email'),
-      password: document.getElementById('password'),
-      passwordConfirm: document.getElementById('passwordConfirm'),
-      plan: document.getElementById('plan')
-    };
-    const errors = {
-      fullName: document.getElementById('fullNameError'),
-      email: document.getElementById('emailError'),
-      password: document.getElementById('passwordError'),
-      passwordConfirm: document.getElementById('passwordConfirmError'),
-      plan: document.getElementById('planError')
-    };
-
-    function validateField(name) {
-      const field = fields[name];
-      const error = errors[name];
-      let isValid = true;
-      let errorMsg = '';
-
-      if (name === 'fullName') {
-        if (!field.value.trim()) {
-          isValid = false;
-          errorMsg = 'Full name is required.';
-        } else if (field.value.trim().split(' ').length < 2) {
-          isValid = false;
-          errorMsg = 'Please enter both first and last name.';
-        }
-      } else if (name === 'email') {
-        const email = SiteAuth.normalizeEmail(field.value);
-        if (!field.value) {
-          isValid = false;
-          errorMsg = 'Email is required.';
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-          isValid = false;
-          errorMsg = 'Please enter a valid email address.';
-        } else {
-          const accounts = SiteAuth.safeParse(localStorage.getItem('registeredAccounts') || '{}', {});
-          if (accounts[email]) {
-            isValid = false;
-            errorMsg = 'Email already registered. Please log in.';
-          }
-        }
-      } else if (name === 'password') {
-        if (!field.value) {
-          isValid = false;
-          errorMsg = 'Password is required.';
-        } else if (field.value.length < 8) {
-          isValid = false;
-          errorMsg = 'Password must be at least 8 characters.';
-        } else if (!/[a-z]/.test(field.value) || !/[0-9]/.test(field.value)) {
-          isValid = false;
-          errorMsg = 'Use both letters and numbers for security.';
-        }
-      } else if (name === 'passwordConfirm') {
-        if (!field.value) {
-          isValid = false;
-          errorMsg = 'Please confirm your password.';
-        } else if (field.value !== fields.password.value) {
-          isValid = false;
-          errorMsg = 'Passwords do not match.';
-        }
-      } else if (name === 'plan') {
-        if (!field.value) {
-          isValid = false;
-          errorMsg = 'Please select a project type.';
-        }
-      }
-
-      field.classList.toggle('error', !isValid);
-      field.classList.toggle('valid', isValid && field.value);
-      if (error) {
-        error.textContent = errorMsg;
-        error.classList.toggle('show', !isValid);
-      }
-
-      return isValid;
-    }
-
-    // Real-time validation on blur and input
-    Object.keys(fields).forEach(name => {
-      fields[name].addEventListener('blur', () => validateField(name));
-      fields[name].addEventListener('input', () => {
-        if (fields[name].classList.contains('error')) {
-          validateField(name);
-        }
-      });
-    });
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      msg.textContent = '';
-      msg.className = 'msg full';
-
-      // Validate all fields
-      const isAllValid = Object.keys(fields).every(name => validateField(name));
-      if (!isAllValid) {
-        msg.textContent = 'Please fix the errors above.';
-        msg.classList.add('error');
-        return;
-      }
-
-      try {
-        const email = SiteAuth.normalizeEmail(fields.email.value);
-        const password = fields.password.value;
-        
-        const accounts = SiteAuth.safeParse(localStorage.getItem('registeredAccounts') || '{}', {});
-        
-        const salt = SiteAuth.generateSessionToken().slice(0, 16);
-        const hash = await SiteAuth.hashPasswordWithSalt(salt, password);
-        accounts[email] = {
-          email,
-          passwordHash: `${salt}:${hash}`,
-          name: fields.fullName.value.trim(),
-          company: document.getElementById('companyName').value.trim(),
-          plan: fields.plan.value,
-          createdAt: new Date().toISOString()
-        };
-        
-        localStorage.setItem('registeredAccounts', JSON.stringify(accounts));
-        SiteAuth.setCustomer(SiteAuth.buildCustomerSession(accounts[email]));
-        
-        msg.textContent = '✓ Account created! Redirecting...';
-        msg.classList.add('success');
-        document.getElementById('submitBtn').disabled = true;
-        
-        if (window.gtag) gtag('event', 'signup_complete', { plan: fields.plan.value });
-        
-        setTimeout(() => { window.location.href = 'customer-portal.html'; }, 1500);
-      } catch (err) {
-        msg.textContent = 'Error creating account. Please try again.';
-        msg.classList.add('error');
-      }
-    });
-  </script>
-
   <footer></footer>
-
-  <script src="footer.js"></script>
+  <script defer src="footer.js"></script>
 </body>
 </html>
->>>>>>> Stashed changes
+

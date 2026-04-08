@@ -182,12 +182,15 @@
 
     <main class="form-panel">
       <div class="back-links">
-        <a class="secondary-btn" href="index.htm">ÃƒÂ¢Ã¢â‚¬Â Ã‚Â Home</a>
-        <a class="secondary-btn" href="login.html">ÃƒÂ¢Ã¢â‚¬Â Ã‚Â Customer Login</a>
+        <a class="secondary-btn" href="index.htm"><- Home</a>
+        <a class="secondary-btn" href="login.html"><- Customer Login</a>
       </div>
       <h2>Agent sign in</h2>
       <p>Enter your staff credentials to access the support portal.</p>
-      <p id="apiStatusBanner" class="status-banner info" role="status" aria-live="polite">Checking login server availability...</p>
+      <div style="display:flex; gap:0.5rem; align-items:center; margin:0 0 1rem; flex-wrap:wrap;">
+        <p id="apiStatusBanner" class="status-banner info" role="status" aria-live="polite" style="margin:0; flex:1 1 320px;">Checking login server availability...</p>
+        <button id="retryStatusBtn" type="button" class="ghost-btn" style="min-height:2.1rem;">Retry</button>
+      </div>
       <form id="supportLoginForm">
         <div class="form-group">
           <label for="supportEmail">Work email</label>
@@ -206,7 +209,7 @@
 
   <script>
     if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      window.CWS_API_BASE = 'http://localhost:3100';
+      window.CWS_API_BASE = 'http://localhost:3000';
     }
   </script>
   <script src="auth.js"></script>
@@ -271,6 +274,10 @@
 
     const loginError = document.getElementById('loginError');
     const apiStatusBanner = document.getElementById('apiStatusBanner');
+    const retryStatusBtn = document.getElementById('retryStatusBtn');
+    const supportLoginForm = document.getElementById('supportLoginForm');
+    const submitButton = supportLoginForm.querySelector('button[type="submit"]');
+    let supportLoginEnabled = true;
     updateAgentCounts();
 
     const setBannerState = (state, message) => {
@@ -281,6 +288,8 @@
 
     const checkApiConnectivity = async () => {
       setBannerState('info', 'Checking login server availability...');
+      retryStatusBtn.disabled = true;
+      retryStatusBtn.textContent = 'Checking...';
 
       const timeoutMs = 6500;
       const timeoutPromise = new Promise((_, reject) => {
@@ -291,21 +300,48 @@
       });
 
       try {
-        await Promise.race([
-          SiteAuth.hasRegisteredAccounts(),
+        const meta = await Promise.race([
+          SiteAuth.getAuthMeta(),
           timeoutPromise
         ]);
-        setBannerState('ok', 'Login server is online. You can sign in now.');
+
+        if (!meta || !meta.supportLoginConfigured) {
+          supportLoginEnabled = false;
+          submitButton.disabled = true;
+          submitButton.textContent = 'Support Login Disabled';
+          setBannerState('error', 'Support login is disabled because no support password is configured on the server. Set SUPPORT_PORTAL_PASSWORD or set a support password in the admin console.');
+          return;
+        }
+
+        supportLoginEnabled = true;
+        submitButton.disabled = false;
+        submitButton.textContent = 'Sign In';
+        setBannerState('ok', 'Login server is online and support login is configured. You can sign in now.');
       } catch (_error) {
+        supportLoginEnabled = false;
+        submitButton.disabled = true;
+        submitButton.textContent = 'Server Unreachable';
         setBannerState('error', 'Login server is unreachable right now. If you are testing locally, start the Node backend, or configure window.CWS_API_BASE to your API URL.');
+      } finally {
+        retryStatusBtn.disabled = false;
+        retryStatusBtn.textContent = 'Retry';
       }
     };
 
-    const supportLoginForm = document.getElementById('supportLoginForm');
+    retryStatusBtn.addEventListener('click', () => {
+      checkApiConnectivity();
+    });
+
     supportLoginForm.addEventListener('submit', async (event) => {
       event.preventDefault();
       const email = SiteAuth.normalizeEmail(document.getElementById('supportEmail').value);
       const password = document.getElementById('supportPassword').value.trim();
+
+      if (!supportLoginEnabled) {
+        loginError.textContent = 'Support login is currently unavailable. Check the banner above for the required server configuration.';
+        return;
+      }
+
       if (!password) {
         loginError.textContent = 'Please enter your password.';
         return;

@@ -1,0 +1,10 @@
+[
+  {
+    "id": "db99f8997630c3d0",
+    "name": "Site QA",
+    "email": "qa@example.com",
+    "message": "Testing contact endpoint",
+    "submittedAt": "2026-04-07T18:30:30.861Z",
+    "status": "new"
+  }
+]

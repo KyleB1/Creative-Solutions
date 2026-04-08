@@ -599,7 +599,7 @@
 
   <script>
     if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      window.CWS_API_BASE = 'http://localhost:3100';
+      window.CWS_API_BASE = 'http://localhost:3000';
     }
   </script>
   <script src="auth.js"></script>
@@ -790,7 +790,7 @@
             <span>${entry.supportTickets} tickets</span>
             <span>${entry.activeProjects} active projects</span>
           </div>
-          <p>Created ${formatDateTime(entry.createdAt)} Ã¢â‚¬Â¢ Renewal ${entry.renewal || 'Not set'} Ã¢â‚¬Â¢ ${entry.monthlySpend} monthly spend</p>
+          <p>Created ${formatDateTime(entry.createdAt)} | Renewal ${entry.renewal || 'Not set'} | ${entry.monthlySpend} monthly spend</p>
           <form class="inline-form" data-customer-form="${entry.email}">
             <select name="plan">
               <option value="Starter" ${entry.plan === 'Starter' ? 'selected' : ''}>Starter</option>
@@ -845,7 +845,7 @@
       supportTicketList.innerHTML = filtered.slice(0, 12).map((entry) => `
         <article class="ticket-item">
           <strong>${entry.subject} (${entry.id})</strong>
-          <p>${entry.customer} Ã¢â‚¬Â¢ ${entry.product}</p>
+          <p>${entry.customer} | ${entry.product}</p>
           <div class="item-meta">
             <span class="pill ticket">${entry.priority}</span>
             <span class="pill ${entry.status === 'resolved' ? 'online' : entry.status === 'pending' ? 'support' : 'admin'}">${entry.status}</span>

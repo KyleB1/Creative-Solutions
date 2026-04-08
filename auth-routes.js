@@ -6,6 +6,7 @@ const path = require('path');
 const router = express.Router();
 
 const SESSION_COOKIE_NAME = 'cws_session';
+const SESSION_HEADER_NAME = 'x-cws-session';
 const SESSION_TTL_MS = 1000 * 60 * 60 * 12;
 const PBKDF2_ITERATIONS = 210000;
 const PBKDF2_KEY_LENGTH = 64;
@@ -200,6 +201,26 @@ function parseCookies(headerValue) {
       accumulator[key] = decodeURIComponent(value);
       return accumulator;
     }, {});
+}
+
+function parseSessionHeader(req) {
+  const direct = String(req.get(SESSION_HEADER_NAME) || '').trim();
+  if (direct) {
+    return direct;
+  }
+
+  const authHeader = String(req.get('authorization') || '').trim();
+  const match = authHeader.match(/^Bearer\s+(.+)$/i);
+  return match ? String(match[1] || '').trim() : '';
+}
+
+function getSessionIdFromRequest(req) {
+  const cookies = parseCookies(req.headers.cookie);
+  if (cookies[SESSION_COOKIE_NAME]) {
+    return cookies[SESSION_COOKIE_NAME];
+  }
+
+  return parseSessionHeader(req);
 }
 
 function serializeCookie(sessionId, maxAgeMs) {
@@ -547,8 +568,7 @@ function createSession(res, user) {
 }
 
 function destroySession(req, res) {
-  const cookies = parseCookies(req.headers.cookie);
-  const sessionId = cookies[SESSION_COOKIE_NAME];
+  const sessionId = getSessionIdFromRequest(req);
   if (sessionId) {
     deleteSession(sessionId);
   }
@@ -571,8 +591,7 @@ function pruneExpiredSessions() {
 
 function getActiveSession(req) {
   pruneExpiredSessions();
-  const cookies = parseCookies(req.headers.cookie);
-  const sessionId = cookies[SESSION_COOKIE_NAME];
+  const sessionId = getSessionIdFromRequest(req);
   if (!sessionId) {
     return null;
   }
@@ -730,7 +749,8 @@ router.get('/session', (req, res) => {
 
   res.json({
     authenticated: true,
-    user: session.user
+    user: session.user,
+    sessionToken: session.sessionId
   });
 });
 
@@ -1107,8 +1127,9 @@ router.post('/signup', async (req, res, next) => {
     await writeCustomerStore(store);
 
     destroySession(req, res);
+    let sessionToken = null;
     if (!REQUIRE_EMAIL_VERIFICATION) {
-      createSession(res, customerSessionView(customer));
+      sessionToken = createSession(res, customerSessionView(customer));
     }
     await appendAuditEvent({
       action: 'customer.signup',
@@ -1130,7 +1151,8 @@ router.post('/signup', async (req, res, next) => {
       : {
           requiresEmailVerification: false,
           message: 'Account created. Redirecting to your portal...',
-          user: customerSessionView(customer)
+          user: customerSessionView(customer),
+          sessionToken
         };
 
     if (REQUIRE_EMAIL_VERIFICATION && verification && process.env.NODE_ENV !== 'production') {
@@ -1299,7 +1321,7 @@ router.post('/login', async (req, res, next) => {
     }
 
     destroySession(req, res);
-    createSession(res, customerSessionView(customer));
+    const sessionToken = createSession(res, customerSessionView(customer));
     await appendAuditEvent({
       action: 'customer.login',
       title: `${customer.name} signed in`,
@@ -1312,7 +1334,8 @@ router.post('/login', async (req, res, next) => {
     });
 
     res.json({
-      user: customerSessionView(customer)
+      user: customerSessionView(customer),
+      sessionToken
     });
   } catch (error) {
     next(error);
@@ -1340,7 +1363,7 @@ router.post('/support-login', async (req, res, next) => {
 
     const supportUser = supportSessionView(email);
     destroySession(req, res);
-    createSession(res, supportUser);
+    const sessionToken = createSession(res, supportUser);
     await appendAuditEvent({
       action: 'support.login',
       title: `${supportUser.name} signed in`,
@@ -1353,7 +1376,8 @@ router.post('/support-login', async (req, res, next) => {
     });
 
     res.json({
-      user: supportUser
+      user: supportUser,
+      sessionToken
     });
   } catch (error) {
     next(error);

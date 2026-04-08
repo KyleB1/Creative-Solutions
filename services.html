@@ -1,155 +1,102 @@
-<<<<<<< Updated upstream
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore Creative Web Solutions' full range of services: custom web design, e-commerce, SEO, app development, CMS integration, and more.">
     <title>Services | Creative Web Solutions</title>
-    <style>
-        :root {
-            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            color: #111827;
-            background: linear-gradient(180deg, #f8f2ff 0%, #eef4ff 100%);
-        }
-        * { box-sizing: border-box; }
-        body { margin: 0; min-height: 100vh; background: linear-gradient(180deg, #f8f2ff 0%, #eef4ff 100%); color: #111827; }
- 
-        .page-header { max-width: 960px; margin: 3rem auto; padding: 2rem; border-radius: 28px; background: #ffffff; box-shadow: 0 30px 80px rgba(15,23,42,0.08); }
-        .page-header h1 { margin-top: 0; font-size: clamp(2.4rem,4vw,3.5rem); letter-spacing: -0.03em; }
-        .page-header p { line-height: 1.8; max-width: 48rem; color: #475569; }
- 
-        .services-grid { max-width: 960px; margin: 0 auto 3rem; padding: 0 2rem; display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
-        .service-card { background: #ffffff; border-radius: 24px; padding: 2rem; box-shadow: 0 20px 50px rgba(15,23,42,0.07); border: 1px solid rgba(124,58,237,0.1); transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .service-card:hover { transform: translateY(-4px); box-shadow: 0 30px 60px rgba(124,58,237,0.12); }
-        .service-card-link { text-decoration: none; color: inherit; display: block; }
-        .service-card-link:focus-visible .service-card { outline: 3px solid rgba(124,58,237,0.45); outline-offset: 3px; }
-        .service-icon { width: 48px; height: 48px; border-radius: 14px; background: #ede9ff; display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; font-size: 1.5rem; }
-        .service-card h3 { margin: 0 0 0.75rem; font-size: 1.15rem; color: #111827; }
-        .service-card p { margin: 0 0 1rem; color: #6b7280; font-size: 0.97rem; line-height: 1.7; }
-        .service-tag { display: inline-flex; padding: 0.3rem 0.75rem; border-radius: 999px; background: #ede9ff; color: #5b21b6; font-size: 0.8rem; font-weight: 700; }
- 
-        .pricing-section { max-width: 960px; margin: 0 auto 4rem; padding: 0 2rem; }
-        .pricing-section h2 { font-size: 2rem; margin-bottom: 0.5rem; }
-        .pricing-section > p { color: #6b7280; margin-bottom: 2rem; }
-        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
-        .pricing-card { background: #ffffff; border-radius: 24px; padding: 2rem; border: 1px solid #e5e7eb; box-shadow: 0 16px 40px rgba(15,23,42,0.06); }
-        .pricing-card.featured { border-color: #7c3aed; background: linear-gradient(180deg, #faf5ff 0%, #ffffff 100%); }
-        .pricing-card .price { font-size: 2.5rem; font-weight: 800; color: #111827; margin: 1rem 0 0.25rem; }
-        .pricing-card .price span { font-size: 1rem; font-weight: 400; color: #6b7280; }
-        .pricing-card h3 { margin: 0; font-size: 1.1rem; color: #7c3aed; }
-        .pricing-card ul { margin: 1.25rem 0 1.5rem; padding: 0; list-style: none; display: grid; gap: 0.6rem; }
-        .pricing-card li { font-size: 0.95rem; color: #374151; padding-left: 1.25rem; position: relative; }
-        .pricing-card li::before { content: '>'; position: absolute; left: 0; color: #7c3aed; font-weight: 700; }
-        .cta-btn { display: block; text-align: center; padding: 0.85rem 1rem; border-radius: 16px; background: #7c3aed; color: #fff; font-weight: 700; text-decoration: none; transition: filter 0.2s ease, transform 0.2s ease; }
-        .cta-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
-        .cta-btn.outline { background: transparent; border: 2px solid #7c3aed; color: #7c3aed; }
-        .cta-btn.outline:hover { background: rgba(124,58,237,0.06); }
- 
-        body.dark-mode { background: #0b1222; color: #f1f5f9; }
-        body.dark-mode .page-header, body.dark-mode .service-card, body.dark-mode .pricing-card { background: #111827; border-color: #374151; }
-        body.dark-mode .page-header p, body.dark-mode .service-card p, body.dark-mode .pricing-card li { color: #c2cffd; }
-        body.dark-mode .service-icon { background: #1f2937; }
-        body.dark-mode .service-tag { background: #312e81; color: #cbd5ff; }
-        body.dark-mode .pricing-card.featured { background: #1a1030; border-color: #7c3aed; }
-        body.dark-mode .pricing-card .price { color: #f3f4f6; }
-        body.dark-mode .pricing-section > p { color: #c2cffd; }
-        body.dark-mode .service-card h3, body.dark-mode .pricing-section h2 { color: #f3f4f6; }
- 
-        @media (max-width: 640px) {
-            .page-header { margin: 2rem 1rem; padding: 1.5rem; }
-            .services-grid, .pricing-section { padding: 0 1rem; }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="page-header">
+<main class="services-wrap" style="margin: 5.5rem auto 2rem;">
+<section class="services-hero">
     <h1>Our Services</h1>
     <p>Providing innovative web solutions for your business needs is at the heart of what we do. From custom website design to digital marketing strategies, we offer comprehensive services to elevate your online presence and drive success.</p>
     <p>Our team of experts is dedicated to delivering high-quality solutions tailored to your unique requirements - whether you're building from scratch, optimizing what you have, or scaling for growth.</p>
-</div>
- 
-<div class="services-grid">
-    <a href="custom-web-design.html" class="service-card-link" aria-label="Open Custom Website Design details">
-        <div class="service-card">
+</section>
+
+<section class="services-grid">
+    <a href="custom-web-design.html" class="service-link" aria-label="Open Custom Website Design details">
+        <div class="service-tile">
             <div class="service-icon">WD</div>
             <h3>Custom Website Design</h3>
             <p>Beautiful, responsive websites crafted to reflect your brand. Every pixel intentional, every interaction smooth.</p>
             <span class="service-tag">Design</span>
         </div>
     </a>
-    <a href="ecommerce-development.html" class="service-card-link" aria-label="Open E-commerce Development details">
-        <div class="service-card">
+    <a href="ecommerce-development.html" class="service-link" aria-label="Open E-commerce Development details">
+        <div class="service-tile">
             <div class="service-icon">EC</div>
             <h3>E-commerce Development</h3>
             <p>Secure, scalable online stores with seamless checkout, inventory management, and payment integrations.</p>
             <span class="service-tag">Commerce</span>
         </div>
     </a>
-    <a href="seo-optimization.html" class="service-card-link" aria-label="Open SEO Optimization details">
-        <div class="service-card">
+    <a href="seo-optimization.html" class="service-link" aria-label="Open SEO Optimization details">
+        <div class="service-tile">
             <div class="service-icon">SEO</div>
             <h3>SEO Optimization</h3>
             <p>Get found by the right people. We handle technical SEO, on-page optimization, and keyword strategy.</p>
             <span class="service-tag">Growth</span>
         </div>
     </a>
-    <a href="cms-integration.html" class="service-card-link" aria-label="Open CMS Integration details">
-        <div class="service-card">
+    <a href="cms-integration.html" class="service-link" aria-label="Open CMS Integration details">
+        <div class="service-tile">
             <div class="service-icon">CMS</div>
             <h3>CMS Integration</h3>
             <p>Take control of your content with flexible CMS setups - WordPress, Webflow, Sanity, and more.</p>
             <span class="service-tag">Content</span>
         </div>
     </a>
-    <a href="app-development.html" class="service-card-link" aria-label="Open App Development details">
-        <div class="service-card">
+    <a href="app-development.html" class="service-link" aria-label="Open App Development details">
+        <div class="service-tile">
             <div class="service-icon">APP</div>
             <h3>App Development</h3>
             <p>Mobile-first applications built for performance, usability, and long-term maintainability.</p>
             <span class="service-tag">Development</span>
         </div>
     </a>
-    <a href="digital-marketing.html" class="service-card-link" aria-label="Open Digital Marketing details">
-        <div class="service-card">
+    <a href="digital-marketing.html" class="service-link" aria-label="Open Digital Marketing details">
+        <div class="service-tile">
             <div class="service-icon">MKT</div>
             <h3>Digital Marketing</h3>
             <p>Campaigns that move the needle - paid ads, email, social, and content strategies tied to real results.</p>
             <span class="service-tag">Marketing</span>
         </div>
     </a>
-    <a href="website-maintenance.html" class="service-card-link" aria-label="Open Website Maintenance details">
-        <div class="service-card">
+    <a href="website-maintenance.html" class="service-link" aria-label="Open Website Maintenance details">
+        <div class="service-tile">
             <div class="service-icon">OPS</div>
             <h3>Website Maintenance</h3>
             <p>Ongoing updates, security patches, performance monitoring, and peace of mind after launch.</p>
             <span class="service-tag">Support</span>
         </div>
     </a>
-    <a href="analytics-reporting.html" class="service-card-link" aria-label="Open Analytics and Reporting details">
-        <div class="service-card">
+    <a href="analytics-reporting.html" class="service-link" aria-label="Open Analytics and Reporting details">
+        <div class="service-tile">
             <div class="service-icon">ANL</div>
             <h3>Analytics & Reporting</h3>
             <p>Know what's working. We set up dashboards, track conversions, and translate data into decisions.</p>
             <span class="service-tag">Insights</span>
         </div>
     </a>
-    <a href="security-audits.html" class="service-card-link" aria-label="Open Security Audits details">
-        <div class="service-card">
+    <a href="security-audits.html" class="service-link" aria-label="Open Security Audits details">
+        <div class="service-tile">
             <div class="service-icon">SEC</div>
             <h3>Security Audits</h3>
             <p>Vulnerability assessments, SSL setup, and hardening recommendations to keep your site protected.</p>
             <span class="service-tag">Security</span>
         </div>
     </a>
-</div>
+ </section>
  
-<div class="pricing-section">
+<section class="pricing-block">
     <h2>Simple, transparent pricing</h2>
     <p>All plans include hosting setup, onboarding support, and a dedicated project contact.</p>
     <div class="pricing-grid">
         <div class="pricing-card">
             <h3>Starter</h3>
-            <div class="price">$799 <span>one-time</span></div>
+            <div class="price">$2,500 <span>one-time</span></div>
             <ul>
                 <li>Up to 5 pages</li>
                 <li>Mobile-responsive design</li>
@@ -161,7 +108,7 @@
         </div>
         <div class="pricing-card featured">
             <h3>Growth</h3>
-            <div class="price">$2,400 <span>one-time</span></div>
+            <div class="price">$6,500 <span>one-time</span></div>
             <ul>
                 <li>Up to 15 pages</li>
                 <li>Custom UI/UX design</li>
@@ -185,184 +132,21 @@
             <a href="index.htm#contact" class="cta-btn outline">Contact us</a>
         </div>
     </div>
-</div>
+ </section>
 
-<div class="pricing-section" style="margin-top: 0;">
+<section class="pricing-block">
     <div class="pricing-card featured" style="text-align: center;">
         <h3>Not sure which style fits your business?</h3>
         <p style="margin: 0.75rem 0 1.25rem; color: #6b7280;">Use our Layout Lab to preview multiple homepage styles before you purchase.</p>
         <a href="layout-lab.html" class="cta-btn">Open Layout Lab</a>
     </div>
-</div>
- 
+ </section>
+</main>
+<footer></footer>
 <script defer src="theme.js"></script>
-<script src="auth.js"></script>
+<script defer src="auth.js"></script>
+<script defer src="footer.js"></script>
 <script defer src="header.js"></script>
 </body>
 </html>
-=======
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Services | Creative Web Solutions</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    .wrap { max-width: 1100px; margin: 0 auto; padding: 1rem; }
-    .head { position: relative; overflow: hidden; background: var(--surface); border: 1px solid var(--surface-contrast); border-radius: 22px; padding: 1.5rem; }
-    .head::before { content: ""; position: absolute; inset: 0; background-image: linear-gradient(rgba(15, 111, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(15, 111, 255, 0.1) 1px, transparent 1px); background-size: 22px 22px; mask-image: linear-gradient(110deg, transparent 8%, black 48%, black 92%, transparent 100%); }
-    .head::after { content: ""; position: absolute; width: 210px; height: 210px; right: -70px; top: -70px; border-radius: 42px; transform: rotate(35deg); background: linear-gradient(150deg, rgba(255, 122, 24, 0.3), rgba(15, 111, 255, 0.12)); }
-    .head h1 { margin: 0 0 .4rem; }
-    .head p { margin: 0; color: var(--muted); }
-    .grid { margin-top: 1rem; display:grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1rem; }
-    .card { background: var(--surface); border: 1px solid var(--surface-contrast); border-radius: 16px; padding: 1rem; }
-    .tag { display: inline-flex; padding: .25rem .6rem; border-radius: 999px; background: #ede9fe; color: #5b21b6; font-size: .78rem; font-weight: 700; }
-    .comparison-section { margin-top: 2.5rem; }
-    .comparison-section h2 { font-size: 1.8rem; margin: 0 0 1.5rem; text-align: center; }
-    .comparison-table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--surface-contrast); border-radius: 12px; overflow: hidden; }
-    .comparison-table th, .comparison-table td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--surface-contrast); }
-    .comparison-table th { background: var(--surface-alt); font-weight: 600; font-size: 0.95rem; }
-    .comparison-table tr:last-child td { border-bottom: none; }
-    .comparison-table td:first-child { font-weight: 600; color: var(--text); }
-    .checkmark { color: #10b981; font-weight: bold; }
-    .x-mark { color: #ef4444; font-weight: bold; }
-    .head > * { position: relative; z-index: 1; }
-    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } .comparison-table { font-size: 0.9rem; } .comparison-table th, .comparison-table td { padding: 0.75rem; } }
-  </style>
-</head>
-<body>
-  <main class="wrap" id="main">
-    <section class="head panel">
-      <h1>Services</h1>
-      <p>Enhanced service pages with streamlined scannability and better interactions across all devices.</p>
-    </section>
-    <section class="grid">
-      <article class="card service-card"><span class="tag">Web</span><h3>Custom Website Builds</h3><p>Brand-first websites with measurable conversion goals.</p></article>
-      <article class="card service-card"><span class="tag">Commerce</span><h3>E-commerce Platforms</h3><p>Secure checkout flows and optimized product experiences.</p></article>
-      <article class="card service-card"><span class="tag">Growth</span><h3>SEO + Performance</h3><p>Faster pages and stronger search visibility.</p></article>
-      <article class="card service-card"><span class="tag">CRM</span><h3>Workflow Automation</h3><p>Lead routing, follow-up automation, and sales pipeline clarity.</p></article>
-      <article class="card service-card"><span class="tag">Support</span><h3>Portal Integration</h3><p>Customer and support portals with role-based access.</p></article>
-      <article class="card service-card"><span class="tag">Ops</span><h3>Maintenance Plans</h3><p>Ongoing optimization, updates, and support ops.</p></article>
-    </section>
 
-    <!-- Service Comparison -->
-    <section class="comparison-section">
-      <h2>Service Feature Comparison</h2>
-      <table class="comparison-table">
-        <thead>
-          <tr>
-            <th>Feature</th>
-            <th>Websites</th>
-            <th>E-Commerce</th>
-            <th>SEO</th>
-            <th>Automation</th>
-            <th>Portals</th>
-            <th>Maintenance</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Responsive Design</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-          </tr>
-          <tr>
-            <td>Conversion Optimization</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-            <td class="x-mark">—</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-          </tr>
-          <tr>
-            <td>SEO Setup & Optimization</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-            <td class="x-mark">—</td>
-            <td class="x-mark">—</td>
-            <td class="checkmark">✓</td>
-          </tr>
-          <tr>
-            <td>Payment Processing</td>
-            <td class="x-mark">—</td>
-            <td class="checkmark">✓</td>
-            <td class="x-mark">—</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-          </tr>
-          <tr>
-            <td>Third-Party Integrations</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-          </tr>
-          <tr>
-            <td>User Authentication & Roles</td>
-            <td class="x-mark">—</td>
-            <td class="checkmark">✓</td>
-            <td class="x-mark">—</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-          </tr>
-          <tr>
-            <td>Lead Capture & CRM</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-            <td class="x-mark">—</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-          </tr>
-          <tr>
-            <td>Ticketing System</td>
-            <td class="x-mark">—</td>
-            <td class="x-mark">—</td>
-            <td class="x-mark">—</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-          </tr>
-          <tr>
-            <td>Workflow Automation</td>
-            <td class="x-mark">—</td>
-            <td class="x-mark">—</td>
-            <td class="x-mark">—</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-            <td class="checkmark">✓</td>
-          </tr>
-          <tr>
-            <td>Post-Launch Support (months)</td>
-            <td>1-3</td>
-            <td>1-3</td>
-            <td>1-3</td>
-            <td>3+</td>
-            <td>3+</td>
-            <td>Ongoing</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-  </main>
-  <script src="auth.js"></script>
-  <script src="header.js"></script>
-  <script src="site-enhancements.js"></script>
-
-  <footer></footer>
-
-  <script src="footer.js"></script>
-</body>
-</html>
->>>>>>> Stashed changes

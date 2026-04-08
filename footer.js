@@ -59,7 +59,7 @@
     </div>
 
     <div class="footer-bottom">
-      <p class="copyright">&copy; ${currentYear} CreatVi Web Solutions. All rights reserved.</p>
+      <p class="copyright">&copy; ${currentYear} Creative Web Solutions. All rights reserved.</p>
       <div class="footer-links">
         <a href="/privacy.html">Privacy</a>
         <span class="separator">•</span>

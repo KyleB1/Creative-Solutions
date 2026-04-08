@@ -10,11 +10,33 @@
   const state = {
     currentUser: null,
     loaded: false,
-    loadingPromise: null
+    loadingPromise: null,
+    sessionToken: null
   };
+
+  const SESSION_TOKEN_STORAGE_KEY = 'cwsSessionToken';
 
   const DEFAULT_HOSTED_API_BASE = 'https://creative-solutions.onrender.com';
   const DEFAULT_LOCAL_API_BASE = 'http://localhost:3000';
+
+  function loadStoredSessionToken() {
+    if (typeof localStorage === 'undefined') return null;
+    const token = String(localStorage.getItem(SESSION_TOKEN_STORAGE_KEY) || '').trim();
+    return token || null;
+  }
+
+  function saveSessionToken(token) {
+    const normalized = String(token || '').trim();
+    state.sessionToken = normalized || null;
+    if (typeof localStorage === 'undefined') return;
+    if (state.sessionToken) {
+      localStorage.setItem(SESSION_TOKEN_STORAGE_KEY, state.sessionToken);
+    } else {
+      localStorage.removeItem(SESSION_TOKEN_STORAGE_KEY);
+    }
+  }
+
+  saveSessionToken(loadStoredSessionToken());
 
   function isLocalHostName(hostname) {
     const normalized = String(hostname || '').toLowerCase();
@@ -203,6 +225,10 @@
       requestOptions.headers['Content-Type'] = 'application/json';
     }
 
+    if (state.sessionToken && !requestOptions.headers['X-CWS-Session']) {
+      requestOptions.headers['X-CWS-Session'] = state.sessionToken;
+    }
+
     const requestUrl = buildApiUrl(path);
     const alternateUrl = (() => {
       if (typeof window === 'undefined' || !window.location) return null;
@@ -268,7 +294,16 @@
     }
 
     state.loadingPromise = apiRequest('/api/auth/session', { method: 'GET' })
-      .then((payload) => setCurrentUser(payload && payload.authenticated ? payload.user : null))
+      .then((payload) => {
+        if (payload && payload.sessionToken) {
+          saveSessionToken(payload.sessionToken);
+        }
+        if (payload && payload.authenticated) {
+          return setCurrentUser(payload.user);
+        }
+        saveSessionToken(null);
+        return setCurrentUser(null);
+      })
       .catch(() => setCurrentUser(null))
       .finally(() => {
         state.loadingPromise = null;
@@ -337,6 +372,10 @@
     return Boolean(payload && payload.hasCustomerAccounts);
   }
 
+  async function getAuthMeta() {
+    return apiRequest('/api/auth/meta', { method: 'GET' });
+  }
+
   function isCustomerLoggedIn() {
     return Boolean(getCustomer());
   }
@@ -397,6 +436,7 @@
     if (result && result.user) {
       setCustomer(result.user);
     }
+    saveSessionToken(result && result.sessionToken);
     return result;
   }
 
@@ -409,6 +449,7 @@
       })
     });
     clearSupport();
+    saveSessionToken(result && result.sessionToken);
     setCustomer(result && result.user);
     return result && result.user;
   }
@@ -421,6 +462,7 @@
         password: payload.password
       })
     });
+    saveSessionToken(result && result.sessionToken);
     setSupport(result && result.user);
     return result && result.user;
   }
@@ -472,6 +514,7 @@
     if (support && support.email) {
       removeOnlineAgent(support.email);
     }
+    saveSessionToken(null);
     setCurrentUser(null);
     if (redirectTo) {
       window.location.href = toAppUrl(redirectTo);
@@ -509,6 +552,7 @@
     clearCustomer,
     clearSupport,
     hasRegisteredAccounts,
+    getAuthMeta,
     isCustomerLoggedIn,
     isSupportLoggedIn,
     requireCustomer,

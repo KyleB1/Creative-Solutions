@@ -1,398 +1,61 @@
-<<<<<<< Updated upstream
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sign in to your Creative Web Solutions account to access your customer portal, project updates, and billing.">
   <title>Login | Creative Web Solutions</title>
-  <style>
-    :root {
-      color-scheme: light;
-      font-family: Inter, system-ui, sans-serif;
-      background: #f4f3ff;
-      color: #111827;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      background: radial-gradient(circle at top left, rgba(124, 58, 237, 0.18), transparent 30%),
-                  linear-gradient(180deg, #f8f6ff 0%, #eef0ff 45%, #f9f7ff 100%);
-      padding: 1.5rem;
-    }
-
-    .login-shell {
-      width: min(960px, 100%);
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 2rem;
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid rgba(124, 58, 237, 0.18);
-      border-radius: 32px;
-      box-shadow: 0 35px 90px rgba(99, 102, 241, 0.12);
-      overflow: hidden;
-    }
-
-    .login-side {
-      padding: 3rem;
-      background: linear-gradient(180deg, #faf5ff 0%, #f3efff 100%);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .login-side h1 {
-      margin: 0 0 1rem;
-      font-size: clamp(2.2rem, 2.8vw, 3.3rem);
-      line-height: 1.05;
-      color: #4c1d95;
-    }
-
-    .login-side p {
-      margin: 0;
-      color: #5b4b96;
-      font-size: 1rem;
-      line-height: 1.8;
-      max-width: 30rem;
-    }
-
-    .login-side .benefits {
-      margin-top: 2rem;
-      display: grid;
-      gap: 1rem;
-    }
-
-    .benefit {
-      display: flex;
-      gap: 0.85rem;
-      align-items: flex-start;
-    }
-
-    .benefit-dot {
-      width: 12px;
-      height: 12px;
-      margin-top: 0.45rem;
-      border-radius: 999px;
-      background: #8b5cf6;
-      flex-shrink: 0;
-    }
-
-    .benefit span {
-      color: #5b4b96;
-      font-size: 0.98rem;
-      line-height: 1.7;
-    }
-
-    .login-form-card {
-      padding: 3rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .login-form-card h2 {
-      margin: 0 0 1rem;
-      font-size: 1.8rem;
-      letter-spacing: -0.03em;
-    }
-
-    .login-form-card p {
-      margin: 0 0 2rem;
-      color: #6b7280;
-    }
-
-    .form-group {
-      margin-bottom: 1.3rem;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 0.6rem;
-      color: #374151;
-      font-size: 0.95rem;
-    }
-
-    input {
-      width: 100%;
-      min-height: 3.1rem;
-      padding: 0.95rem 1rem;
-      font-size: 1rem;
-      color: #111827;
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      border-radius: 16px;
-      background: #ffffff;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    input:focus {
-      border-color: #7c3aed;
-      outline: none;
-      box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12);
-    }
-
-    .remember-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.85rem;
-      margin-bottom: 2rem;
-      flex-wrap: wrap;
-      color: #4b5563;
-      font-size: 0.95rem;
-    }
-
-    .remember-row a {
-      color: #7c3aed;
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    .primary-btn {
-      width: 100%;
-      padding: 1rem 1.1rem;
-      background: linear-gradient(135deg, #7c3aed 0%, #9333ea 100%);
-      border: none;
-      border-radius: 16px;
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.2s ease, filter 0.2s ease;
-    }
-
-    .primary-btn:hover {
-      filter: brightness(1.05);
-      transform: translateY(-1px);
-    }
-
-    .back-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-      padding: 0.75rem 1rem;
-      border-radius: 999px;
-      border: 1px solid rgba(124, 58, 237, 0.25);
-      background: #ffffff;
-      color: #5b4b96;
-      font-size: 0.95rem;
-      text-decoration: none;
-      transition: background 0.2s ease, transform 0.2s ease;
-    }
-
-    .back-btn:hover {
-      background: rgba(124, 58, 237, 0.08);
-      transform: translateY(-0.1rem);
-    }
-
-    .alt-link {
-      margin-top: 1.5rem;
-      font-size: 0.95rem;
-      color: #6b7280;
-      text-align: center;
-    }
-
-    .status-banner {
-      margin: 0 0 1rem;
-      padding: 0.75rem 0.9rem;
-      border-radius: 12px;
-      font-size: 0.92rem;
-      line-height: 1.45;
-      border: 1px solid transparent;
-    }
-
-    .status-banner.info {
-      background: #eef2ff;
-      border-color: #cbd5ff;
-      color: #3730a3;
-    }
-
-    .status-banner.ok {
-      background: #ecfdf3;
-      border-color: #a7f3d0;
-      color: #065f46;
-    }
-
-    .status-banner.error {
-      background: #fef2f2;
-      border-color: #fecaca;
-      color: #991b1b;
-    }
-
-    .alt-link a {
-      color: #7c3aed;
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    .theme-toggle {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      z-index: 1000;
-      padding: 0.75rem 1rem;
-      border-radius: 999px;
-      border: 1px solid rgba(124, 58, 237, 0.25);
-      background: #ffffff;
-      color: #5b4b96;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s ease, transform 0.2s ease;
-    }
-
-    .theme-toggle:hover {
-      background: rgba(124, 58, 237, 0.08);
-    }
-
-    body.dark-mode {
-      background: #0f172a;
-      color: #f1f5f9;
-    }
-
-    body.dark-mode .login-shell {
-      background: #111827;
-      border-color: #334155;
-    }
-
-    body.dark-mode .login-side {
-      background: linear-gradient(180deg, #182235 0%, #111827 100%);
-    }
-
-    body.dark-mode .login-form-card {
-      background: #111827;
-    }
-
-    body.dark-mode .login-side h1,
-    body.dark-mode .login-side p,
-    body.dark-mode .benefit span,
-    body.dark-mode .remember-row,
-    body.dark-mode .alt-link,
-    body.dark-mode .alt-link a {
-      color: #e2e8f0;
-    }
-
-    body.dark-mode .status-banner.info {
-      background: #1f2937;
-      border-color: #374151;
-      color: #cbd5ff;
-    }
-
-    body.dark-mode .status-banner.ok {
-      background: #052e24;
-      border-color: #065f46;
-      color: #a7f3d0;
-    }
-
-    body.dark-mode .status-banner.error {
-      background: #3f1d1d;
-      border-color: #7f1d1d;
-      color: #fecaca;
-    }
-
-    body.dark-mode input {
-      background: #0f172a;
-      color: #e2e8f0;
-      border-color: #334155;
-    }
-
-    body.dark-mode label {
-      color: #e5e7eb;
-    }
-
-    body.dark-mode .primary-btn {
-      background: #8b5cf6;
-    }
-
-    body.dark-mode .back-btn {
-      background: #111827;
-      border-color: #4f46e5;
-      color: #e5e7eb;
-    }
-
-    body.dark-mode .theme-toggle {
-      background: #1f2937;
-      color: #e5e7eb;
-      border-color: rgba(148, 163, 184, 0.45);
-    }
-
-    body.dark-mode a,
-    body.dark-mode button,
-    body.dark-mode textarea,
-    body.dark-mode select {
-      color: #e2e8f0;
-    }
-
-    body.dark-mode input::placeholder {
-      color: #b8c7ea;
-    }
-
-    @media (max-width: 860px) {
-      .login-shell {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 520px) {
-      .login-side,
-      .login-form-card {
-        padding: 2rem;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <button id="themeToggle" class="theme-toggle" type="button">Dark Mode</button>
-  <div class="login-shell">
-    <aside class="login-side">
+  <button id="themeToggle" class="ghost-btn theme-fab" type="button">Dark Mode</button>
+  <div class="split-shell" style="margin: 5.5rem auto 2rem;">
+    <aside class="split-intro">
       <h1>Welcome back</h1>
-      <p>Log in to continue managing projects, tracking progress, and building better digital experiences with Creative Web Solutions.</p>
-      <div class="benefits">
-        <div class="benefit"><span class="benefit-dot"></span><span>Secure access to your dashboard</span></div>
-        <div class="benefit"><span class="benefit-dot"></span><span>Fast onboarding and project updates</span></div>
-        <div class="benefit"><span class="benefit-dot"></span><span>Integrated support and account tools</span></div>
+      <p>Sign in to access your portfolio, track project updates, and manage billing all in one place.</p>
+      <div class="pill-row">
+        <span class="pill-chip">Secure Portal Access</span>
+        <span class="pill-chip">Faster Project Updates</span>
+        <span class="pill-chip">Billing + Support</span>
       </div>
     </aside>
 
-    <main class="login-form-card">
-      <div style="display:flex; flex-wrap:wrap; gap:0.75rem; align-items:center; margin-bottom:1rem;">
-        <a href="javascript:history.back()" class="back-btn">Ã¢â€ Â Back</a>
-        <a href="index.htm" class="back-btn">Ã°Å¸ÂÂ  Home</a>
+    <main class="split-form">
+      <div class="action-row">
+        <a href="javascript:history.back()" class="ghost-btn">&larr; Back</a>
+        <a href="index.htm" class="ghost-btn">Home</a>
       </div>
       <h2>Sign in to your account</h2>
-      <p>Enter your credentials below to access your workspace.</p>
-      <p id="apiStatusBanner" class="status-banner info" role="status" aria-live="polite">Checking login server availability...</p>
-      <form>
-        <div class="form-group">
+      <p class="auth-meta" style="margin:0 0 1rem; text-align:left;">Access your workspace and continue where you left off.</p>
+      <div style="display:flex; gap:0.5rem; align-items:center; margin:0 0 1rem; flex-wrap:wrap;">
+        <p id="apiStatusBanner" class="status-banner info" role="status" aria-live="polite" style="margin:0; flex:1 1 320px;">Checking login server availability...</p>
+        <button id="retryStatusBtn" type="button" class="ghost-btn" style="min-height:2.1rem;">Retry</button>
+      </div>
+      <form class="auth-form">
+        <div class="auth-field">
           <label for="email">Email address</label>
           <input type="email" id="email" name="email" placeholder="you@example.com" required>
         </div>
 
-        <div class="form-group">
+        <div class="auth-field">
           <label for="password">Password</label>
           <input type="password" id="password" name="password" placeholder="Enter your password" required>
         </div>
 
-        <div class="remember-row">
+        <div class="muted-row">
           <label><input type="checkbox"> Remember me</label>
           <a href="password-reset.html">Forgot password?</a>
         </div>
 
-        <button type="submit" class="primary-btn">Log In</button>
-        <p id="loginError" class="alt-link" style="margin-top:0.75rem; color:#b91c1c;"></p>
+        <button type="submit" class="auth-submit">Log In</button>
+        <p id="loginError" class="auth-meta" style="color:#b91c1c;"></p>
       </form>
-      <p class="alt-link">DonÃ¢â‚¬â„¢t have an account? <a href="signup.html">Create one</a></p>
+      <p class="auth-meta">Don't have an account? <a href="signup.html">Create one</a></p>
     </main>
   </div>
   <script>
     if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      window.CWS_API_BASE = 'http://localhost:3100';
+      window.CWS_API_BASE = 'http://localhost:3000';
     }
   </script>
   <script src="auth.js"></script>
@@ -402,7 +65,10 @@
     const themeToggle = document.getElementById('themeToggle');
     const loginError = document.getElementById('loginError');
     const apiStatusBanner = document.getElementById('apiStatusBanner');
+    const retryStatusBtn = document.getElementById('retryStatusBtn');
+    const submitButton = loginForm.querySelector('button[type="submit"]');
     const storedTheme = localStorage.getItem('siteTheme') || 'light';
+    let customerLoginEnabled = true;
 
     const applyTheme = (theme) => {
       document.body.classList.toggle('dark-mode', theme === 'dark');
@@ -413,6 +79,11 @@
     loginForm.addEventListener('submit', async (event) => {
       event.preventDefault();
       loginError.textContent = '';
+
+      if (!customerLoginEnabled) {
+        loginError.textContent = 'Customer login is currently unavailable because the login server cannot be reached.';
+        return;
+      }
 
       try {
         await SiteAuth.loginCustomer({
@@ -433,6 +104,8 @@
 
     const checkApiConnectivity = async () => {
       setBannerState('info', 'Checking login server availability...');
+      retryStatusBtn.disabled = true;
+      retryStatusBtn.textContent = 'Checking...';
 
       const timeoutMs = 6500;
       const timeoutPromise = new Promise((_, reject) => {
@@ -443,15 +116,35 @@
       });
 
       try {
-        await Promise.race([
-          SiteAuth.hasRegisteredAccounts(),
+        const meta = await Promise.race([
+          SiteAuth.getAuthMeta(),
           timeoutPromise
         ]);
+
+        customerLoginEnabled = true;
+        submitButton.disabled = false;
+        submitButton.textContent = 'Log In';
+
+        if (meta && meta.hasCustomerAccounts === false) {
+          setBannerState('info', 'Login server is online. No customer accounts are registered yet, so create an account first.');
+          return;
+        }
+
         setBannerState('ok', 'Login server is online. You can sign in now.');
       } catch (_error) {
+        customerLoginEnabled = false;
+        submitButton.disabled = true;
+        submitButton.textContent = 'Server Unreachable';
         setBannerState('error', 'Login server is unreachable right now. If you are testing locally, start the Node backend, or configure window.CWS_API_BASE to your API URL.');
+      } finally {
+        retryStatusBtn.disabled = false;
+        retryStatusBtn.textContent = 'Retry';
       }
     };
+
+    retryStatusBtn.addEventListener('click', () => {
+      checkApiConnectivity();
+    });
 
     themeToggle.addEventListener('click', () => {
       const nextTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
@@ -471,175 +164,7 @@
       await SiteAuth.redirectIfCustomer('customer-portal.html');
     })();
   </script>
-</body>
-</html>
-=======
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login | Creative Web Solutions</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    .wrap{max-width:640px;margin:0 auto;padding:1rem;}
-    .card{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--surface-contrast);border-radius:20px;padding:1.25rem;}
-    .card::before{content:"";position:absolute;left:-30px;right:-30px;top:-90px;height:180px;border-radius:0 0 120px 120px;background:linear-gradient(140deg,rgba(15,111,255,0.2),rgba(15,111,255,0.02));}
-    .card::after{content:"";position:absolute;width:180px;height:180px;right:-60px;bottom:-70px;border-radius:50%;background:radial-gradient(circle,rgba(255,122,24,0.28),transparent 72%);}
-    .field{display:grid;gap:.35rem;margin-bottom:.85rem;position:relative;}
-    .field label { display: block; font-weight: 500; }
-    input,button{min-height:2.65rem;border-radius:12px;border:1px solid #cbd5e1;padding:0 .75rem;font:inherit;transition:border-color 0.2s, box-shadow 0.2s;}
-    input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-    input.error { border-color: #ef4444; }
-    input.error:focus { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1); }
-    .field-error { font-size: 0.85rem; color: #ef4444; margin-top: -0.2rem; display: none; }
-    .field-error.show { display: block; }
-    .btn{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:700;cursor:pointer;width:100%;transition:opacity 0.2s;}
-    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .msg{min-height:1.25rem;font-weight:700;padding:0.5rem;border-radius:8px;background:rgba(239,68,68,0.08);display:none;}
-    .msg.show { display: block; }
-    .msg.error { color: #ef4444; }
-    .msg.success { color: #10b981; background: rgba(16,185,129,0.08); }
-    .card > *{position:relative;z-index:1;}
-  </style>
-</head>
-<body>
-  <main class="wrap" id="main">
-    <section class="card panel">
-      <h1>Customer Login</h1>
-      <p>Secure sign in to view your project and billing portal.</p>
-      <form id="loginForm">
-        <label class="field">
-          <span>Email address</span>
-          <input id="email" name="email" type="email" required>
-          <span class="field-error" id="emailError"></span>
-        </label>
-        <label class="field">
-          <span>Password</span>
-          <input id="password" name="password" type="password" required>
-          <span class="field-error" id="passwordError"></span>
-        </label>
-        <button class="btn" type="submit" id="submitBtn">Sign In</button>
-      </form>
-      <p id="loginMessage" class="msg"></p>
-      <p>No account? <a href="signup.html">Create one</a></p>
-    </section>
-  </main>
-  <script src="auth.js"></script>
-  <script src="header.js"></script>
-  <script src="site-enhancements.js"></script>
-  <script>
-    if (SiteAuth.redirectIfCustomer('customer-portal.html')) {}
-    
-    const form = document.getElementById('loginForm');
-    const msg = document.getElementById('loginMessage');
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    const emailError = document.getElementById('emailError');
-    const passwordError = document.getElementById('passwordError');
-    const submitBtn = document.getElementById('submitBtn');
-
-    function validateEmail() {
-      const email = emailInput.value.trim();
-      let isValid = true;
-      let errorMsg = '';
-
-      if (!email) {
-        isValid = false;
-        errorMsg = 'Email is required.';
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        isValid = false;
-        errorMsg = 'Please enter a valid email address.';
-      }
-
-      emailInput.classList.toggle('error', !isValid);
-      emailError.textContent = errorMsg;
-      emailError.classList.toggle('show', !isValid);
-      return isValid;
-    }
-
-    function validatePassword() {
-      const password = passwordInput.value;
-      let isValid = true;
-      let errorMsg = '';
-
-      if (!password) {
-        isValid = false;
-        errorMsg = 'Password is required.';
-      }
-
-      passwordInput.classList.toggle('error', !isValid);
-      passwordError.textContent = errorMsg;
-      passwordError.classList.toggle('show', !isValid);
-      return isValid;
-    }
-
-    emailInput.addEventListener('blur', validateEmail);
-    passwordInput.addEventListener('blur', validatePassword);
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      msg.textContent = '';
-      msg.className = 'msg';
-
-      if (!validateEmail() || !validatePassword()) {
-        msg.textContent = 'Please fix the errors above.';
-        msg.classList.add('show', 'error');
-        return;
-      }
-
-      try {
-        submitBtn.disabled = true;
-        msg.textContent = 'Signing in...';
-        msg.classList.add('show');
-
-        const email = SiteAuth.normalizeEmail(emailInput.value);
-        const password = passwordInput.value;
-        const accounts = SiteAuth.safeParse(localStorage.getItem('registeredAccounts') || '{}', {});
-        const account = accounts[email];
-        
-        if (!account) {
-          msg.textContent = 'No account found for that email.';
-          msg.classList.remove('show');
-          msg.classList.add('show', 'error');
-          submitBtn.disabled = false;
-          emailInput.classList.add('error');
-          return;
-        }
-
-        const ok = await SiteAuth.verifyPassword(account.passwordHash || '', password);
-        if (!ok) {
-          msg.textContent = 'Email or password is incorrect.';
-          msg.classList.remove('show');
-          msg.classList.add('show', 'error');
-          submitBtn.disabled = false;
-          passwordInput.classList.add('error');
-          if (window.gtag) gtag('event', 'login_failed', { reason: 'invalid_credentials' });
-          return;
-        }
-
-        const session = SiteAuth.buildCustomerSession({ email, name: account.name, plan: account.plan || 'starter' });
-        SiteAuth.setCustomer(session);
-        
-        msg.textContent = '✓ Signed in successfully!';
-        msg.classList.remove('error');
-        msg.classList.add('success');
-        
-        if (window.gtag) gtag('event', 'login', { method: 'email_password' });
-        
-        setTimeout(() => { window.location.href = 'customer-portal.html'; }, 1000);
-      } catch (err) {
-        msg.textContent = 'Error signing in. Please try again.';
-        msg.classList.remove('show');
-        msg.classList.add('show', 'error');
-        submitBtn.disabled = false;
-      }
-    });
-  </script>
-
   <footer></footer>
-
-  <script src="footer.js"></script>
+  <script defer src="footer.js"></script>
 </body>
 </html>
->>>>>>> Stashed changes
