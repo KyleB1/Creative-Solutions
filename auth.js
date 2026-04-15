@@ -2,7 +2,7 @@
 (function () {
   const SUPPORT_ROLES = Object.freeze({
     'support@creativewebsolutions.com': 'Support Agent',
-    'helpdesk@creativewebsolutions.com': 'Support Agent',
+    'helpdesk@creativewebsolutions.com': 'Help Desk Agent',
     'admin@creativewebsolutions.com': 'System Administrator',
     'kyle.creativesolutions@gmail.com': 'System Administrator'
   });

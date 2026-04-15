@@ -15,7 +15,6 @@ DROP TABLE IF EXISTS support_tickets;
 DROP TABLE IF EXISTS projects;
 DROP TABLE IF EXISTS sessions;
 DROP TABLE IF EXISTS customers;
-
 -- Store users with secure password hashing and email uniqueness.
 CREATE TABLE customers (
     customer_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

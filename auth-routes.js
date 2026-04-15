@@ -26,6 +26,18 @@ let sessionStoreLoaded = false;
 let sessionStoreLoadPromise = null;
 let sessionStoreWriteQueue = Promise.resolve();
 
+// In-memory write-through caches for customer and admin stores.
+// Reads are served from RAM; writes go to disk and update the cache.
+let customerStoreCache = null;
+let customerStoreCacheLoaded = false;
+let customerStoreCacheLoadPromise = null;
+let customerStoreWriteQueue = Promise.resolve();
+
+let adminStoreCache = null;
+let adminStoreCacheLoaded = false;
+let adminStoreCacheLoadPromise = null;
+let adminStoreWriteQueue = Promise.resolve();
+
 const SUPPORT_ROLES = Object.freeze({
   'support@creativewebsolutions.com': 'Support Agent',
   'helpdesk@creativewebsolutions.com': 'Support Agent',
@@ -257,16 +269,42 @@ async function ensureCustomerStore() {
   }
 }
 
+async function loadCustomerStoreCache() {
+  if (customerStoreCacheLoaded) return;
+  if (customerStoreCacheLoadPromise) return customerStoreCacheLoadPromise;
+
+  customerStoreCacheLoadPromise = (async () => {
+    await ensureCustomerStore();
+    const raw = await fs.readFile(CUSTOMER_STORE_PATH, 'utf8');
+    const parsed = JSON.parse(raw || '{}');
+    customerStoreCache = parsed && typeof parsed === 'object' ? parsed : { customers: {} };
+    customerStoreCacheLoaded = true;
+  })();
+
+  try {
+    await customerStoreCacheLoadPromise;
+  } finally {
+    customerStoreCacheLoadPromise = null;
+  }
+}
+
 async function readCustomerStore() {
-  await ensureCustomerStore();
-  const raw = await fs.readFile(CUSTOMER_STORE_PATH, 'utf8');
-  const parsed = JSON.parse(raw || '{}');
-  return parsed && typeof parsed === 'object' ? parsed : { customers: {} };
+  await loadCustomerStoreCache();
+  return customerStoreCache;
 }
 
 async function writeCustomerStore(store) {
-  await ensureCustomerStore();
-  await fs.writeFile(CUSTOMER_STORE_PATH, JSON.stringify(store, null, 2), 'utf8');
+  customerStoreCache = store;
+  customerStoreCacheLoaded = true;
+  customerStoreWriteQueue = customerStoreWriteQueue
+    .then(async () => {
+      await ensureCustomerStore();
+      await fs.writeFile(CUSTOMER_STORE_PATH, JSON.stringify(customerStoreCache, null, 2), 'utf8');
+    })
+    .catch((error) => {
+      console.error('Failed to persist customer store:', error);
+    });
+  await customerStoreWriteQueue;
 }
 
 function cloneDefaultSupportTickets() {
@@ -309,16 +347,42 @@ async function ensureAdminStore() {
   }
 }
 
+async function loadAdminStoreCache() {
+  if (adminStoreCacheLoaded) return;
+  if (adminStoreCacheLoadPromise) return adminStoreCacheLoadPromise;
+
+  adminStoreCacheLoadPromise = (async () => {
+    await ensureAdminStore();
+    const raw = await fs.readFile(ADMIN_STORE_PATH, 'utf8');
+    const parsed = JSON.parse(raw || '{}');
+    adminStoreCache = normalizeAdminStore(parsed);
+    adminStoreCacheLoaded = true;
+  })();
+
+  try {
+    await adminStoreCacheLoadPromise;
+  } finally {
+    adminStoreCacheLoadPromise = null;
+  }
+}
+
 async function readAdminStore() {
-  await ensureAdminStore();
-  const raw = await fs.readFile(ADMIN_STORE_PATH, 'utf8');
-  const parsed = JSON.parse(raw || '{}');
-  return normalizeAdminStore(parsed);
+  await loadAdminStoreCache();
+  return adminStoreCache;
 }
 
 async function writeAdminStore(store) {
-  await ensureAdminStore();
-  await fs.writeFile(ADMIN_STORE_PATH, JSON.stringify(normalizeAdminStore(store), null, 2), 'utf8');
+  adminStoreCache = normalizeAdminStore(store);
+  adminStoreCacheLoaded = true;
+  adminStoreWriteQueue = adminStoreWriteQueue
+    .then(async () => {
+      await ensureAdminStore();
+      await fs.writeFile(ADMIN_STORE_PATH, JSON.stringify(adminStoreCache, null, 2), 'utf8');
+    })
+    .catch((error) => {
+      console.error('Failed to persist admin store:', error);
+    });
+  await adminStoreWriteQueue;
 }
 
 async function ensureSessionStore() {
@@ -772,7 +836,11 @@ router.get('/customer/tickets', requireSessionRole('customer'), async (req, res,
     const customerEmail = normalizeEmail(req.session.user.email);
     const tickets = adminStore.supportTickets
       .filter((ticket) => normalizeEmail(ticket.customerEmail) === customerEmail)
-      .map((ticket) => normalizeTicketRecord(ticket))
+      .map((ticket) => {
+        const normalized = normalizeTicketRecord(ticket);
+        normalized.messages = normalized.messages.filter((msg) => msg.visibility !== 'agent');
+        return normalized;
+      })
       .sort((left, right) => new Date(right.updatedAt || right.createdAt || 0) - new Date(left.updatedAt || left.createdAt || 0));
     res.json({ tickets });
   } catch (error) {
@@ -1470,6 +1538,15 @@ router.post('/logout', async (req, res, next) => {
 
 loadSessionStore().catch((error) => {
   console.error('Failed to load persisted sessions:', error);
+});
+
+// Pre-warm in-memory caches on startup so the first request is instant.
+loadCustomerStoreCache().catch((error) => {
+  console.error('Failed to pre-load customer store:', error);
+});
+
+loadAdminStoreCache().catch((error) => {
+  console.error('Failed to pre-load admin store:', error);
 });
 
 module.exports = router;

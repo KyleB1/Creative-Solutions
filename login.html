@@ -102,12 +102,14 @@
       apiStatusBanner.textContent = message;
     };
 
+    const authMetaUrl = SiteAuth.buildApiUrl('/api/auth/meta');
+
     const checkApiConnectivity = async () => {
-      setBannerState('info', 'Checking login server availability...');
+      setBannerState('info', `Checking login server availability at ${authMetaUrl} ...`);
       retryStatusBtn.disabled = true;
       retryStatusBtn.textContent = 'Checking...';
 
-      const timeoutMs = 6500;
+      const timeoutMs = 15000;
       const timeoutPromise = new Promise((_, reject) => {
         const timer = setTimeout(() => {
           clearTimeout(timer);
@@ -126,16 +128,16 @@
         submitButton.textContent = 'Log In';
 
         if (meta && meta.hasCustomerAccounts === false) {
-          setBannerState('info', 'Login server is online. No customer accounts are registered yet, so create an account first.');
+          setBannerState('info', `Login server is online at ${authMetaUrl}. No customer accounts are registered yet, so create an account first.`);
           return;
         }
 
-        setBannerState('ok', 'Login server is online. You can sign in now.');
+        setBannerState('ok', `Login server is online at ${authMetaUrl}. You can sign in now.`);
       } catch (_error) {
         customerLoginEnabled = false;
         submitButton.disabled = true;
         submitButton.textContent = 'Server Unreachable';
-        setBannerState('error', 'Login server is unreachable right now. If you are testing locally, start the Node backend, or configure window.CWS_API_BASE to your API URL.');
+        setBannerState('error', `Login server is unreachable at ${authMetaUrl}. If you are testing locally, start the Node backend, or configure window.CWS_API_BASE to your API URL.`);
       } finally {
         retryStatusBtn.disabled = false;
         retryStatusBtn.textContent = 'Retry';

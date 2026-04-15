@@ -286,12 +286,14 @@
       apiStatusBanner.textContent = message;
     };
 
+    const authMetaUrl = SiteAuth.buildApiUrl('/api/auth/meta');
+
     const checkApiConnectivity = async () => {
-      setBannerState('info', 'Checking login server availability...');
+      setBannerState('info', `Checking login server availability at ${authMetaUrl} ...`);
       retryStatusBtn.disabled = true;
       retryStatusBtn.textContent = 'Checking...';
 
-      const timeoutMs = 6500;
+      const timeoutMs = 15000;
       const timeoutPromise = new Promise((_, reject) => {
         const timer = setTimeout(() => {
           clearTimeout(timer);
@@ -309,19 +311,19 @@
           supportLoginEnabled = false;
           submitButton.disabled = true;
           submitButton.textContent = 'Support Login Disabled';
-          setBannerState('error', 'Support login is disabled because no support password is configured on the server. Set SUPPORT_PORTAL_PASSWORD or set a support password in the admin console.');
+          setBannerState('error', `Support login is disabled at ${authMetaUrl} because no support password is configured on the server. Set SUPPORT_PORTAL_PASSWORD or set a support password in the admin console.`);
           return;
         }
 
         supportLoginEnabled = true;
         submitButton.disabled = false;
         submitButton.textContent = 'Sign In';
-        setBannerState('ok', 'Login server is online and support login is configured. You can sign in now.');
+        setBannerState('ok', `Login server is online at ${authMetaUrl} and support login is configured. You can sign in now.`);
       } catch (_error) {
         supportLoginEnabled = false;
         submitButton.disabled = true;
         submitButton.textContent = 'Server Unreachable';
-        setBannerState('error', 'Login server is unreachable right now. If you are testing locally, start the Node backend, or configure window.CWS_API_BASE to your API URL.');
+        setBannerState('error', `Login server is unreachable at ${authMetaUrl}. If you are testing locally, start the Node backend, or configure window.CWS_API_BASE to your API URL.`);
       } finally {
         retryStatusBtn.disabled = false;
         retryStatusBtn.textContent = 'Retry';
