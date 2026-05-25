@@ -162,6 +162,10 @@ function validatePassword(password) {
   return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(String(password || ''));
 }
 
+function isValidEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || ''));
+}
+
 function hashPassword(password, salt) {
   return crypto.pbkdf2Sync(
     String(password || ''),
@@ -690,6 +694,10 @@ function supportPasswordConfigured(store) {
   return Boolean(getSupportPasswordRecord(store) || String(process.env.SUPPORT_PORTAL_PASSWORD || '').trim());
 }
 
+function updateSupportPassword(store, newPassword, updatedBy) {
+  const record = createPasswordRecord(newPassword);
+}
+
 function verifySupportPassword(password, store) {
   const record = getSupportPasswordRecord(store);
   if (record) {
@@ -956,7 +964,7 @@ router.patch('/support/tickets/:ticketId', requireSessionRole('support'), async 
 
     const changes = [];
     if (ticket.status !== nextStatus) {
-      changes.push(`status changed to ${getStatusLabel(nextStatus)}`);
+      changes.push(`status changed to ${getTicketStatusLabel(nextStatus)}`);
       ticket.status = nextStatus;
     }
     if (ticket.priority !== nextPriority) {
@@ -1152,6 +1160,10 @@ router.post('/signup', async (req, res, next) => {
       return res.status(400).json({ error: 'Name, email, and password are required.' });
     }
 
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ error: 'Please provide a valid email address.' });
+    }
+
     if (!validatePassword(password)) {
       return res.status(400).json({ error: 'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.' });
     }
@@ -1282,6 +1294,10 @@ router.post('/password-reset/request', async (req, res, next) => {
       return res.status(400).json({ error: 'Email is required.' });
     }
 
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ error: 'Please provide a valid email address.' });
+    }
+
     const store = await readCustomerStore();
     const customer = store.customers && store.customers[email];
     if (!customer) {
@@ -1372,6 +1388,10 @@ router.post('/login', async (req, res, next) => {
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required.' });
+    }
+
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ error: 'Please provide a valid email address.' });
     }
 
     const store = await readCustomerStore();

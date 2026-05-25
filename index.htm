@@ -406,7 +406,7 @@
       btn.disabled = true;
       btn.textContent = 'Sending...';
       statusEl.textContent = '';
-
+      
       try {
         const apiBase = (typeof SiteAuth !== 'undefined') ? SiteAuth.buildApiUrl('/api/contact') : '/api/contact';
         const res = await fetch(apiBase, {

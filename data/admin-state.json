@@ -117,9 +117,102 @@
           "content": "Investigating server error logs and validation rules."
         }
       ]
+    },
+    {
+      "id": "TCK-1016",
+      "customer": "Test Customer",
+      "customerEmail": "test-auth-1779480167555@example.com",
+      "subject": "Test Support Ticket",
+      "status": "open",
+      "priority": "Medium",
+      "createdAt": "2026-05-22T20:02:49.648Z",
+      "updatedAt": "2026-05-22T20:02:49.648Z",
+      "product": "Test Product",
+      "description": "This is a test ticket from an authenticated customer.",
+      "messages": [
+        {
+          "id": "e6782f21-7202-46e2-92eb-448898c64878",
+          "author": "Test Customer",
+          "visibility": "customer",
+          "timestamp": "2026-05-22T20:02:49.648Z",
+          "content": "This is a test ticket from an authenticated customer."
+        }
+      ]
     }
   ],
   "auditLog": [
+    {
+      "id": "b97fcc71-da62-40cc-a77f-b3fc2f420d8c",
+      "action": "customer.signup",
+      "title": "Test User created an account",
+      "description": "unique-1779480203515@example.com signed up for the Growth plan plan.",
+      "actorEmail": "unique-1779480203515@example.com",
+      "actorName": "Test User",
+      "actorRole": "customer",
+      "targetType": "customer",
+      "targetId": "unique-1779480203515@example.com",
+      "createdAt": "2026-05-22T20:03:23.787Z"
+    },
+    {
+      "id": "aa759c84-b38f-480e-a4b6-0dfe918a13ab",
+      "action": "customer.signup",
+      "title": "Test User created an account",
+      "description": "not-an-email signed up for the Growth plan plan.",
+      "actorEmail": "not-an-email",
+      "actorName": "Test User",
+      "actorRole": "customer",
+      "targetType": "customer",
+      "targetId": "not-an-email",
+      "createdAt": "2026-05-22T20:03:23.505Z"
+    },
+    {
+      "id": "8fa0eac0-52e0-41c0-a649-5917a27ffbb5",
+      "action": "session.logout",
+      "title": "Updated Test Customer logged out",
+      "description": "test-auth-1779480167555@example.com ended their session.",
+      "actorEmail": "test-auth-1779480167555@example.com",
+      "actorName": "Updated Test Customer",
+      "actorRole": "customer",
+      "targetType": "session",
+      "targetId": "0da5cacfea0438acea81c8e75390ea714f805b4e2f20547473ebb4562e11bb2a",
+      "createdAt": "2026-05-22T20:02:49.713Z"
+    },
+    {
+      "id": "df2ee9cf-78d4-42dd-9729-3ac2798fe835",
+      "action": "customer.profile.updated",
+      "title": "Updated Test Customer updated their profile",
+      "description": "Profile settings were updated for test-auth-1779480167555@example.com.",
+      "actorEmail": "test-auth-1779480167555@example.com",
+      "actorName": "Updated Test Customer",
+      "actorRole": "customer",
+      "targetType": "customer",
+      "targetId": "test-auth-1779480167555@example.com",
+      "createdAt": "2026-05-22T20:02:49.692Z"
+    },
+    {
+      "id": "00a3aa20-7276-4357-b71c-79ed7dfeddf3",
+      "action": "customer.ticket.created",
+      "title": "Test Support Ticket submitted",
+      "description": "test-auth-1779480167555@example.com created TCK-1016 for Test Product.",
+      "actorEmail": "test-auth-1779480167555@example.com",
+      "actorName": "Test Customer",
+      "actorRole": "customer",
+      "targetType": "ticket",
+      "targetId": "TCK-1016",
+      "createdAt": "2026-05-22T20:02:49.648Z"
+    },
+    {
+      "id": "475e1576-8190-4651-86ea-b8b31c6336f8",
+      "action": "customer.signup",
+      "title": "Test Customer created an account",
+      "description": "test-auth-1779480167555@example.com signed up for the Growth plan plan.",
+      "actorEmail": "test-auth-1779480167555@example.com",
+      "actorName": "Test Customer",
+      "actorRole": "customer",
+      "targetType": "customer",
+      "targetId": "test-auth-1779480167555@example.com",
+      "createdAt": "2026-05-22T20:02:48.407Z"
+    },
     {
       "id": "a349d4a0-e6ce-417f-8834-ad685e967d96",
       "action": "customer.login",
