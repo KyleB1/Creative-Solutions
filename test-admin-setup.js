@@ -12,12 +12,12 @@ const http = require('http');
 
 const ADMIN_EMAIL = 'admin@creativewebsolutions.com';
 const ADMIN_PASSWORD = 'AdminPass123!@';
-const PORT = 3002;
+const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
 
 async function request(method, path, body = null, headers = {}) {
   return new Promise((resolve) => {
     const opts = {
-      hostname: '127.0.0.1',
+      hostname: 'localhost',
       port: PORT,
       path,
       method,
@@ -84,7 +84,7 @@ async function request(method, path, body = null, headers = {}) {
     console.log('2. Restart the server:');
     console.log('   node server.js\n');
     console.log('3. Access admin panel:');
-    console.log('   - Support Portal: http://localhost:3002/support-portal.html');
+    console.log('   - Support Portal: http://localhost:3000/support-portal.html');
     console.log('   - Login with:');
     console.log(`     Email: ${ADMIN_EMAIL}`);
     console.log(`     Password: AdminPass123!@\n`);
@@ -124,12 +124,12 @@ async function request(method, path, body = null, headers = {}) {
   console.log('═══════════════════════════════════════════════════════\n');
   console.log('✓ ADMIN PANEL IS ACCESSIBLE!\n');
   console.log('ACCESS INSTRUCTIONS:\n');
-  console.log(`1. Open: http://127.0.0.1:${PORT}/support-portal.html`);
+  console.log(`1. Open: http://localhost:${PORT}/support-portal.html`);
   console.log('\n2. Login with admin credentials:');
   console.log(`   Email: ${ADMIN_EMAIL}`);
   console.log(`   Password: AdminPass123!@\n`);
   console.log('3. Click "Admin Console" button (visible for System Administrators)\n');
-  console.log('4. Or go directly to: http://127.0.0.1:' + PORT + '/system-admin.html\n');
+  console.log('4. Or go directly to: http://localhost:' + PORT + '/system-admin.html\n');
   console.log('ADMIN FEATURES:\n');
   console.log('  - View all customers & accounts');
   console.log('  - Manage support tickets');

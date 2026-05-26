@@ -195,6 +195,7 @@
         <p id="apiStatusBanner" class="status-banner info" role="status" aria-live="polite" style="margin:0; flex:1 1 320px;">Checking login server availability...</p>
         <button id="retryStatusBtn" type="button" class="ghost-btn" style="min-height:2.1rem;">Retry</button>
       </div>
+      <p id="backendHint" class="page-footnote" style="margin:0 0 1rem; font-size:0.9rem; color:#475569;">Backend API base: <span id="backendUrlText">Checking...</span></p>
       <form id="supportLoginForm">
         <div class="form-group">
           <label for="supportEmail">Work email</label>
@@ -290,10 +291,41 @@
       apiStatusBanner.textContent = message;
     };
 
-    const authMetaUrl = SiteAuth.buildApiUrl('/api/auth/meta');
+    const backendUrlText = document.getElementById('backendUrlText');
+    const getAuthMetaUrl = () => SiteAuth.buildApiUrl('/api/auth/meta');
+    const getBackendUrl = () => {
+      const metaUrl = getAuthMetaUrl();
+      return String(metaUrl).replace(/\/api\/auth\/meta$/, '') || metaUrl;
+    };
+    const getLocalBackendHint = (metaUrl) => {
+      return metaUrl.startsWith('http://localhost') || metaUrl.startsWith('http://127.0.0.1')
+        ? ' If you are testing locally, try the backend on http://localhost:3000 or http://localhost:3001, or set window.CWS_API_BASE to your API URL.'
+        : '';
+    };
+    const updateBackendHint = () => {
+      const metaUrl = getAuthMetaUrl();
+      const backendUrl = getBackendUrl();
+      backendUrlText.textContent = backendUrl;
+      return {
+        metaUrl,
+        backendUrl,
+        localBackendHint: getLocalBackendHint(metaUrl)
+      };
+    };
+
+    let lastBackendUrl = getBackendUrl();
+    const watchBackendUrl = () => {
+      const nextUrl = getBackendUrl();
+      if (nextUrl !== lastBackendUrl) {
+        lastBackendUrl = nextUrl;
+        backendUrlText.textContent = nextUrl;
+      }
+    };
+    setInterval(watchBackendUrl, 1500);
 
     const checkApiConnectivity = async () => {
-      setBannerState('info', `Checking login server availability at ${authMetaUrl} ...`);
+      const { metaUrl, localBackendHint } = updateBackendHint();
+      setBannerState('info', `Checking login server availability at ${metaUrl} ...`);
       retryStatusBtn.disabled = true;
       retryStatusBtn.textContent = 'Checking...';
 
@@ -315,19 +347,19 @@
           supportLoginEnabled = false;
           submitButton.disabled = true;
           submitButton.textContent = 'Support Login Disabled';
-          setBannerState('error', `Support login is disabled at ${authMetaUrl} because no support password is configured on the server. Set SUPPORT_PORTAL_PASSWORD or set a support password in the admin console.`);
+          setBannerState('error', `Support login is disabled at ${metaUrl} because no support password is configured on the server. Set SUPPORT_PORTAL_PASSWORD or set a support password in the admin console.`);
           return;
         }
 
         supportLoginEnabled = true;
         submitButton.disabled = false;
         submitButton.textContent = 'Sign In';
-        setBannerState('ok', `Login server is online at ${authMetaUrl} and support login is configured. You can sign in now.`);
+        setBannerState('ok', `Login server is online at ${metaUrl} and support login is configured. You can sign in now.`);
       } catch (_error) {
         supportLoginEnabled = false;
         submitButton.disabled = true;
         submitButton.textContent = 'Server Unreachable';
-        setBannerState('error', `Login server is unreachable at ${authMetaUrl}. If you are testing locally, start the Node backend, or configure window.CWS_API_BASE to your API URL.`);
+        setBannerState('error', `Login server is unreachable at ${metaUrl}.${localBackendHint}`);
       } finally {
         retryStatusBtn.disabled = false;
         retryStatusBtn.textContent = 'Retry';

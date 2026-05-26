@@ -137,9 +137,9 @@ GROUP BY c.customer_id, c.email, c.full_name, c.plan_name, c.status, c.role_name
 
 INSERT INTO customers (email, password_hash, full_name, company_name, status, plan_name, role_name)
 VALUES
-    ('admin@creativewebsolutions.com', crypt('AdminPassword123!', gen_salt('bf', 12)), 'Admin User', 'Creative Web Solutions', 'active', 'enterprise', 'admin'),
-    ('support@creativewebsolutions.com', crypt('AdminPassword123!', gen_salt('bf', 12)), 'Support User', 'Creative Web Solutions', 'active', 'enterprise', 'support'),
-    ('kyle.creativesolutions@gmail.com', crypt('8eL4Gmuoftj3Zqb1Q90M', gen_salt('bf', 12)), 'Kyle Creative', 'Creative Web Solutions', 'active', 'enterprise', 'system_admin');
+    ('admin@creativewebsolutions.com', crypt('-5f7pH]59MrB', gen_salt('bf', 12)), 'Admin User', 'Creative Web Solutions', 'active', 'enterprise', 'admin'),
+    ('support@creativewebsolutions.com', crypt('9vtxJ}P;860@', gen_salt('bf', 12)), 'Support User', 'Creative Web Solutions', 'active', 'enterprise', 'support'),
+    ('kyle.creativesolutions@gmail.com', crypt('m_iT@35HYRp7', gen_salt('bf', 12)), 'Kyle Creative', 'Creative Web Solutions', 'active', 'enterprise', 'system_admin');
 
 -- Notes:
 -- 1) Always hash passwords using a strong algorithm like bcrypt, argon2, or scrypt.

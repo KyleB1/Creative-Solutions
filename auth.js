@@ -230,49 +230,64 @@
     }
 
     const requestUrl = buildApiUrl(path);
-    const alternateUrl = (() => {
-      if (typeof window === 'undefined' || !window.location) return null;
+    const localFallbackUrls = (() => {
+      if (typeof window === 'undefined' || !window.location) return [];
       const host = String(window.location.hostname || '').toLowerCase();
-      if (!isLocalHostName(host)) return null;
-      if (requestUrl.includes(':3000/')) return requestUrl.replace(':3000/', ':3100/');
-      if (requestUrl.includes(':3100/')) return requestUrl.replace(':3100/', ':3000/');
-      return null;
+      if (!isLocalHostName(host)) return [];
+
+      const fallbackPorts = new Set();
+      const candidatePorts = [3000, 3001];
+      const url = (() => {
+        try {
+          return new URL(requestUrl);
+        } catch (_error) {
+          return null;
+        }
+      })();
+      if (!url) return [];
+
+      const currentPort = Number(url.port || (url.protocol === 'https:' ? 443 : 80));
+      for (const port of candidatePorts) {
+        if (port !== currentPort) {
+          fallbackPorts.add(port);
+        }
+      }
+
+      return Array.from(fallbackPorts).map((port) => {
+        const copy = new URL(requestUrl);
+        copy.port = String(port);
+        return copy.toString();
+      });
     })();
 
     let response;
-    try {
-      response = await fetch(requestUrl, requestOptions);
-    } catch (_networkError) {
-      if (alternateUrl) {
-        try {
-          response = await fetch(alternateUrl, requestOptions);
-        } catch (_alternateError) {
-          const configuredBase = getApiBase();
-          const target = configuredBase || 'same-origin backend';
-          throw new Error(`Unable to reach the login server (${target}). If you are running the site locally, start the Node backend on port 3000 or set window.CWS_API_BASE to your API URL.`);
-        }
-      } else {
-        const configuredBase = getApiBase();
-        const target = configuredBase || 'same-origin backend';
-        throw new Error(`Unable to reach the login server (${target}). If you are running the site locally, start the Node backend on port 3000 or set window.CWS_API_BASE to your API URL.`);
-      }
-    }
-    let payload = response.status === 204 ? null : await response.json().catch(() => ({}));
-
-    // If the first local port responds but is not the auth server (e.g. 404),
-    // try the alternate local port before surfacing a connectivity/banner error.
-    if (!response.ok && alternateUrl) {
+    let lastError = null;
+    const candidateUrls = [requestUrl, ...localFallbackUrls];
+    for (const url of candidateUrls) {
       try {
-        const fallbackResponse = await fetch(alternateUrl, requestOptions);
-        const fallbackPayload = fallbackResponse.status === 204 ? null : await fallbackResponse.json().catch(() => ({}));
-        if (fallbackResponse.ok) {
-          response = fallbackResponse;
-          payload = fallbackPayload;
-        }
-      } catch (_fallbackError) {
-        // Keep original response/payload and error handling below.
+        response = await fetch(url, requestOptions);
+      } catch (networkError) {
+        lastError = networkError;
+        continue;
       }
+
+      if (response.ok) {
+        break;
+      }
+
+      if (url === requestUrl && localFallbackUrls.length > 0) {
+        continue;
+      }
+      break;
     }
+
+    if (!response) {
+      const configuredBase = getApiBase();
+      const target = configuredBase || 'same-origin backend';
+      throw new Error(`Unable to reach the login server (${target}). If you are running the site locally, start the Node backend on port 3000 or set window.CWS_API_BASE to your API URL.`);
+    }
+
+    let payload = response.status === 204 ? null : await response.json().catch(() => ({}));
 
     if (!response.ok) {
       const error = new Error((payload && payload.error) || 'Request failed');

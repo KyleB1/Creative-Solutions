@@ -13,14 +13,15 @@
 const http = require('http');
 const crypto = require('crypto');
 
-const BASE_URL = 'http://127.0.0.1:3002';
+const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
+const BASE_URL = `http://localhost:${PORT}`;
 const BILLING_JWT_SECRET = process.env.BILLING_JWT_SECRET || null;
 
 async function request(method, path, body = null, headers = {}) {
   return new Promise((resolve) => {
     const opts = {
-      hostname: '127.0.0.1',
-      port: 3002,
+      hostname: 'localhost',
+      port: PORT,
       path,
       method,
       headers: { 'Content-Type': 'application/json', ...headers }

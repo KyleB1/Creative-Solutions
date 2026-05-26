@@ -41,7 +41,22 @@ Files added for deployment:
 
 1. Install dependencies with `npm install`.
 2. Copy `.env.example` to `.env` and fill in the required values.
-3. Start the server:
+3. Ensure support login is enabled locally by setting `SUPPORT_PORTAL_PASSWORD` in `.env`.
+4. Start the server:
 	- Standard: `npm start`
 	- Windows PowerShell (execution-policy safe): `./start-local.cmd`
-4. Open `http://localhost:3000`.
+5. Open `http://localhost:3000`.
+
+## Support login smoke test
+
+To verify the local support login flow and admin access, run the built-in smoke test:
+
+```bash
+node test-admin-setup.js
+```
+
+This script assumes the backend is available on port `3000` and that
+`SUPPORT_PORTAL_PASSWORD` is set in your `.env` file.
+
+If the backend starts on a different port, set `PORT=3000` before starting
+or modify the script's `PORT` constant.

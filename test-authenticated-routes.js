@@ -1,10 +1,12 @@
 const http = require('http');
 
+const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
+
 async function request(method, path, body = null, headers = {}) {
   return new Promise((resolve) => {
     const opts = {
-      hostname: '127.0.0.1',
-      port: 3002,
+      hostname: 'localhost',
+      port: PORT,
       path,
       method,
       headers: { 'Content-Type': 'application/json', ...headers }
