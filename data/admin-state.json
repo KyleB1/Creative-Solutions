@@ -186,6 +186,18 @@
   ],
   "auditLog": [
     {
+      "id": "aca3b352-9bf1-4671-a40f-3776c73a3dff",
+      "action": "support.login",
+      "title": "Admin signed in",
+      "description": "System Administrator session started for admin@creativewebsolutions.com.",
+      "actorEmail": "admin@creativewebsolutions.com",
+      "actorName": "Admin",
+      "actorRole": "System Administrator",
+      "targetType": "support-user",
+      "targetId": "admin@creativewebsolutions.com",
+      "createdAt": "2026-06-06T22:44:12.435Z"
+    },
+    {
       "id": "6934e2a5-1bbf-4a88-b648-299960b0d761",
       "action": "session.logout",
       "title": "Kyle Binfet logged out",
