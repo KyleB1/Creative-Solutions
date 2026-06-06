@@ -681,6 +681,7 @@
     <div class="page-tabs">
       <button type="button" class="tab-button active" data-tab="overview">Overview</button>
       <button type="button" class="tab-button" data-tab="financial">Financial reports</button>
+      <button type="button" class="tab-button" data-tab="security">Security</button>
     </div>
     <div id="overviewPanel" class="tab-panel active">
       <div class="admin-grid">
@@ -814,6 +815,58 @@
         </section>
       </div>
     </div>
+
+    <div id="securityPanel" class="tab-panel" hidden>
+      <section class="admin-section">
+        <div class="section-head">
+          <div>
+            <h2>Security posture</h2>
+            <p>Review the application security posture for admin access, session protection, and support login.</p>
+          </div>
+          <span class="section-chip">Security</span>
+        </div>
+        <div class="metric-grid">
+          <article class="metric-card">
+            <span>Support login</span>
+            <strong id="securitySupportLogin">Checking</strong>
+          </article>
+          <article class="metric-card">
+            <span>Session protection</span>
+            <strong>Enabled</strong>
+          </article>
+          <article class="metric-card">
+            <span>Rate limiting</span>
+            <strong>Enabled</strong>
+          </article>
+          <article class="metric-card">
+            <span>Content security</span>
+            <strong>Enforced</strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="admin-section">
+        <div class="section-head">
+          <div>
+            <h2>Support access</h2>
+            <p>Rotate the shared support password and manage access controls from a dedicated security surface.</p>
+          </div>
+        </div>
+        <div class="control-list">
+          <article class="control-item">
+            <strong>Rotate support password</strong>
+            <p>Set a new shared password for support staff sign-in. This overrides the server default password for future support logins.</p>
+            <form class="inline-form" id="passwordRotationForm">
+              <input id="supportPasswordInput" type="password" class="inline-field" placeholder="New support password" required>
+              <div class="inline-actions">
+                <button class="inline-button primary" type="submit">Rotate password</button>
+                <span id="passwordRotationStatus">No recent rotation in this session.</span>
+              </div>
+            </form>
+          </article>
+        </div>
+      </section>
+    </div>
   </div>
 
   <div id="financialPanel" class="tab-panel" hidden>
@@ -920,8 +973,10 @@
     const financialReportChip = document.getElementById('financialReportChip');
     const financialChartControls = document.getElementById('financialChartControls');
     const financialChartWrapper = document.getElementById('financialChartWrapper');
+    const securitySupportLogin = document.getElementById('securitySupportLogin');
     const pageTabButtons = document.querySelectorAll('.tab-button');
     const overviewPanel = document.getElementById('overviewPanel');
+    const securityPanel = document.getElementById('securityPanel');
     const financialPanel = document.getElementById('financialPanel');
     const financialTabLink = document.getElementById('financialTabLink');
     let activeFinancialChart = 'list';
@@ -1274,13 +1329,15 @@
       }
     });
 
-    const setFinancialTab = (tab) => {
+    const setAdminTab = (tab) => {
       pageTabButtons.forEach((button) => {
         button.classList.toggle('active', button.dataset.tab === tab);
       });
       overviewPanel.classList.toggle('active', tab === 'overview');
+      securityPanel.classList.toggle('active', tab === 'security');
       financialPanel.classList.toggle('active', tab === 'financial');
       overviewPanel.hidden = tab !== 'overview';
+      securityPanel.hidden = tab !== 'security';
       financialPanel.hidden = tab !== 'financial';
     };
 
@@ -1435,19 +1492,22 @@
 
     pageTabButtons.forEach((button) => {
       button.addEventListener('click', () => {
-        setFinancialTab(button.dataset.tab);
+        setAdminTab(button.dataset.tab);
       });
     });
 
     financialTabLink?.addEventListener('click', (event) => {
       event.preventDefault();
-      setFinancialTab('financial');
+      setAdminTab('financial');
     });
 
     const renderOverview = (overview) => {
       currentOverview = overview;
       snapshotTimestamp.textContent = formatDateTime(overview.generatedAt);
       supportConfigState.textContent = overview.supportLoginConfigured ? 'Configured' : 'Missing password';
+      if (securitySupportLogin) {
+        securitySupportLogin.textContent = overview.supportLoginConfigured ? 'Configured' : 'Missing password';
+      }
       snapshotNote.textContent = `Tracking ${overview.totals.activeSessions} live sessions, ${overview.totals.supportTickets} persisted tickets, and ${overview.totals.onlineSupportAccounts} online support staff.`;
       metricCustomers.textContent = String(overview.totals.customers);
       metricSessions.textContent = String(overview.totals.activeSessions);
