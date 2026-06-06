@@ -17,6 +17,7 @@ const router = express.Router();
 const crypto = require('crypto');
 const { stripe, formatAmountForStripe, translateStripeError } = require('./stripe-config');
 const { getActiveSession } = require('./auth-routes');
+const logger = require('./logger');
 
 function parseJwtClaims(token) {
   if (!token || token.split('.').length < 2) return null;
@@ -180,7 +181,7 @@ router.post('/payment-intent', requireAuth, async (req, res) => {
       currency
     });
   } catch (error) {
-    console.error('Payment intent error:', error);
+    logger.error('Payment intent error:', error);
     res.status(500).json({ error: translateStripeError(error) });
   }
 });
@@ -277,7 +278,7 @@ router.post('/charge', requireAuth, async (req, res) => {
       });
     }
   } catch (error) {
-    console.error('Charge error:', error);
+    logger.error('Charge error:', error);
     
     // Handle specific Stripe errors
     if (error.type === 'StripeCardError') {
@@ -334,7 +335,7 @@ router.post('/payment-methods', requireAuth, async (req, res) => {
       billingDetails: paymentMethod.billing_details
     });
   } catch (error) {
-    console.error('Store payment method error:', error);
+    logger.error('Store payment method error:', error);
     res.status(500).json({ error: translateStripeError(error) });
   }
 });
@@ -354,7 +355,7 @@ router.get('/payment-methods', requireAuth, async (req, res) => {
       paymentMethods: []
     });
   } catch (error) {
-    console.error('List payment methods error:', error);
+    logger.error('List payment methods error:', error);
     res.status(500).json({ error: 'Failed to fetch payment methods' });
   }
 });
@@ -373,7 +374,7 @@ router.delete('/payment-methods/:id', requireAuth, async (req, res) => {
 
     res.json({ success: true });
   } catch (error) {
-    console.error('Delete payment method error:', error);
+    logger.error('Delete payment method error:', error);
     res.status(500).json({ error: 'Failed to delete payment method' });
   }
 });
@@ -411,7 +412,7 @@ router.get('/payments', requireAuth, async (req, res) => {
       payments
     });
   } catch (error) {
-    console.error('Payment history error:', error);
+    logger.error('Payment history error:', error);
     res.status(500).json({ error: 'Failed to fetch payment history' });
   }
 });
@@ -459,7 +460,7 @@ router.post('/refund', requireAdmin, async (req, res) => {
       amount: refund.amount / 100
     });
   } catch (error) {
-    console.error('Refund error:', error);
+    logger.error('Refund error:', error);
     res.status(500).json({ error: translateStripeError(error) });
   }
 });
@@ -487,7 +488,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
   } catch (error) {
-    console.error('Webhook signature verification failed:', error.message);
+    logger.error('Webhook signature verification failed:', error.message);
     return res.status(400).json({ error: 'Invalid signature' });
   }
 
@@ -507,12 +508,12 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
         break;
 
       default:
-        console.log(`Unhandled event type ${event.type}`);
+        logger.debug(`Unhandled event type ${event.type}`);
     }
 
     res.json({ received: true });
   } catch (error) {
-    console.error('Webhook error:', error);
+    logger.error('Webhook error:', error);
     res.status(500).json({ error: 'Webhook processing failed' });
   }
 });
@@ -521,7 +522,7 @@ router.post('/webhook', express.raw({ type: 'application/json' }), async (req, r
  * Handle successful payment
  */
 async function handlePaymentSucceeded(paymentIntent) {
-  console.log('✓ Payment succeeded:', paymentIntent.id);
+  logger.info('✓ Payment succeeded:', paymentIntent.id);
   
   // In production:
   // 1. Update payment record in database with status 'completed'
@@ -532,8 +533,8 @@ async function handlePaymentSucceeded(paymentIntent) {
 
   const customerId = paymentIntent.metadata?.customerId;
   if (customerId) {
-    console.log(`  Customer: ${customerId}`);
-    console.log(`  Amount: ${paymentIntent.amount / 100} ${paymentIntent.currency.toUpperCase()}`);
+    logger.info(`  Customer: ${customerId}`);
+    logger.info(`  Amount: ${paymentIntent.amount / 100} ${paymentIntent.currency.toUpperCase()}`);
   }
 }
 
@@ -541,7 +542,7 @@ async function handlePaymentSucceeded(paymentIntent) {
  * Handle failed payment
  */
 async function handlePaymentFailed(paymentIntent) {
-  console.error('✗ Payment failed:', paymentIntent.id);
+  logger.error('✗ Payment failed:', paymentIntent.id);
   
   // In production:
   // 1. Update payment record in database with status 'failed'
@@ -552,8 +553,8 @@ async function handlePaymentFailed(paymentIntent) {
 
   const customerId = paymentIntent.metadata?.customerId;
   if (customerId) {
-    console.error(`  Customer: ${customerId}`);
-    console.error(`  Last error: ${paymentIntent.last_payment_error?.message}`);
+    logger.error(`  Customer: ${customerId}`);
+    logger.error(`  Last error: ${paymentIntent.last_payment_error?.message}`);
   }
 }
 
@@ -561,7 +562,7 @@ async function handlePaymentFailed(paymentIntent) {
  * Handle charge refund
  */
 async function handleChargeRefunded(charge) {
-  console.log('✓ Charge refunded:', charge.id);
+  logger.info('✓ Charge refunded:', charge.id);
   
   // In production:
   // 1. Find corresponding payment record in database

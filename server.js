@@ -14,10 +14,12 @@ const express = require('express');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const path = require('path');
+const logger = require('./logger');
 
 // Initialize Express
 const app = express();
-const PORT = Number(process.env.PORT) || 3000;
+const DEFAULT_PORT = 3000;
+const PORT = Number(process.env.PORT || DEFAULT_PORT);
 
 app.disable('x-powered-by');
 app.set('trust proxy', 1);
@@ -47,7 +49,8 @@ function isLocalDevelopmentOrigin(origin) {
   try {
     const parsed = new URL(origin);
     const hostname = String(parsed.hostname || '').toLowerCase();
-    return hostname === 'localhost' || hostname === '127.0.0.1';
+    const port = parsed.port || (parsed.protocol === 'https:' ? '443' : '80');
+    return (hostname === 'localhost' || hostname === '127.0.0.1') && port === '3000';
   } catch (_error) {
     return false;
   }
@@ -58,9 +61,8 @@ function buildCorsOptions(req) {
   const inferredOrigin = normalizeOrigin(`${req.protocol}://${req.get('host')}`);
   const allowedOrigins = new Set([
     inferredOrigin,
-    'http://localhost:3100',
-    'http://127.0.0.1:3100',
     'http://localhost:3000',
+    'http://127.0.0.1:3000',
     'https://kyleb1.github.io',
     ...configuredOrigins
   ]);
@@ -85,8 +87,8 @@ app.use(helmet({
   contentSecurityPolicy: {
     useDefaults: true,
     directives: {
-      // TODO: migrate all page inline <script> blocks to external files, then
-      // remove 'unsafe-inline' from scriptSrc to complete the CSP hardening.
+      // NOTE: Inline page scripts remain for now; externalizing them would allow
+      // removing 'unsafe-inline' from scriptSrc and hardening CSP further.
       scriptSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net'],
       styleSrc: ["'self'", 'https:', "'unsafe-inline'"]
     }
@@ -100,9 +102,8 @@ app.use((req, res, next) => {
   const inferredOrigin = normalizeOrigin(`${req.protocol}://${req.get('host')}`);
   const allowedOrigins = new Set([
     inferredOrigin,
-    'http://localhost:3100',
-    'http://127.0.0.1:3100',
     'http://localhost:3000',
+    'http://127.0.0.1:3000',
     'https://kyleb1.github.io',
     ...configuredOrigins
   ]);
@@ -130,18 +131,20 @@ app.use((req, res, next) => {
 // Rate limiting for payment endpoints
 const paymentLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,  // 15 minutes
-  max: 5,  // 5 attempts
+  max: 5,  // 5 attempts per billing endpoint
   message: { error: 'Too many payment attempts, please try again later.' },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  keyGenerator: (req) => `${req.ip}:${req.path}`
 });
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10,
+  max: 10,  // 10 attempts per auth endpoint
   message: { error: 'Too many authentication attempts, please try again later.' },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  keyGenerator: (req) => `${req.ip}:${req.path}`
 });
 
 const contactLimiter = rateLimit({
@@ -165,7 +168,7 @@ app.use((req, res, next) => {
   
   res.on('finish', () => {
     const duration = Date.now() - startTime;
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path} ${res.statusCode} ${duration}ms`);
+    logger.info(`[${new Date().toISOString()}] ${req.method} ${req.path} ${res.statusCode} ${duration}ms`);
   });
   
   next();
@@ -242,7 +245,7 @@ app.use((req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Server error:', err);
+  logger.error('Server error:', err);
   res.status(err.status || 500).json({
     error: err.status ? (err.message || 'Request failed') : 'Internal server error',
     timestamp: new Date().toISOString()
@@ -252,14 +255,14 @@ app.use((err, req, res, next) => {
 // Track the active server instance so SIGTERM shutdown works correctly.
 let activeServer = null;
 
-// Start server — auto-increment port if the preferred one is already in use
+// Start server on a single configured port and fail loudly if it is already in use.
 function startServer(port) {
   const normalizedPort = Number(port);
   const s = app.listen(normalizedPort, onListening.bind(null, normalizedPort));
   s.on('error', err => {
     if (err.code === 'EADDRINUSE') {
-      console.warn(`Port ${normalizedPort} in use, trying ${normalizedPort + 1}…`);
-      startServer(normalizedPort + 1);
+      logger.error(`Port ${normalizedPort} is already in use. Please free the port or set PORT to a different value before starting the server.`);
+      process.exit(1);
     } else {
       throw err;
     }
@@ -269,16 +272,16 @@ function startServer(port) {
 }
 
 async function onListening(port) {
-  console.log('\n╔════════════════════════════════════════════════════════════════╗');
-  console.log('║                   STRIPE PAYMENT SERVER                        ║');
-  console.log('╚════════════════════════════════════════════════════════════════╝\n');
-  
-  console.log(`Server running on http://localhost:${port}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`Mode: ${process.env.STRIPE_SECRET_KEY?.startsWith('sk_test') ? 'TEST' : 'LIVE'}\n`);
-  console.log(`Customer store: ${process.env.CUSTOMER_STORE_PATH || path.join(__dirname, 'data', 'customer-accounts.json')}`);
+  logger.info('\n╔════════════════════════════════════════════════════════════════╗');
+  logger.info('║                   STRIPE PAYMENT SERVER                        ║');
+  logger.info('╚════════════════════════════════════════════════════════════════╝\n');
+
+  logger.info(`Server running on http://localhost:${port}`);
+  logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  logger.info(`Mode: ${process.env.STRIPE_SECRET_KEY?.startsWith('sk_test') ? 'TEST' : 'LIVE'}\n`);
+  logger.info(`Customer store: ${process.env.CUSTOMER_STORE_PATH || path.join(__dirname, 'data', 'customer-accounts.json')}`);
   if (!process.env.SUPPORT_PORTAL_PASSWORD) {
-    console.warn('Support login disabled until SUPPORT_PORTAL_PASSWORD is configured.');
+    logger.warn('Support login disabled until SUPPORT_PORTAL_PASSWORD is configured.');
   }
 
   // Test Stripe connection
@@ -287,29 +290,29 @@ async function onListening(port) {
     const connected = await testStripeConnection();
     
     if (!connected) {
-      console.warn('⚠️  Warning: Stripe connection failed. Check your API keys in .env\n');
+      logger.warn('⚠️  Warning: Stripe connection failed. Check your API keys in .env\n');
     }
   } catch (error) {
-    console.error('Error testing Stripe:', error.message);
+    logger.error('Error testing Stripe:', error.message);
   }
 
-  console.log('Available endpoints:');
-  console.log('  POST   /api/billing/payment-intent    - Create payment intent');
-  console.log('  POST   /api/billing/charge            - Process payment');
-  console.log('  POST   /api/billing/payment-methods   - Store payment method');
-  console.log('  GET    /api/billing/payment-methods   - List payment methods');
-  console.log('  DELETE /api/billing/payment-methods/:id - Delete payment method');
-  console.log('  GET    /api/billing/payments          - Payment history');
-  console.log('  POST   /api/billing/refund            - Refund (admin only)');
-  console.log('  POST   /api/billing/webhook           - Stripe webhook\n');
+  logger.info('Available endpoints:');
+  logger.info('  POST   /api/billing/payment-intent    - Create payment intent');
+  logger.info('  POST   /api/billing/charge            - Process payment');
+  logger.info('  POST   /api/billing/payment-methods   - Store payment method');
+  logger.info('  GET    /api/billing/payment-methods   - List payment methods');
+  logger.info('  DELETE /api/billing/payment-methods/:id - Delete payment method');
+  logger.info('  GET    /api/billing/payments          - Payment history');
+  logger.info('  POST   /api/billing/refund            - Refund (admin only)');
+  logger.info('  POST   /api/billing/webhook           - Stripe webhook\n');
 }
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-  console.log('SIGTERM received, shutting down gracefully...');
+  logger.info('SIGTERM received, shutting down gracefully...');
   if (activeServer) {
     activeServer.close(() => {
-      console.log('Server closed');
+      logger.info('Server closed');
       process.exit(0);
     });
   } else {

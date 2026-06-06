@@ -408,16 +408,28 @@ class BillingBackend extends EventEmitter {
    * Charge using Square (stub - implement with actual Square API)
    */
   async chargeWithSquare(customerId, paymentMethod, paymentRequest, context) {
-    // TODO: Implement Square charge via their API
-    throw new Error('Square integration not yet implemented');
+    // Square integration not yet implemented — return 501-style response
+    return {
+      success: false,
+      error: 'Square integration not implemented',
+      code: 'not_implemented',
+      processor: 'square',
+      statusCode: 501
+    };
   }
 
   /**
    * Charge using PayPal (stub - implement with actual PayPal API)
    */
   async chargeWithPayPal(customerId, paymentMethod, paymentRequest, context) {
-    // TODO: Implement PayPal charge via their API
-    throw new Error('PayPal integration not yet implemented');
+    // PayPal integration not yet implemented — return 501-style response
+    return {
+      success: false,
+      error: 'PayPal integration not implemented',
+      code: 'not_implemented',
+      processor: 'paypal',
+      statusCode: 501
+    };
   }
 
   /**

@@ -9,6 +9,8 @@ const crypto = require('crypto');
 const fs = require('fs/promises');
 const path = require('path');
 
+const logger = require('./logger');
+
 const router = express.Router();
 
 const CONTACT_STORE_PATH = path.resolve(
@@ -74,11 +76,11 @@ router.post('/', async (req, res) => {
     list.push(submission);
     await saveSubmissions(list);
   } catch (err) {
-    console.error('Contact form save error:', err);
+    logger.error('Contact form save error:', err);
     return res.status(500).json({ error: 'Unable to save your message. Please try again.' });
   }
 
-  console.log(`[contact] New submission from ${email} (${submission.id})`);
+  logger.info(`[contact] New submission from ${email} (${submission.id})`);
   res.status(201).json({ message: 'Thank you! We will be in touch within one business day.' });
 });
 

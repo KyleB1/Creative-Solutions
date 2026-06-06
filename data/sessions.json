@@ -1,61 +1,9 @@
 {
   "sessions": {
-    "9c1adfb0f65905a92ffd7553b4b72014e0eec74d92d7a272955cddc75e23960f": {
-      "user": {
-        "role": "admin",
-        "email": "kyle.creativesolutions@gmail.com",
-        "name": "Kyle Creativesolutions",
-        "supportRole": "System Administrator"
-      },
-      "expiresAt": 1779813251802
-    },
-    "31de4733602c6efb2b8bb7215d6ad85b69dfa6214a03b96ef6569a39a49f087e": {
-      "user": {
-        "role": "admin",
-        "email": "admin@creativewebsolutions.com",
-        "name": "Admin",
-        "supportRole": "System Administrator"
-      },
-      "expiresAt": 1779813808780
-    },
-    "5938669349a07abf3a49f9f1490487437762e7ca694d8cec525c631623d952e9": {
-      "user": {
-        "role": "admin",
-        "email": "admin@creativewebsolutions.com",
-        "name": "Admin",
-        "supportRole": "System Administrator"
-      },
-      "expiresAt": 1779816144470
-    },
-    "155426ad14017b6f386ee474e1344d08fc67d408eddf910d1935e2a4f43c3f55": {
+    "2df52307e30100ac83af7078deb4de784ff79964d3d631331b695e425349c034": {
       "user": {
         "role": "customer",
-        "email": "unique-1779772967700@example.com",
-        "name": "Test User",
-        "plan": "Growth plan",
-        "renewal": "May 18",
-        "activeProjects": 8,
-        "newLeads": 24,
-        "supportTickets": 0,
-        "monthlySpend": "$2.4K",
-        "notifications": false,
-        "customerId": "2b872288-cfc1-4f52-a138-aef42c0c04a8"
-      },
-      "expiresAt": 1779816167952
-    },
-    "2902af32eddee40fd7d567af3c638d7c099340fbe825a702ee9f0da3a72474bb": {
-      "user": {
-        "role": "admin",
-        "email": "admin@creativewebsolutions.com",
-        "name": "Admin",
-        "supportRole": "System Administrator"
-      },
-      "expiresAt": 1779817196508
-    },
-    "2d1bca463692d487205383c2a94a04fd6bccd5a188597f2e1b1b9ba27687c3a6": {
-      "user": {
-        "role": "customer",
-        "email": "unique-1779774048039@example.com",
+        "email": "unique-1780777755894@example.com",
         "name": "Test User",
         "plan": "Growth plan",
         "renewal": "May 18",
@@ -64,9 +12,9 @@
         "supportTickets": 3,
         "monthlySpend": "$2.4K",
         "notifications": false,
-        "customerId": "3bd5e905-e644-495f-ad30-d4807946bc09"
+        "customerId": "fa64473d-a940-40e2-98fa-c18c80bd807f"
       },
-      "expiresAt": 1779817248281
+      "expiresAt": 1780820956773
     }
   }
 }

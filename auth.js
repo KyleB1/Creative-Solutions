@@ -236,7 +236,7 @@
       if (!isLocalHostName(host)) return [];
 
       const fallbackPorts = new Set();
-      const candidatePorts = [3000, 3001];
+      const candidatePorts = [3000];
       const url = (() => {
         try {
           return new URL(requestUrl);
@@ -510,6 +510,20 @@
     });
   }
 
+  async function requestSupportPasswordReset(email) {
+    return apiRequest('/api/auth/support-password-reset/request', {
+      method: 'POST',
+      body: JSON.stringify({ email: normalizeEmail(email) })
+    });
+  }
+
+  async function confirmSupportPasswordReset(token, password) {
+    return apiRequest('/api/auth/support-password-reset/confirm', {
+      method: 'POST',
+      body: JSON.stringify({ token: String(token || '').trim(), password })
+    });
+  }
+
   async function verifyEmail(token) {
     return apiRequest('/api/auth/verify-email', {
       method: 'POST',
@@ -580,6 +594,8 @@
     updateCustomerProfile,
     requestPasswordReset,
     confirmPasswordReset,
+    requestSupportPasswordReset,
+    confirmSupportPasswordReset,
     verifyEmail,
     logoutCustomer,
     logoutSupport

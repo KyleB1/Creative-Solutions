@@ -2,8 +2,10 @@
   "supportSettings": {
     "passwordSalt": null,
     "passwordHash": null,
-    "updatedAt": null,
-    "updatedBy": null
+    "passwordResetTokenHash": null,
+    "passwordResetExpiresAt": null,
+    "updatedAt": "2026-05-26T00:00:00.000Z",
+    "updatedBy": "system"
   },
   "supportTickets": [
     {
@@ -183,6 +185,126 @@
     }
   ],
   "auditLog": [
+    {
+      "id": "7ff69754-64fd-4035-82a3-e02d6d796a01",
+      "action": "customer.signup",
+      "title": "Test User created an account",
+      "description": "unique-1780777755894@example.com signed up for the Growth plan plan.",
+      "actorEmail": "unique-1780777755894@example.com",
+      "actorName": "Test User",
+      "actorRole": "customer",
+      "targetType": "customer",
+      "targetId": "unique-1780777755894@example.com",
+      "createdAt": "2026-06-06T20:29:16.768Z"
+    },
+    {
+      "id": "59215e97-3c8f-4549-b62c-9a1386857971",
+      "action": "support.login",
+      "title": "Admin signed in",
+      "description": "System Administrator session started for admin@creativewebsolutions.com.",
+      "actorEmail": "admin@creativewebsolutions.com",
+      "actorName": "Admin",
+      "actorRole": "System Administrator",
+      "targetType": "support-user",
+      "targetId": "admin@creativewebsolutions.com",
+      "createdAt": "2026-05-26T22:59:10.018Z"
+    },
+    {
+      "id": "538af57c-1b31-4b4f-b8c1-353d5391ca55",
+      "action": "support.login",
+      "title": "Admin signed in",
+      "description": "System Administrator session started for admin@creativewebsolutions.com.",
+      "actorEmail": "admin@creativewebsolutions.com",
+      "actorName": "Admin",
+      "actorRole": "System Administrator",
+      "targetType": "support-user",
+      "targetId": "admin@creativewebsolutions.com",
+      "createdAt": "2026-05-26T22:58:31.412Z"
+    },
+    {
+      "id": "ea8e39f9-7cd0-43f4-8d3b-29f8b94738d1",
+      "action": "support.login",
+      "title": "Admin signed in",
+      "description": "System Administrator session started for admin@creativewebsolutions.com.",
+      "actorEmail": "admin@creativewebsolutions.com",
+      "actorName": "Admin",
+      "actorRole": "System Administrator",
+      "targetType": "support-user",
+      "targetId": "admin@creativewebsolutions.com",
+      "createdAt": "2026-05-26T22:56:47.890Z"
+    },
+    {
+      "id": "a370f108-9ff6-4181-8fb4-47d60e396d1d",
+      "action": "support.login",
+      "title": "Admin signed in",
+      "description": "System Administrator session started for admin@creativewebsolutions.com.",
+      "actorEmail": "admin@creativewebsolutions.com",
+      "actorName": "Admin",
+      "actorRole": "System Administrator",
+      "targetType": "support-user",
+      "targetId": "admin@creativewebsolutions.com",
+      "createdAt": "2026-05-26T22:55:11.716Z"
+    },
+    {
+      "id": "104e443d-aad7-4ad9-bd83-2607015de682",
+      "action": "customer.signup",
+      "title": "Test User created an account",
+      "description": "unique-1779835935641@example.com signed up for the Growth plan plan.",
+      "actorEmail": "unique-1779835935641@example.com",
+      "actorName": "Test User",
+      "actorRole": "customer",
+      "targetType": "customer",
+      "targetId": "unique-1779835935641@example.com",
+      "createdAt": "2026-05-26T22:52:15.879Z"
+    },
+    {
+      "id": "0a5402ac-1bee-4c99-8e00-7a2f433f0609",
+      "action": "customer.signup",
+      "title": "Test User created an account",
+      "description": "unique-1779814284423@example.com signed up for the Growth plan plan.",
+      "actorEmail": "unique-1779814284423@example.com",
+      "actorName": "Test User",
+      "actorRole": "customer",
+      "targetType": "customer",
+      "targetId": "unique-1779814284423@example.com",
+      "createdAt": "2026-05-26T16:51:24.752Z"
+    },
+    {
+      "id": "ede79fc1-5064-4b97-a160-f0e56d2d06de",
+      "action": "customer.signup",
+      "title": "Test User created an account",
+      "description": "unique-1779813796638@example.com signed up for the Growth plan plan.",
+      "actorEmail": "unique-1779813796638@example.com",
+      "actorName": "Test User",
+      "actorRole": "customer",
+      "targetType": "customer",
+      "targetId": "unique-1779813796638@example.com",
+      "createdAt": "2026-05-26T16:43:16.947Z"
+    },
+    {
+      "id": "51b36d48-08a9-4d94-8c98-51cdac09a3c6",
+      "action": "customer.signup",
+      "title": "Test User created an account",
+      "description": "unique-1779813701827@example.com signed up for the Growth plan plan.",
+      "actorEmail": "unique-1779813701827@example.com",
+      "actorName": "Test User",
+      "actorRole": "customer",
+      "targetType": "customer",
+      "targetId": "unique-1779813701827@example.com",
+      "createdAt": "2026-05-26T16:41:42.085Z"
+    },
+    {
+      "id": "f6389028-050e-4570-9fcc-db6cc018476e",
+      "action": "customer.signup",
+      "title": "Test Customer created an account",
+      "description": "test-auth-1779813591855@example.com signed up for the Growth plan plan.",
+      "actorEmail": "test-auth-1779813591855@example.com",
+      "actorName": "Test Customer",
+      "actorRole": "customer",
+      "targetType": "customer",
+      "targetId": "test-auth-1779813591855@example.com",
+      "createdAt": "2026-05-26T16:39:54.083Z"
+    },
     {
       "id": "8abdaa5b-16e5-448c-850a-ed94d023f47f",
       "action": "customer.signup",

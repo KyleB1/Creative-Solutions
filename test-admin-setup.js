@@ -11,7 +11,7 @@
 const http = require('http');
 
 const ADMIN_EMAIL = 'admin@creativewebsolutions.com';
-const ADMIN_PASSWORD = 'AdminPass123!@';
+const ADMIN_PASSWORD = process.env.SUPPORT_PORTAL_PASSWORD || 'AdminPass123!@';
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
 
 async function request(method, path, body = null, headers = {}) {
@@ -58,7 +58,7 @@ async function request(method, path, body = null, headers = {}) {
     console.log('   To enable it, set environment variable:');
     console.log('   SUPPORT_PORTAL_PASSWORD=YourSecurePassword123!@\n');
     console.log('   Then restart the server:\n');
-    console.log('   $ SUPPORT_PORTAL_PASSWORD=AdminPass123!@ node server.js\n');
+    console.log('   $ SUPPORT_PORTAL_PASSWORD=<your-password> node server.js\n');
   }
   
   // Step 2: Attempt support login with admin credentials
@@ -80,14 +80,14 @@ async function request(method, path, body = null, headers = {}) {
     console.log('═══════════════════════════════════════════════════════\n');
     console.log('TO ENABLE ADMIN PANEL:\n');
     console.log('1. Set the password via environment variable:');
-    console.log('   export SUPPORT_PORTAL_PASSWORD=AdminPass123!@\n');
+    console.log('   export SUPPORT_PORTAL_PASSWORD=<your-password>\n');
     console.log('2. Restart the server:');
     console.log('   node server.js\n');
     console.log('3. Access admin panel:');
     console.log('   - Support Portal: http://localhost:3000/support-portal.html');
     console.log('   - Login with:');
     console.log(`     Email: ${ADMIN_EMAIL}`);
-    console.log(`     Password: AdminPass123!@\n`);
+    console.log(`     Password: ${ADMIN_PASSWORD}\n`);
     console.log('4. Once logged in as System Administrator, you\'ll see');
     console.log('   "Admin Console" link to access: system-admin.html\n');
     process.exit(0);
@@ -127,7 +127,7 @@ async function request(method, path, body = null, headers = {}) {
   console.log(`1. Open: http://localhost:${PORT}/support-portal.html`);
   console.log('\n2. Login with admin credentials:');
   console.log(`   Email: ${ADMIN_EMAIL}`);
-  console.log(`   Password: AdminPass123!@\n`);
+  console.log(`   Password: ${ADMIN_PASSWORD}\n`);
   console.log('3. Click "Admin Console" button (visible for System Administrators)\n');
   console.log('4. Or go directly to: http://localhost:' + PORT + '/system-admin.html\n');
   console.log('ADMIN FEATURES:\n');
