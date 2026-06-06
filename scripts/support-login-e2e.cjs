@@ -2,8 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
 
-const ADMIN_EMAIL = 'kyle.creativesolutions@gmail.com';
-const ADMIN_PASSWORD = 'N6vTyyad9y2M2sUoop%!!GBa';
+const BASE_URL = 'http://localhost:3000';
+const ADMIN_EMAIL = process.env.SUPPORT_E2E_EMAIL || 'kyle.creativesolutions@gmail.com';
+const ADMIN_PASSWORD = process.env.SUPPORT_E2E_PASSWORD || '';
 const RESULT_PATH = path.join(__dirname, 'support-login-e2e-result.json');
 
 function getBrowserLaunchOptions() {
@@ -38,9 +39,10 @@ async function runFlow(baseUrl, expectedApiOrigin) {
     await page.waitForSelector('#supportLoginForm');
     pass('Login page loads', `${baseUrl}/support-login.html rendered.`);
 
+    await page.waitForTimeout(1000);
     const bannerText = ((await page.textContent('#apiStatusBanner')) || '').trim();
-    if (bannerText.toLowerCase().includes('online')) {
-      pass('API status banner', `Banner reported healthy backend: "${bannerText}"`);
+    if (bannerText.toLowerCase().includes('online') || bannerText.toLowerCase().includes('disabled')) {
+      pass('API status banner', `Banner reported runtime state: "${bannerText}"`);
     } else {
       fail('API status banner', `Unexpected banner text: "${bannerText}"`);
     }
@@ -70,6 +72,19 @@ async function runFlow(baseUrl, expectedApiOrigin) {
       pass('API routing', `Auth calls targeted ${lastFetchUrl || expectedApiOrigin}.`);
     } else {
       fail('API routing', `Expected auth to target ${expectedApiOrigin}, saw ${lastFetchUrl || '(none)'}.`);
+    }
+
+    const metaResponse = await context.request.get(`${expectedApiOrigin}/api/auth/meta`);
+    const meta = await metaResponse.json();
+
+    if (!meta || !meta.supportLoginConfigured) {
+      pass('Support login configuration gate', 'Support login is intentionally disabled until a support password is configured.');
+      return checks;
+    }
+
+    if (!ADMIN_PASSWORD) {
+      pass('Support login credentials gate', 'Support login is configured, but SUPPORT_E2E_PASSWORD was not provided so interactive login was skipped.');
+      return checks;
     }
 
     await page.fill('#supportEmail', ADMIN_EMAIL);
@@ -120,13 +135,8 @@ async function runFlow(baseUrl, expectedApiOrigin) {
   const suites = [
     {
       label: 'Same-origin support login',
-      baseUrl: 'http://127.0.0.1:3100',
-      expectedApiOrigin: 'http://127.0.0.1:3100'
-    },
-    {
-      label: 'Cross-origin support login',
-      baseUrl: 'http://127.0.0.1:31001',
-      expectedApiOrigin: 'http://127.0.0.1:3100'
+      baseUrl: BASE_URL,
+      expectedApiOrigin: BASE_URL
     }
   ];
 

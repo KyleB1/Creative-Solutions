@@ -3,9 +3,12 @@ const crypto = require('crypto');
 const fs = require('fs/promises');
 const path = require('path');
 
+const logger = require('./logger');
+
 const router = express.Router();
 
 const SESSION_COOKIE_NAME = 'cws_session';
+const SESSION_HEADER_NAME = 'x-cws-session';
 const SESSION_TTL_MS = 1000 * 60 * 60 * 12;
 const PBKDF2_ITERATIONS = 210000;
 const PBKDF2_KEY_LENGTH = 64;
@@ -25,9 +28,21 @@ let sessionStoreLoaded = false;
 let sessionStoreLoadPromise = null;
 let sessionStoreWriteQueue = Promise.resolve();
 
+// In-memory write-through caches for customer and admin stores.
+// Reads are served from RAM; writes go to disk and update the cache.
+let customerStoreCache = null;
+let customerStoreCacheLoaded = false;
+let customerStoreCacheLoadPromise = null;
+let customerStoreWriteQueue = Promise.resolve();
+
+let adminStoreCache = null;
+let adminStoreCacheLoaded = false;
+let adminStoreCacheLoadPromise = null;
+let adminStoreWriteQueue = Promise.resolve();
+
 const SUPPORT_ROLES = Object.freeze({
   'support@creativewebsolutions.com': 'Support Agent',
-  'helpdesk@creativewebsolutions.com': 'Support Agent',
+  'helpdesk@creativewebsolutions.com': 'Help Desk Agent',
   'admin@creativewebsolutions.com': 'System Administrator',
   'kyle.creativesolutions@gmail.com': 'System Administrator'
 });
@@ -149,6 +164,10 @@ function validatePassword(password) {
   return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(String(password || ''));
 }
 
+function isValidEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || ''));
+}
+
 function hashPassword(password, salt) {
   return crypto.pbkdf2Sync(
     String(password || ''),
@@ -202,6 +221,26 @@ function parseCookies(headerValue) {
     }, {});
 }
 
+function parseSessionHeader(req) {
+  const direct = String(req.get(SESSION_HEADER_NAME) || '').trim();
+  if (direct) {
+    return direct;
+  }
+
+  const authHeader = String(req.get('authorization') || '').trim();
+  const match = authHeader.match(/^Bearer\s+(.+)$/i);
+  return match ? String(match[1] || '').trim() : '';
+}
+
+function getSessionIdFromRequest(req) {
+  const cookies = parseCookies(req.headers.cookie);
+  if (cookies[SESSION_COOKIE_NAME]) {
+    return cookies[SESSION_COOKIE_NAME];
+  }
+
+  return parseSessionHeader(req);
+}
+
 function serializeCookie(sessionId, maxAgeMs) {
   const cookieParts = [
     `${SESSION_COOKIE_NAME}=${encodeURIComponent(sessionId)}`,
@@ -236,16 +275,42 @@ async function ensureCustomerStore() {
   }
 }
 
+async function loadCustomerStoreCache() {
+  if (customerStoreCacheLoaded) return;
+  if (customerStoreCacheLoadPromise) return customerStoreCacheLoadPromise;
+
+  customerStoreCacheLoadPromise = (async () => {
+    await ensureCustomerStore();
+    const raw = await fs.readFile(CUSTOMER_STORE_PATH, 'utf8');
+    const parsed = JSON.parse(raw || '{}');
+    customerStoreCache = parsed && typeof parsed === 'object' ? parsed : { customers: {} };
+    customerStoreCacheLoaded = true;
+  })();
+
+  try {
+    await customerStoreCacheLoadPromise;
+  } finally {
+    customerStoreCacheLoadPromise = null;
+  }
+}
+
 async function readCustomerStore() {
-  await ensureCustomerStore();
-  const raw = await fs.readFile(CUSTOMER_STORE_PATH, 'utf8');
-  const parsed = JSON.parse(raw || '{}');
-  return parsed && typeof parsed === 'object' ? parsed : { customers: {} };
+  await loadCustomerStoreCache();
+  return customerStoreCache;
 }
 
 async function writeCustomerStore(store) {
-  await ensureCustomerStore();
-  await fs.writeFile(CUSTOMER_STORE_PATH, JSON.stringify(store, null, 2), 'utf8');
+  customerStoreCache = store;
+  customerStoreCacheLoaded = true;
+  customerStoreWriteQueue = customerStoreWriteQueue
+    .then(async () => {
+      await ensureCustomerStore();
+      await fs.writeFile(CUSTOMER_STORE_PATH, JSON.stringify(customerStoreCache, null, 2), 'utf8');
+    })
+    .catch((error) => {
+      logger.error('Failed to persist customer store:', error);
+    });
+  await customerStoreWriteQueue;
 }
 
 function cloneDefaultSupportTickets() {
@@ -257,6 +322,8 @@ function getDefaultAdminStore() {
     supportSettings: {
       passwordSalt: null,
       passwordHash: null,
+      passwordResetTokenHash: null,
+      passwordResetExpiresAt: null,
       updatedAt: null,
       updatedBy: null
     },
@@ -288,16 +355,42 @@ async function ensureAdminStore() {
   }
 }
 
+async function loadAdminStoreCache() {
+  if (adminStoreCacheLoaded) return;
+  if (adminStoreCacheLoadPromise) return adminStoreCacheLoadPromise;
+
+  adminStoreCacheLoadPromise = (async () => {
+    await ensureAdminStore();
+    const raw = await fs.readFile(ADMIN_STORE_PATH, 'utf8');
+    const parsed = JSON.parse(raw || '{}');
+    adminStoreCache = normalizeAdminStore(parsed);
+    adminStoreCacheLoaded = true;
+  })();
+
+  try {
+    await adminStoreCacheLoadPromise;
+  } finally {
+    adminStoreCacheLoadPromise = null;
+  }
+}
+
 async function readAdminStore() {
-  await ensureAdminStore();
-  const raw = await fs.readFile(ADMIN_STORE_PATH, 'utf8');
-  const parsed = JSON.parse(raw || '{}');
-  return normalizeAdminStore(parsed);
+  await loadAdminStoreCache();
+  return adminStoreCache;
 }
 
 async function writeAdminStore(store) {
-  await ensureAdminStore();
-  await fs.writeFile(ADMIN_STORE_PATH, JSON.stringify(normalizeAdminStore(store), null, 2), 'utf8');
+  adminStoreCache = normalizeAdminStore(store);
+  adminStoreCacheLoaded = true;
+  adminStoreWriteQueue = adminStoreWriteQueue
+    .then(async () => {
+      await ensureAdminStore();
+      await fs.writeFile(ADMIN_STORE_PATH, JSON.stringify(adminStoreCache, null, 2), 'utf8');
+    })
+    .catch((error) => {
+      logger.error('Failed to persist admin store:', error);
+    });
+  await adminStoreWriteQueue;
 }
 
 async function ensureSessionStore() {
@@ -375,7 +468,7 @@ function queueSessionStoreWrite() {
   sessionStoreWriteQueue = sessionStoreWriteQueue
     .then(() => writeSessionStore())
     .catch((error) => {
-      console.error('Failed to persist session store:', error);
+      logger.error('Failed to persist session store:', error);
     });
 }
 
@@ -547,8 +640,7 @@ function createSession(res, user) {
 }
 
 function destroySession(req, res) {
-  const cookies = parseCookies(req.headers.cookie);
-  const sessionId = cookies[SESSION_COOKIE_NAME];
+  const sessionId = getSessionIdFromRequest(req);
   if (sessionId) {
     deleteSession(sessionId);
   }
@@ -571,8 +663,7 @@ function pruneExpiredSessions() {
 
 function getActiveSession(req) {
   pruneExpiredSessions();
-  const cookies = parseCookies(req.headers.cookie);
-  const sessionId = cookies[SESSION_COOKIE_NAME];
+  const sessionId = getSessionIdFromRequest(req);
   if (!sessionId) {
     return null;
   }
@@ -605,6 +696,29 @@ function requireSessionRole(role) {
 
 function supportPasswordConfigured(store) {
   return Boolean(getSupportPasswordRecord(store) || String(process.env.SUPPORT_PORTAL_PASSWORD || '').trim());
+}
+
+function updateSupportPassword(store, newPassword, updatedBy) {
+  const record = createPasswordRecord(newPassword);
+  store.supportSettings = {
+    ...store.supportSettings,
+    passwordSalt: record.salt,
+    passwordHash: record.hash,
+    passwordResetTokenHash: null,
+    passwordResetExpiresAt: null,
+    updatedAt: new Date().toISOString(),
+    updatedBy: updatedBy || 'system'
+  };
+}
+
+function supportPasswordResetTokenValid(token, store) {
+  const settings = store && store.supportSettings;
+  if (!settings || !settings.passwordResetTokenHash || !settings.passwordResetExpiresAt) {
+    return false;
+  }
+  const tokenHash = hashOneTimeToken(token);
+  return safeEqual(settings.passwordResetTokenHash, tokenHash)
+    && new Date(settings.passwordResetExpiresAt).getTime() > Date.now();
 }
 
 function verifySupportPassword(password, store) {
@@ -730,7 +844,8 @@ router.get('/session', (req, res) => {
 
   res.json({
     authenticated: true,
-    user: session.user
+    user: session.user,
+    sessionToken: session.sessionId
   });
 });
 
@@ -752,7 +867,11 @@ router.get('/customer/tickets', requireSessionRole('customer'), async (req, res,
     const customerEmail = normalizeEmail(req.session.user.email);
     const tickets = adminStore.supportTickets
       .filter((ticket) => normalizeEmail(ticket.customerEmail) === customerEmail)
-      .map((ticket) => normalizeTicketRecord(ticket))
+      .map((ticket) => {
+        const normalized = normalizeTicketRecord(ticket);
+        normalized.messages = normalized.messages.filter((msg) => msg.visibility !== 'agent');
+        return normalized;
+      })
       .sort((left, right) => new Date(right.updatedAt || right.createdAt || 0) - new Date(left.updatedAt || left.createdAt || 0));
     res.json({ tickets });
   } catch (error) {
@@ -868,7 +987,7 @@ router.patch('/support/tickets/:ticketId', requireSessionRole('support'), async 
 
     const changes = [];
     if (ticket.status !== nextStatus) {
-      changes.push(`status changed to ${getStatusLabel(nextStatus)}`);
+      changes.push(`status changed to ${getTicketStatusLabel(nextStatus)}`);
       ticket.status = nextStatus;
     }
     if (ticket.priority !== nextPriority) {
@@ -1064,6 +1183,10 @@ router.post('/signup', async (req, res, next) => {
       return res.status(400).json({ error: 'Name, email, and password are required.' });
     }
 
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ error: 'Please provide a valid email address.' });
+    }
+
     if (!validatePassword(password)) {
       return res.status(400).json({ error: 'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.' });
     }
@@ -1107,8 +1230,9 @@ router.post('/signup', async (req, res, next) => {
     await writeCustomerStore(store);
 
     destroySession(req, res);
+    let sessionToken = null;
     if (!REQUIRE_EMAIL_VERIFICATION) {
-      createSession(res, customerSessionView(customer));
+      sessionToken = createSession(res, customerSessionView(customer));
     }
     await appendAuditEvent({
       action: 'customer.signup',
@@ -1130,7 +1254,8 @@ router.post('/signup', async (req, res, next) => {
       : {
           requiresEmailVerification: false,
           message: 'Account created. Redirecting to your portal...',
-          user: customerSessionView(customer)
+          user: customerSessionView(customer),
+          sessionToken
         };
 
     if (REQUIRE_EMAIL_VERIFICATION && verification && process.env.NODE_ENV !== 'production') {
@@ -1190,6 +1315,10 @@ router.post('/password-reset/request', async (req, res, next) => {
     const email = normalizeEmail(req.body.email);
     if (!email) {
       return res.status(400).json({ error: 'Email is required.' });
+    }
+
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ error: 'Please provide a valid email address.' });
     }
 
     const store = await readCustomerStore();
@@ -1275,6 +1404,88 @@ router.post('/password-reset/confirm', async (req, res, next) => {
   }
 });
 
+router.post('/support-password-reset/request', async (req, res, next) => {
+  try {
+    const email = normalizeEmail(req.body.email);
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required.' });
+    }
+
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ error: 'Please provide a valid email address.' });
+    }
+
+    const role = SUPPORT_ROLES[email] || null;
+    const adminStore = await readAdminStore();
+    if (!role) {
+      return res.json({ message: 'If an authorized support account exists for that email, a reset token was generated.' });
+    }
+
+    const reset = createOneTimeToken();
+    adminStore.supportSettings.passwordResetTokenHash = reset.tokenHash;
+    adminStore.supportSettings.passwordResetExpiresAt = new Date(Date.now() + (1000 * 60 * 30)).toISOString();
+    adminStore.supportSettings.updatedBy = email;
+    await writeAdminStore(adminStore);
+
+    await appendAuditEvent({
+      action: 'support.password_reset.requested',
+      title: `Support password reset requested by ${email}`,
+      description: `A support password reset token was requested for ${email}.`,
+      actorEmail: email,
+      actorName: normalizeDisplayName(email.split('@')[0].replace(/[^a-zA-Z0-9]+/g, ' '), 'Support Agent'),
+      actorRole: 'support',
+      targetType: 'support-password',
+      targetId: email
+    });
+
+    const response = { message: 'If an authorized support account exists for that email, a reset token was generated.' };
+    if (process.env.NODE_ENV !== 'production') {
+      response.resetToken = reset.token;
+    }
+    res.json(response);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post('/support-password-reset/confirm', async (req, res, next) => {
+  try {
+    const token = String(req.body.token || '').trim();
+    const password = String(req.body.password || '');
+
+    if (!token || !password) {
+      return res.status(400).json({ error: 'Token and new password are required.' });
+    }
+
+    if (!validatePassword(password)) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.' });
+    }
+
+    const adminStore = await readAdminStore();
+    if (!supportPasswordResetTokenValid(token, adminStore)) {
+      return res.status(400).json({ error: 'Reset token is invalid or has expired.' });
+    }
+
+    updateSupportPassword(adminStore, password, 'support-password-reset');
+    await writeAdminStore(adminStore);
+
+    await appendAuditEvent({
+      action: 'support.password_reset.completed',
+      title: 'Support password reset completed',
+      description: 'The shared support password was updated via password reset.',
+      actorEmail: null,
+      actorName: null,
+      actorRole: 'support',
+      targetType: 'support-password',
+      targetId: 'support-password'
+    });
+
+    res.json({ success: true, message: 'Support password updated. You can now sign in.' });
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.post('/login', async (req, res, next) => {
   try {
     const email = normalizeEmail(req.body.email);
@@ -1282,6 +1493,10 @@ router.post('/login', async (req, res, next) => {
 
     if (!email || !password) {
       return res.status(400).json({ error: 'Email and password are required.' });
+    }
+
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ error: 'Please provide a valid email address.' });
     }
 
     const store = await readCustomerStore();
@@ -1299,7 +1514,7 @@ router.post('/login', async (req, res, next) => {
     }
 
     destroySession(req, res);
-    createSession(res, customerSessionView(customer));
+    const sessionToken = createSession(res, customerSessionView(customer));
     await appendAuditEvent({
       action: 'customer.login',
       title: `${customer.name} signed in`,
@@ -1312,7 +1527,8 @@ router.post('/login', async (req, res, next) => {
     });
 
     res.json({
-      user: customerSessionView(customer)
+      user: customerSessionView(customer),
+      sessionToken
     });
   } catch (error) {
     next(error);
@@ -1340,7 +1556,7 @@ router.post('/support-login', async (req, res, next) => {
 
     const supportUser = supportSessionView(email);
     destroySession(req, res);
-    createSession(res, supportUser);
+    const sessionToken = createSession(res, supportUser);
     await appendAuditEvent({
       action: 'support.login',
       title: `${supportUser.name} signed in`,
@@ -1353,7 +1569,8 @@ router.post('/support-login', async (req, res, next) => {
     });
 
     res.json({
-      user: supportUser
+      user: supportUser,
+      sessionToken
     });
   } catch (error) {
     next(error);
@@ -1445,7 +1662,16 @@ router.post('/logout', async (req, res, next) => {
 });
 
 loadSessionStore().catch((error) => {
-  console.error('Failed to load persisted sessions:', error);
+  logger.error('Failed to load persisted sessions:', error);
+});
+
+// Pre-warm in-memory caches on startup so the first request is instant.
+loadCustomerStoreCache().catch((error) => {
+  logger.error('Failed to pre-load customer store:', error);
+});
+
+loadAdminStoreCache().catch((error) => {
+  logger.error('Failed to pre-load admin store:', error);
 });
 
 module.exports = router;

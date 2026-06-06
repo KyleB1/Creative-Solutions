@@ -1,8 +1,8 @@
 const { chromium } = require('playwright');
 
 (async () => {
-  const frontendBase = 'http://127.0.0.1:4173';
-  const backendBase = 'http://127.0.0.1:3100';
+  const frontendBase = 'http://localhost:3000';
+  const backendBase = 'http://localhost:3000';
 
   const testIdentity = {
     name: 'Jordan Backend',
@@ -26,13 +26,9 @@ const { chromium } = require('playwright');
 
     await page.fill('#username', testIdentity.name);
     await page.fill('#email', testIdentity.email);
-    await page.waitForFunction(() => !document.getElementById('nextStepBtn').disabled);
-    await page.click('#nextStepBtn');
-    await page.waitForSelector('.form-step.active[data-step="2"]');
-
     await page.fill('#password', testIdentity.password);
     await page.fill('#confirmPassword', testIdentity.password);
-    await page.click('#createAccountBtn');
+    await page.click('button[type="submit"]');
     await page.waitForURL('**/customer-portal.html', { timeout: 12000, waitUntil: 'domcontentloaded' });
     pass('Signup redirects to portal', 'Customer portal loaded after account creation.');
 
@@ -44,18 +40,15 @@ const { chromium } = require('playwright');
       fail('Portal personalization', `Unexpected welcome label: ${welcomeName.trim()}`);
     }
 
-    const storage = await page.evaluate(() => {
-      try {
-        return JSON.parse(localStorage.getItem('portalCustomer') || 'null');
-      } catch {
-        return null;
-      }
+    const sessionPayload = await page.evaluate(async () => {
+      const response = await fetch('/api/auth/session', { credentials: 'include' });
+      return response.json();
     });
 
-    if (storage && storage.email && storage.customerId && storage.sessionToken) {
-      pass('Session persisted', `portalCustomer saved for ${storage.email}.`);
+    if (sessionPayload && sessionPayload.authenticated && sessionPayload.user && sessionPayload.user.customerId) {
+      pass('Session persisted', `Authenticated cookie session exists for ${sessionPayload.user.email}.`);
     } else {
-      fail('Session persisted', 'portalCustomer localStorage payload is incomplete.');
+      fail('Session persisted', `Unexpected session payload: ${JSON.stringify(sessionPayload)}`);
     }
 
     const healthResp = await context.request.get(`${backendBase}/health`);
@@ -65,28 +58,11 @@ const { chromium } = require('playwright');
       fail('Backend health endpoint', `GET /health responded with ${healthResp.status()}.`);
     }
 
-    const noCustomerResp = await context.request.get(`${backendBase}/api/billing/payments`, {
-      headers: {
-        Authorization: `Bearer ${storage ? storage.sessionToken : ''}`
-      }
-    });
-
-    if (noCustomerResp.status() === 401) {
-      pass('Billing auth guard (frontend-style request)', 'GET /api/billing/payments rejects missing customerId with 401.');
-    } else {
-      fail('Billing auth guard (frontend-style request)', `Expected 401, got ${noCustomerResp.status()}.`);
-    }
-
-    const customerId = storage ? storage.customerId : '';
-    const withCustomerResp = await context.request.get(`${backendBase}/api/billing/payments?customerId=${encodeURIComponent(customerId)}`, {
-      headers: {
-        Authorization: `Bearer ${storage ? storage.sessionToken : ''}`
-      }
-    });
+    const withCustomerResp = await context.request.get(`${backendBase}/api/billing/payments`);
 
     const withCustomerBody = await withCustomerResp.text();
     if (withCustomerResp.status() === 200) {
-      pass('Billing payments endpoint (customer scoped)', 'GET /api/billing/payments returned 200 with customerId query.');
+      pass('Billing payments endpoint (customer scoped)', 'GET /api/billing/payments returned 200 using the authenticated session cookie.');
     } else {
       fail('Billing payments endpoint (customer scoped)', `Status ${withCustomerResp.status()} body: ${withCustomerBody.slice(0, 220)}`);
     }

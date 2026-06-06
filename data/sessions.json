@@ -1,13 +1,38 @@
 {
   "sessions": {
-    "74c48d874941e206a88867eb29de7af687d0d5f0368b83c7105f0765ed9c57a3": {
+    "2df52307e30100ac83af7078deb4de784ff79964d3d631331b695e425349c034": {
+      "user": {
+        "role": "customer",
+        "email": "unique-1780777755894@example.com",
+        "name": "Test User",
+        "plan": "Growth plan",
+        "renewal": "May 18",
+        "activeProjects": 8,
+        "newLeads": 24,
+        "supportTickets": 3,
+        "monthlySpend": "$2.4K",
+        "notifications": false,
+        "customerId": "fa64473d-a940-40e2-98fa-c18c80bd807f"
+      },
+      "expiresAt": 1780820956773
+    },
+    "bab1c7f67651ac61023e9fb73f16fda308367d2879bb2ffcb0099182b9e6a988": {
       "user": {
         "role": "admin",
         "email": "kyle.creativesolutions@gmail.com",
         "name": "Kyle Creativesolutions",
         "supportRole": "System Administrator"
       },
-      "expiresAt": 1775168314366
+      "expiresAt": 1780823962176
+    },
+    "91ae639c47985d4d073962ae02cc2c00571fb04ac09ff93e5c17784c795a5056": {
+      "user": {
+        "role": "admin",
+        "email": "admin@creativewebsolutions.com",
+        "name": "Admin",
+        "supportRole": "System Administrator"
+      },
+      "expiresAt": 1780829052435
     }
   }
 }

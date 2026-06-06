@@ -3,47 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Analytics and reporting services from Creative Web Solutions: dashboard setup, event tracking, conversion funnel analysis, and monthly performance reporting.">
   <title>Analytics and Reporting | Creative Web Solutions</title>
-  <style>
-    :root { font-family: Inter, system-ui, sans-serif; }
-    * { box-sizing: border-box; }
-    body { margin: 0; min-height: 100vh; background: linear-gradient(180deg, #f8f2ff 0%, #eef4ff 100%); color: #111827; }
-    .wrap { max-width: 980px; margin: 3rem auto; padding: 0 1.25rem 2.5rem; }
-    .panel { background: #fff; border: 1px solid rgba(124,58,237,0.12); border-radius: 24px; padding: 1.8rem; box-shadow: 0 20px 50px rgba(15,23,42,0.08); }
-    .eyebrow { display:inline-flex; padding:.3rem .75rem; border-radius:999px; background:#ede9ff; color:#5b21b6; font-weight:700; font-size:.82rem; }
-    h1 { margin: .85rem 0 .65rem; font-size: clamp(2rem, 4vw, 2.8rem); }
-    p, li { color: #475569; line-height: 1.7; }
-    ul { padding-left: 1rem; }
-    .actions { margin-top: 1rem; display: flex; gap: .75rem; flex-wrap: wrap; }
-    .btn { text-decoration: none; border-radius: 14px; padding: .8rem 1rem; font-weight: 700; }
-    .btn.primary { background: #7c3aed; color: #fff; }
-    .btn.secondary { border: 1px solid rgba(124,58,237,.35); color: #4c1d95; background: #fff; }
-    body.dark-mode { background: #0b1222; color: #f1f5f9; }
-    body.dark-mode .panel { background: #111827; border-color: #374151; }
-    body.dark-mode p, body.dark-mode li { color: #c2cffd; }
-    body.dark-mode .eyebrow { background: #312e81; color: #cbd5ff; }
-    body.dark-mode .btn.secondary { background: #1f2937; color: #e5e7eb; border-color: rgba(148,163,184,.35); }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="wrap">
-    <section class="panel">
-      <span class="eyebrow">Insights</span>
+  <main class="svc-detail-wrap">
+    <section class="svc-detail-panel">
+      <span class="svc-eyebrow">Insights</span>
       <h1>Analytics and Reporting</h1>
       <p>We set up practical analytics frameworks that translate traffic and user behavior into clear actions your team can execute.</p>
-      <ul>
+      <ul class="svc-list">
         <li>Dashboard setup for marketing, sales, and content KPIs</li>
         <li>Event tracking plans and conversion funnel analysis</li>
         <li>Monthly reporting with recommendations and next steps</li>
       </ul>
-      <div class="actions">
-        <a class="btn primary" href="index.htm#contact">Request a Quote</a>
-        <a class="btn secondary" href="services.html">Back to Services</a>
+      <div class="svc-actions">
+        <a class="cta-btn" href="index.htm#contact">Request a Quote</a>
+        <a class="cta-btn outline" href="services.html">Back to Services</a>
       </div>
     </section>
   </main>
+  <footer></footer>
   <script defer src="theme.js"></script>
-  <script src="auth.js"></script>
+  <script defer src="footer.js"></script>
   <script defer src="header.js"></script>
 </body>
 </html>

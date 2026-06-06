@@ -313,6 +313,130 @@
       box-shadow: 0 14px 28px rgba(124, 58, 237, 0.09);
     }
     .quick-link span { color: #6b7280; }
+    .ticket-item .ticket-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-top: 0.85rem;
+    }
+    .ticket-item .ticket-actions button {
+      border: 1px solid #dbeafe;
+      background: #ffffff;
+      color: #4338ca;
+      border-radius: 14px;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-weight: 700;
+    }
+    .ticket-item .ticket-actions button.primary {
+      background: #7c3aed;
+      border-color: #7c3aed;
+      color: #ffffff;
+    }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: rgba(15, 23, 42, 0.5);
+      padding: 1rem;
+      z-index: 1100;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal-window {
+      width: min(760px, 100%);
+      max-height: min(90vh, 820px);
+      overflow: auto;
+      border-radius: 26px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 32px 90px rgba(15, 23, 42, 0.22);
+      padding: 1.5rem;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .modal-header h2 { margin: 0; font-size: 1.3rem; }
+    .modal-close {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 999px;
+      border: none;
+      background: rgba(124, 58, 237, 0.08);
+      color: #111827;
+      font-size: 1.25rem;
+      cursor: pointer;
+    }
+    .modal-content {
+      display: grid;
+      gap: 1rem;
+    }
+    .modal-content label {
+      display: grid;
+      gap: 0.35rem;
+      font-weight: 700;
+      color: #4b5563;
+    }
+    .modal-content textarea,
+    .modal-content select,
+    .modal-content input {
+      width: 100%;
+      padding: 0.95rem 1rem;
+      border-radius: 16px;
+      border: 1px solid #d1d5db;
+      font: inherit;
+      color: #111827;
+      background: #ffffff;
+    }
+    .modal-content textarea { min-height: 130px; resize: vertical; }
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: flex-end;
+    }
+    .ticket-thread {
+      display: grid;
+      gap: 0.75rem;
+      padding: 1rem;
+      border-radius: 20px;
+      background: #f8f6ff;
+      border: 1px solid #e5e7eb;
+    }
+    .ticket-thread .thread-item {
+      display: grid;
+      gap: 0.35rem;
+      padding: 0.85rem 0.95rem;
+      border-radius: 18px;
+      background: #ffffff;
+      border: 1px solid #dbeafe;
+    }
+    .ticket-thread .thread-item span { color: #6b7280; font-size: 0.88rem; }
+    @media (max-width: 760px) {
+      body { padding: 0.75rem; }
+      .admin-shell { padding: 1rem; }
+      .filter-row { flex-direction: column; }
+      .filter-row input,
+      .filter-row select { min-width: 100%; }
+      .hero-panel,
+      .metric-grid,
+      .admin-grid,
+      .quick-links { grid-template-columns: 1fr; }
+      .ticket-item { padding: 0.95rem; }
+      .ticket-item .item-meta { flex-direction: column; align-items: flex-start; }
+      .ticket-item p { font-size: 0.95rem; }
+      .ticket-item .ticket-actions { justify-content: flex-start; }
+    }
     .status-banner {
       margin-bottom: 1rem;
       padding: 0.85rem 1rem;
@@ -405,14 +529,101 @@
       border-color: #4b5563;
     }
     body.dark-mode .inline-button.primary {
-      background: #8b5cf6;
-      border-color: #8b5cf6;
+      background: #8b5cf6; 
+      border-color: #301934;
       color: #ffffff;
     }
     body.dark-mode .toggle-row { color: #cbd5e1; }
     body.dark-mode .status-banner.info { background: #1f2937; border-color: #374151; color: #cbd5ff; }
     body.dark-mode .status-banner.ok { background: #052e24; border-color: #065f46; color: #a7f3d0; }
     body.dark-mode .status-banner.error { background: #3f1d1d; border-color: #7f1d1d; color: #fecaca; }
+
+    .page-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin: 1rem 0 1.2rem;
+      flex-wrap: wrap;
+    }
+    .tab-button,
+    .chart-tab {
+      border: 1px solid #d1d5db;
+      background: #f8fafc;
+      color: #0f172a;
+      padding: 0.7rem 1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .tab-button.active,
+    .chart-tab.active {
+      background: #4338ca;
+      color: #ffffff;
+      border-color: #4338ca;
+    }
+    .tab-button:hover,
+    .chart-tab:hover {
+      background: #eef2ff;
+    }
+    .tab-panel:not(.active) {
+      display: none;
+    }
+    .chart-controls {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .financial-chart {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 1rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      min-height: 240px;
+    }
+    .chart-grid {
+      display: grid;
+      gap: 1rem;
+    }
+    .chart-bar-row {
+      display: grid;
+      gap: 0.35rem;
+    }
+    .chart-bar-track {
+      background: #e2e8f0;
+      border-radius: 999px;
+      height: 1rem;
+      overflow: hidden;
+    }
+    .chart-bar-fill {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, #4338ca, #6366f1);
+    }
+    .pie-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+    .pie-item {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 1rem;
+      padding: 1rem;
+      text-align: center;
+    }
+    .pie-item strong {
+      display: block;
+      font-size: 1.4rem;
+      margin-bottom: 0.25rem;
+    }
+    .financial-report-list { margin-top: 0; }
+    body.dark-mode .tab-button,
+    body.dark-mode .chart-tab { background: #1f2937; color: #e5e7eb; border-color: #374151; }
+    body.dark-mode .tab-button.active,
+    body.dark-mode .chart-tab.active { background: #4338ca; color: #ffffff; }
+    body.dark-mode .financial-chart { background: #111827; border-color: #374151; }
+    body.dark-mode .pie-item { background: #111827; border-color: #374151; }
   </style>
 </head>
 <body>
@@ -423,6 +634,7 @@
         <a href="index.htm">Home</a>
         <a href="support-portal.html">Support Portal</a>
         <a href="crm.html">CRM</a>
+        <a href="#" id="financialTabLink">Financial reports</a>
         <div class="admin-session" id="adminSession" hidden>
           <div class="admin-session-text">
             <strong id="adminSessionName">System Administrator</strong>
@@ -466,7 +678,12 @@
       <article class="metric-card"><span>Tracked tickets</span><strong id="metricTickets">0</strong></article>
     </section>
 
-    <div class="admin-grid">
+    <div class="page-tabs">
+      <button type="button" class="tab-button active" data-tab="overview">Overview</button>
+      <button type="button" class="tab-button" data-tab="financial">Financial reports</button>
+    </div>
+    <div id="overviewPanel" class="tab-panel active">
+      <div class="admin-grid">
       <div class="stack">
         <section class="admin-section">
           <div class="section-head">
@@ -580,6 +797,8 @@
           <div class="ticket-list" id="supportTicketList"></div>
         </section>
 
+        <!-- Financial report tab moved to its own chart view -->
+
         <section class="admin-section">
           <div class="section-head">
             <div>
@@ -597,9 +816,68 @@
     </div>
   </div>
 
+  <div id="financialPanel" class="tab-panel" hidden>
+    <section class="admin-section" id="financialReports">
+      <div class="section-head">
+        <div>
+          <h2>Financial reports</h2>
+          <p>Review business movement across billing, invoices, and payment activity with chart toggles for easier reading.</p>
+        </div>
+        <span class="section-chip" id="financialReportChip">0 items</span>
+      </div>
+      <div class="filter-row">
+        <input id="financialReportSearchInput" type="search" placeholder="Search financial report entries">
+      </div>
+      <div class="chart-controls" id="financialChartControls">
+        <button type="button" class="chart-tab active" data-chart="list">List view</button>
+        <button type="button" class="chart-tab" data-chart="bar">Bar chart</button>
+        <button type="button" class="chart-tab" data-chart="pie">Pie chart</button>
+      </div>
+      <div class="financial-chart" id="financialChartWrapper"></div>
+      <div class="activity-list financial-report-list" id="financialReportList"></div>
+    </section>
+  </div>
+
+  <div class="modal-overlay" id="ticketDetailModal" hidden>
+    <div class="modal-window" role="dialog" aria-modal="true" aria-labelledby="ticketDetailTitle">
+      <div class="modal-header">
+        <h2 id="ticketDetailTitle">Respond to ticket</h2>
+        <button type="button" class="modal-close" id="ticketDetailClose">&times;</button>
+      </div>
+      <div class="modal-content">
+        <div class="detail-row" style="display:grid; gap:0.8rem;">
+          <div><strong>Customer</strong><span id="ticketDetailCustomer"></span></div>
+          <div><strong>Product</strong><span id="ticketDetailProduct"></span></div>
+          <div><strong>Status</strong><span id="ticketDetailStatus"></span></div>
+          <div><strong>Priority</strong><span id="ticketDetailPriority"></span></div>
+          <div><strong>Updated</strong><span id="ticketDetailUpdated"></span></div>
+        </div>
+        <div class="ticket-thread" id="ticketThreadList"></div>
+        <label>
+          Your response
+          <textarea id="ticketReplyInput" placeholder="Write a response to the customer"></textarea>
+        </label>
+        <label>
+          Update ticket status
+          <select id="ticketStatusUpdate">
+            <option value="open">Open</option>
+            <option value="inprogress">In progress</option>
+            <option value="waiting">Waiting</option>
+            <option value="pending">Pending</option>
+            <option value="resolved">Resolved</option>
+          </select>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="inline-button" id="ticketDetailCloseButton">Close</button>
+          <button type="button" class="inline-button primary" id="ticketReplySend">Send response</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      window.CWS_API_BASE = 'http://localhost:3100';
+      window.CWS_API_BASE = 'http://localhost:3000';
     }
   </script>
   <script src="auth.js"></script>
@@ -637,8 +915,32 @@
     const customerPlanFilter = document.getElementById('customerPlanFilter');
     const ticketSearchInput = document.getElementById('ticketSearchInput');
     const ticketStatusFilter = document.getElementById('ticketStatusFilter');
+    const financialReportSearchInput = document.getElementById('financialReportSearchInput');
+    const financialReportList = document.getElementById('financialReportList');
+    const financialReportChip = document.getElementById('financialReportChip');
+    const financialChartControls = document.getElementById('financialChartControls');
+    const financialChartWrapper = document.getElementById('financialChartWrapper');
+    const pageTabButtons = document.querySelectorAll('.tab-button');
+    const overviewPanel = document.getElementById('overviewPanel');
+    const financialPanel = document.getElementById('financialPanel');
+    const financialTabLink = document.getElementById('financialTabLink');
+    let activeFinancialChart = 'list';
+    const ticketDetailModal = document.getElementById('ticketDetailModal');
+    const ticketDetailClose = document.getElementById('ticketDetailClose');
+    const ticketDetailCloseButton = document.getElementById('ticketDetailCloseButton');
+    const ticketDetailTitle = document.getElementById('ticketDetailTitle');
+    const ticketDetailCustomer = document.getElementById('ticketDetailCustomer');
+    const ticketDetailProduct = document.getElementById('ticketDetailProduct');
+    const ticketDetailStatus = document.getElementById('ticketDetailStatus');
+    const ticketDetailPriority = document.getElementById('ticketDetailPriority');
+    const ticketDetailUpdated = document.getElementById('ticketDetailUpdated');
+    const ticketThreadList = document.getElementById('ticketThreadList');
+    const ticketReplyInput = document.getElementById('ticketReplyInput');
+    const ticketStatusUpdate = document.getElementById('ticketStatusUpdate');
+    const ticketReplySend = document.getElementById('ticketReplySend');
 
     let currentOverview = null;
+    let activeTicket = null;
 
     const setBanner = (state, message) => {
       adminStatusBanner.classList.remove('info', 'ok', 'error');
@@ -790,7 +1092,7 @@
             <span>${entry.supportTickets} tickets</span>
             <span>${entry.activeProjects} active projects</span>
           </div>
-          <p>Created ${formatDateTime(entry.createdAt)} Ã¢â‚¬Â¢ Renewal ${entry.renewal || 'Not set'} Ã¢â‚¬Â¢ ${entry.monthlySpend} monthly spend</p>
+          <p>Created ${formatDateTime(entry.createdAt)} | Renewal ${entry.renewal || 'Not set'} | ${entry.monthlySpend} monthly spend</p>
           <form class="inline-form" data-customer-form="${entry.email}">
             <select name="plan">
               <option value="Starter" ${entry.plan === 'Starter' ? 'selected' : ''}>Starter</option>
@@ -833,6 +1135,22 @@
       });
     };
 
+    const persistTicketChanges = async (ticketId, changes) => {
+      const payload = await adminRequest(`/api/auth/support/tickets/${encodeURIComponent(ticketId)}`, {
+        method: 'PATCH',
+        body: JSON.stringify(changes)
+      });
+      return payload && payload.ticket ? payload.ticket : null;
+    };
+
+    const addTicketMessage = async (ticketId, content, visibility = 'customer') => {
+      const payload = await adminRequest(`/api/auth/support/tickets/${encodeURIComponent(ticketId)}/messages`, {
+        method: 'POST',
+        body: JSON.stringify({ content, visibility })
+      });
+      return payload && payload.ticket ? payload.ticket : null;
+    };
+
     const renderSupportTickets = (tickets) => {
       const query = ticketSearchInput.value.trim().toLowerCase();
       const status = ticketStatusFilter.value;
@@ -842,19 +1160,289 @@
         return matchesQuery && matchesStatus;
       });
       ticketChip.textContent = `${filtered.length} tickets`;
-      supportTicketList.innerHTML = filtered.slice(0, 12).map((entry) => `
+      supportTicketList.innerHTML = filtered.slice(0, 12).map((entry) => {
+        const messages = Array.isArray(entry.messages) ? entry.messages : [];
+        const replies = messages.filter((message) => message.visibility !== 'internal').length;
+        return `
         <article class="ticket-item">
           <strong>${entry.subject} (${entry.id})</strong>
-          <p>${entry.customer} Ã¢â‚¬Â¢ ${entry.product}</p>
+          <p>${entry.customer} | ${entry.product}</p>
           <div class="item-meta">
             <span class="pill ticket">${entry.priority}</span>
             <span class="pill ${entry.status === 'resolved' ? 'online' : entry.status === 'pending' ? 'support' : 'admin'}">${entry.status}</span>
             <span>Updated ${formatDateTime(entry.updatedAt)}</span>
           </div>
           <p>${entry.description}</p>
+          <div class="ticket-actions">
+            <button class="inline-button primary" type="button" data-ticket-open="${entry.id}">Reply</button>
+            <span class="pill support">${replies} reply${replies === 1 ? '' : 'ies'}</span>
+          </div>
         </article>
-      `).join('') || '<article class="ticket-item"><strong>No matching tickets</strong><p>No tickets match the current filters.</p></article>';
+      `;
+      }).join('') || '<article class="ticket-item"><strong>No matching tickets</strong><p>No tickets match the current filters.</p></article>';
+
+      supportTicketList.querySelectorAll('[data-ticket-open]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const ticketId = button.dataset.ticketOpen;
+          const ticket = tickets.find((entry) => String(entry.id) === ticketId);
+          if (ticket) {
+            openTicketDetail(ticket);
+          }
+        });
+      });
     };
+
+    const renderTicketThread = (ticket) => {
+      const messageItems = [];
+      messageItems.push({ author: ticket.customer, content: ticket.description, timestamp: ticket.createdAt, type: 'customer' });
+      (ticket.messages || []).forEach((message) => {
+        messageItems.push({
+          author: message.author || 'Agent',
+          content: message.content || '',
+          timestamp: message.timestamp || message.createdAt,
+          type: message.visibility === 'internal' ? 'internal' : 'agent'
+        });
+      });
+      ticketThreadList.innerHTML = messageItems.map((message) => `
+        <div class="thread-item">
+          <strong>${message.type === 'agent' ? 'Agent response' : message.type === 'internal' ? 'Internal note' : 'Customer'}</strong>
+          <span>${message.author} • ${formatDateTime(message.timestamp)}</span>
+          <p>${message.content}</p>
+        </div>
+      `).join('');
+    };
+
+    const openTicketDetail = (ticket) => {
+      activeTicket = ticket;
+      ticketDetailTitle.textContent = `Respond to ticket ${ticket.id}`;
+      ticketDetailCustomer.textContent = ticket.customer || 'Unknown';
+      ticketDetailProduct.textContent = ticket.product || 'General';
+      ticketDetailStatus.textContent = ticket.status || 'Unknown';
+      ticketDetailPriority.textContent = ticket.priority || 'Normal';
+      ticketDetailUpdated.textContent = formatDateTime(ticket.updatedAt || ticket.createdAt);
+      ticketStatusUpdate.value = ticket.status || 'open';
+      ticketReplyInput.value = '';
+      renderTicketThread(ticket);
+      ticketDetailModal.hidden = false;
+      ticketDetailModal.classList.add('active');
+    };
+
+    const closeTicketDetail = () => {
+      ticketDetailModal.classList.remove('active');
+      ticketDetailModal.hidden = true;
+      activeTicket = null;
+      ticketReplyInput.value = '';
+    };
+
+    ticketDetailClose?.addEventListener('click', closeTicketDetail);
+    ticketDetailCloseButton?.addEventListener('click', closeTicketDetail);
+    ticketReplySend?.addEventListener('click', async () => {
+      if (!activeTicket) return;
+      const replyText = ticketReplyInput.value.trim();
+      if (!replyText) return;
+      const originalStatus = activeTicket.status;
+      const nextStatus = ticketStatusUpdate.value;
+      try {
+        let updatedTicket = activeTicket;
+        if (nextStatus !== originalStatus) {
+          const patched = await persistTicketChanges(activeTicket.id, { status: nextStatus });
+          if (patched) {
+            updatedTicket = patched;
+            currentOverview.supportTickets = currentOverview.supportTickets.map((ticket) => ticket.id === patched.id ? patched : ticket);
+          }
+        }
+        const replied = await addTicketMessage(updatedTicket.id, replyText, 'customer');
+        if (replied) {
+          updatedTicket = replied;
+          currentOverview.supportTickets = currentOverview.supportTickets.map((ticket) => ticket.id === replied.id ? replied : ticket);
+        }
+        activeTicket = updatedTicket;
+        renderTicketThread(activeTicket);
+        renderSupportTickets(currentOverview.supportTickets || []);
+        ticketReplyInput.value = '';
+        ticketDetailStatus.textContent = activeTicket.status || 'Unknown';
+        ticketDetailUpdated.textContent = formatDateTime(activeTicket.updatedAt || activeTicket.createdAt);
+        setBanner('ok', `Response sent to ticket ${activeTicket.id}.`);
+      } catch (error) {
+        setBanner('error', error.message || 'Failed to save the ticket response.');
+      }
+    });
+
+    ticketDetailModal?.addEventListener('click', (event) => {
+      if (event.target === ticketDetailModal) {
+        closeTicketDetail();
+      }
+    });
+
+    const setFinancialTab = (tab) => {
+      pageTabButtons.forEach((button) => {
+        button.classList.toggle('active', button.dataset.tab === tab);
+      });
+      overviewPanel.classList.toggle('active', tab === 'overview');
+      financialPanel.classList.toggle('active', tab === 'financial');
+      overviewPanel.hidden = tab !== 'overview';
+      financialPanel.hidden = tab !== 'financial';
+    };
+
+    const renderFinancialChart = (counts) => {
+      const total = Object.values(counts).reduce((sum, amount) => sum + amount, 0);
+      if (total === 0) {
+        financialChartWrapper.innerHTML = '<p>No financial report data available for chart rendering.</p>';
+        return;
+      }
+
+      if (activeFinancialChart === 'bar') {
+        financialChartWrapper.innerHTML = `
+          <div class="chart-grid">
+            ${Object.entries(counts).map(([label, value]) => {
+              const percentage = Math.round((value / total) * 100);
+              return `
+                <div class="chart-bar-row">
+                  <strong>${label}</strong>
+                  <div class="chart-bar-track"><span class="chart-bar-fill" style="width:${percentage}%"></span></div>
+                  <small>${value} item${value === 1 ? '' : 's'} • ${percentage}%</small>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      } else if (activeFinancialChart === 'pie') {
+        financialChartWrapper.innerHTML = `
+          <div class="pie-grid">
+            ${Object.entries(counts).map(([label, value]) => `
+              <div class="pie-item">
+                <strong>${value}</strong>
+                <span>${label}</span>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else {
+        financialChartWrapper.innerHTML = '<p>Select a chart type to visualize the report data, or use the list view below.</p>';
+      }
+    };
+
+    const renderFinancialReports = (overview) => {
+      const query = financialReportSearchInput.value.trim().toLowerCase();
+      const keywordMatcher = /financial report|financial reports|invoice|billing statement|payment report|revenue report|receipt|subscription|charge|refund|payment/i;
+      const normalize = (value) => String(value || '');
+      const matches = [];
+      const summaryCounts = { Invoice: 0, Payment: 0, Refund: 0, Billing: 0, Other: 0 };
+
+      (overview.auditLog || []).forEach((entry) => {
+        const text = `${normalize(entry.title)} ${normalize(entry.description)} ${normalize(entry.action)} ${normalize(entry.actorEmail)}`;
+        if (keywordMatcher.test(text) || (query && text.toLowerCase().includes(query))) {
+          matches.push({
+            type: 'Audit log',
+            title: entry.title || 'Audit entry',
+            summary: entry.description || entry.action || 'Financial report-related entry',
+            meta: `${entry.actorEmail || 'System'} • ${formatDateTime(entry.createdAt)}`
+          });
+          const lower = text.toLowerCase();
+          if (lower.includes('invoice')) {
+            summaryCounts.Invoice += 1;
+          } else if (lower.includes('refund')) {
+            summaryCounts.Refund += 1;
+          } else if (lower.includes('payment') || lower.includes('charge')) {
+            summaryCounts.Payment += 1;
+          } else if (lower.includes('billing') || lower.includes('subscription') || lower.includes('statement')) {
+            summaryCounts.Billing += 1;
+          } else {
+            summaryCounts.Other += 1;
+          }
+        }
+      });
+
+      (overview.supportTickets || []).forEach((ticket) => {
+        const text = `${normalize(ticket.subject)} ${normalize(ticket.description)} ${normalize(ticket.product)} ${normalize(ticket.customer)}`;
+        if (keywordMatcher.test(text) || (query && text.toLowerCase().includes(query))) {
+          matches.push({
+            type: 'Ticket',
+            title: `${ticket.subject || 'Support ticket'} (${ticket.id || 'unknown'})`,
+            summary: `${ticket.customer || 'Customer'} • ${ticket.status || 'Status unknown'}`,
+            meta: `${ticket.priority || 'Priority unknown'} • ${formatDateTime(ticket.updatedAt)}`
+          });
+          const lower = text.toLowerCase();
+          if (lower.includes('invoice')) {
+            summaryCounts.Invoice += 1;
+          } else if (lower.includes('refund')) {
+            summaryCounts.Refund += 1;
+          } else if (lower.includes('payment') || lower.includes('charge')) {
+            summaryCounts.Payment += 1;
+          } else if (lower.includes('billing') || lower.includes('subscription') || lower.includes('statement')) {
+            summaryCounts.Billing += 1;
+          } else {
+            summaryCounts.Other += 1;
+          }
+        }
+      });
+
+      (overview.customers || []).forEach((customer) => {
+        const text = `${normalize(customer.name)} ${normalize(customer.email)} ${normalize(customer.plan)} ${normalize(customer.monthlySpend)} ${normalize(customer.notes)} ${normalize(customer.accountNotes)} ${normalize(customer.billingNotes)}`;
+        if (keywordMatcher.test(text) || (query && text.toLowerCase().includes(query))) {
+          matches.push({
+            type: 'Customer',
+            title: `${customer.name || customer.email || 'Customer record'}`,
+            summary: `${customer.plan || 'Plan not set'} • ${customer.monthlySpend || 'Spend not recorded'}`,
+            meta: `Created ${formatDateTime(customer.createdAt)}`
+          });
+          const lower = text.toLowerCase();
+          if (lower.includes('invoice')) {
+            summaryCounts.Invoice += 1;
+          } else if (lower.includes('refund')) {
+            summaryCounts.Refund += 1;
+          } else if (lower.includes('payment') || lower.includes('charge')) {
+            summaryCounts.Payment += 1;
+          } else if (lower.includes('billing') || lower.includes('subscription') || lower.includes('statement')) {
+            summaryCounts.Billing += 1;
+          } else {
+            summaryCounts.Other += 1;
+          }
+        }
+      });
+
+      financialReportChip.textContent = `${matches.length} items`;
+      financialReportList.innerHTML = matches.slice(0, 12).map((entry) => `
+        <article class="activity-item">
+          <strong>${entry.title}</strong>
+          <p>${entry.summary}</p>
+          <div class="item-meta">
+            <span class="pill admin">${entry.type}</span>
+            <span>${entry.meta}</span>
+          </div>
+        </article>
+      `).join('') || '<article class="activity-item"><strong>No financial reports found</strong><p>Try a broader search or verify that report-related activity has been recorded.</p></article>';
+
+      renderFinancialChart(summaryCounts);
+      financialReportList.style.display = activeFinancialChart === 'list' ? 'block' : 'none';
+    };
+
+    const setFinancialChartType = (chartType) => {
+      activeFinancialChart = chartType;
+      financialChartControls.querySelectorAll('.chart-tab').forEach((button) => {
+        button.classList.toggle('active', button.dataset.chart === chartType);
+      });
+      if (currentOverview) {
+        renderFinancialReports(currentOverview);
+      }
+    };
+
+    financialChartControls?.querySelectorAll('[data-chart]').forEach((button) => {
+      button.addEventListener('click', () => {
+        setFinancialChartType(button.dataset.chart);
+      });
+    });
+
+    pageTabButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        setFinancialTab(button.dataset.tab);
+      });
+    });
+
+    financialTabLink?.addEventListener('click', (event) => {
+      event.preventDefault();
+      setFinancialTab('financial');
+    });
 
     const renderOverview = (overview) => {
       currentOverview = overview;
@@ -870,6 +1458,7 @@
       renderSessions(overview.activeSessions || []);
       renderCustomers(overview.customers || []);
       renderSupportTickets(overview.supportTickets || []);
+      renderFinancialReports(overview);
       passwordRotationStatus.textContent = overview.supportPasswordUpdatedAt
         ? `Last rotated ${formatDateTime(overview.supportPasswordUpdatedAt)}.`
         : 'Using the server default support password.';
@@ -912,7 +1501,7 @@
       }
     });
 
-    [auditSearchInput, sessionSearchInput, sessionRoleFilter, customerSearchInput, customerPlanFilter, ticketSearchInput, ticketStatusFilter].forEach((element) => {
+    [auditSearchInput, sessionSearchInput, sessionRoleFilter, customerSearchInput, customerPlanFilter, ticketSearchInput, ticketStatusFilter, financialReportSearchInput].forEach((element) => {
       element.addEventListener('input', () => {
         if (currentOverview) {
           renderOverview(currentOverview);

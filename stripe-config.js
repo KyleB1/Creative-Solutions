@@ -17,6 +17,8 @@ const stripe = require('stripe')(
   }
 );
 
+const logger = require('./logger');
+
 /**
  * Get Stripe configuration for billing — never includes secret keys.
  */
@@ -34,10 +36,10 @@ const getStripeConfig = () => ({
 const testStripeConnection = async () => {
   try {
     await stripe.balance.retrieve();
-    console.log('✓ Stripe connection successful');
+    logger.info('✓ Stripe connection successful');
     return true;
   } catch (error) {
-    console.error('✗ Stripe connection failed:', error.message);
+    logger.error('✗ Stripe connection failed:', error.message);
     return false;
   }
 };

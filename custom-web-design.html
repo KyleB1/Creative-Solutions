@@ -3,167 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Custom website design by Creative Web Solutions: brand-aligned, conversion-focused sites built mobile-first with SEO-friendly architecture.">
   <title>Custom Website Design | Creative Web Solutions</title>
-  <style>
-    :root {
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: #111827;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: linear-gradient(180deg, #f8f2ff 0%, #eef4ff 100%);
-      color: #111827;
-    }
-
-    .page-wrap {
-      max-width: 1000px;
-      margin: 3rem auto;
-      padding: 0 1.25rem 3rem;
-    }
-
-    .hero {
-      background: #ffffff;
-      border-radius: 26px;
-      padding: 2rem;
-      border: 1px solid rgba(124,58,237,0.12);
-      box-shadow: 0 24px 64px rgba(15,23,42,0.08);
-      margin-bottom: 1.5rem;
-    }
-
-    .eyebrow {
-      display: inline-flex;
-      padding: 0.28rem 0.72rem;
-      border-radius: 999px;
-      background: #ede9ff;
-      color: #5b21b6;
-      font-size: 0.82rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-    }
-
-    h1 {
-      margin: 0 0 0.75rem;
-      font-size: clamp(2rem, 4vw, 3rem);
-      letter-spacing: -0.02em;
-    }
-
-    .hero p {
-      margin: 0;
-      color: #475569;
-      line-height: 1.75;
-      max-width: 48rem;
-    }
-
-    .grid {
-      display: grid;
-      gap: 1rem;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      margin-bottom: 1.5rem;
-    }
-
-    .card {
-      background: #ffffff;
-      border-radius: 20px;
-      padding: 1.25rem;
-      border: 1px solid #e5e7eb;
-      box-shadow: 0 16px 36px rgba(15,23,42,0.06);
-    }
-
-    .card h2 {
-      margin: 0 0 0.6rem;
-      font-size: 1.05rem;
-      color: #4c1d95;
-    }
-
-    .card p,
-    .card li {
-      color: #475569;
-      line-height: 1.7;
-      font-size: 0.95rem;
-    }
-
-    .card ul {
-      margin: 0;
-      padding-left: 1rem;
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-top: 0.5rem;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      border-radius: 14px;
-      padding: 0.82rem 1rem;
-      font-weight: 700;
-      border: 1px solid transparent;
-    }
-
-    .btn.primary {
-      background: #7c3aed;
-      color: #fff;
-    }
-
-    .btn.secondary {
-      border-color: rgba(124,58,237,0.35);
-      color: #4c1d95;
-      background: #fff;
-    }
-
-    body.dark-mode {
-      background: #0b1222;
-      color: #f1f5f9;
-    }
-
-    body.dark-mode .hero,
-    body.dark-mode .card {
-      background: #111827;
-      border-color: #374151;
-      color: #e5e7eb;
-    }
-
-    body.dark-mode .eyebrow {
-      background: #312e81;
-      color: #cbd5ff;
-    }
-
-    body.dark-mode .hero p,
-    body.dark-mode .card p,
-    body.dark-mode .card li {
-      color: #c2cffd;
-    }
-
-    body.dark-mode .card h2 {
-      color: #f3f4f6;
-    }
-
-    body.dark-mode .btn.secondary {
-      background: #1f2937;
-      border-color: rgba(148, 163, 184, 0.35);
-      color: #e5e7eb;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="page-wrap">
-    <section class="hero">
-      <span class="eyebrow">Design Service</span>
+  <main class="svc-detail-wrap">
+    <section class="svc-detail-panel">
+      <span class="svc-eyebrow">Design Service</span>
       <h1>Custom Website Design</h1>
       <p>We design conversion-focused websites tailored to your brand voice, business goals, and customer journey. Every project includes mobile-first layouts, accessibility-minded structure, and polished visual systems.</p>
     </section>
 
-    <section class="grid" aria-label="Custom design details">
-      <article class="card">
+    <div class="svc-detail-grid">
+      <article class="svc-detail-card">
         <h2>What is Included</h2>
         <ul>
           <li>Brand-aligned visual direction and page composition</li>
@@ -173,25 +26,25 @@
         </ul>
       </article>
 
-      <article class="card">
+      <article class="svc-detail-card">
         <h2>Typical Timeline</h2>
         <p>Most builds complete in 2 to 5 weeks depending on number of pages, content readiness, and revision rounds.</p>
       </article>
 
-      <article class="card">
+      <article class="svc-detail-card">
         <h2>Recommended For</h2>
         <p>Small businesses, agencies, and founders who need a website that looks premium and supports measurable growth.</p>
       </article>
-    </section>
+    </div>
 
-    <section class="actions" aria-label="Next steps">
-      <a class="btn primary" href="index.htm#contact">Request a Design Quote</a>
-      <a class="btn secondary" href="services.html">Back to Services</a>
-    </section>
+    <div class="svc-actions">
+      <a class="cta-btn" href="index.htm#contact">Request a Design Quote</a>
+      <a class="cta-btn outline" href="services.html">Back to Services</a>
+    </div>
   </main>
-
+  <footer></footer>
   <script defer src="theme.js"></script>
-  <script src="auth.js"></script>
+  <script defer src="footer.js"></script>
   <script defer src="header.js"></script>
 </body>
 </html>

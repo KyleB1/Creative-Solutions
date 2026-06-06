@@ -2,7 +2,7 @@
 (function () {
   const SUPPORT_ROLES = Object.freeze({
     'support@creativewebsolutions.com': 'Support Agent',
-    'helpdesk@creativewebsolutions.com': 'Support Agent',
+    'helpdesk@creativewebsolutions.com': 'Help Desk Agent',
     'admin@creativewebsolutions.com': 'System Administrator',
     'kyle.creativesolutions@gmail.com': 'System Administrator'
   });
@@ -10,11 +10,33 @@
   const state = {
     currentUser: null,
     loaded: false,
-    loadingPromise: null
+    loadingPromise: null,
+    sessionToken: null
   };
+
+  const SESSION_TOKEN_STORAGE_KEY = 'cwsSessionToken';
 
   const DEFAULT_HOSTED_API_BASE = 'https://creative-solutions.onrender.com';
   const DEFAULT_LOCAL_API_BASE = 'http://localhost:3000';
+
+  function loadStoredSessionToken() {
+    if (typeof localStorage === 'undefined') return null;
+    const token = String(localStorage.getItem(SESSION_TOKEN_STORAGE_KEY) || '').trim();
+    return token || null;
+  }
+
+  function saveSessionToken(token) {
+    const normalized = String(token || '').trim();
+    state.sessionToken = normalized || null;
+    if (typeof localStorage === 'undefined') return;
+    if (state.sessionToken) {
+      localStorage.setItem(SESSION_TOKEN_STORAGE_KEY, state.sessionToken);
+    } else {
+      localStorage.removeItem(SESSION_TOKEN_STORAGE_KEY);
+    }
+  }
+
+  saveSessionToken(loadStoredSessionToken());
 
   function isLocalHostName(hostname) {
     const normalized = String(hostname || '').toLowerCase();
@@ -47,7 +69,7 @@
     }
 
     // When the site is opened from a local static server, route auth calls to
-    // the Node backend on port 3000 by default (server.js default).
+    // the Node backend on port 3000 by default.
     if (isLocalHostName(normalizedHost) && port && port !== '3000') {
       return `http://${normalizedHost}:3000`;
     }
@@ -203,50 +225,69 @@
       requestOptions.headers['Content-Type'] = 'application/json';
     }
 
+    if (state.sessionToken && !requestOptions.headers['X-CWS-Session']) {
+      requestOptions.headers['X-CWS-Session'] = state.sessionToken;
+    }
+
     const requestUrl = buildApiUrl(path);
-    const alternateUrl = (() => {
-      if (typeof window === 'undefined' || !window.location) return null;
+    const localFallbackUrls = (() => {
+      if (typeof window === 'undefined' || !window.location) return [];
       const host = String(window.location.hostname || '').toLowerCase();
-      if (!isLocalHostName(host)) return null;
-      if (requestUrl.includes(':3000/')) return requestUrl.replace(':3000/', ':3100/');
-      if (requestUrl.includes(':3100/')) return requestUrl.replace(':3100/', ':3000/');
-      return null;
+      if (!isLocalHostName(host)) return [];
+
+      const fallbackPorts = new Set();
+      const candidatePorts = [3000];
+      const url = (() => {
+        try {
+          return new URL(requestUrl);
+        } catch (_error) {
+          return null;
+        }
+      })();
+      if (!url) return [];
+
+      const currentPort = Number(url.port || (url.protocol === 'https:' ? 443 : 80));
+      for (const port of candidatePorts) {
+        if (port !== currentPort) {
+          fallbackPorts.add(port);
+        }
+      }
+
+      return Array.from(fallbackPorts).map((port) => {
+        const copy = new URL(requestUrl);
+        copy.port = String(port);
+        return copy.toString();
+      });
     })();
 
     let response;
-    try {
-      response = await fetch(requestUrl, requestOptions);
-    } catch (_networkError) {
-      if (alternateUrl) {
-        try {
-          response = await fetch(alternateUrl, requestOptions);
-        } catch (_alternateError) {
-          const configuredBase = getApiBase();
-          const target = configuredBase || 'same-origin backend';
-          throw new Error(`Unable to reach the login server (${target}). If you are running the site locally, start the Node backend on port 3000 or set window.CWS_API_BASE to your API URL.`);
-        }
-      } else {
-        const configuredBase = getApiBase();
-        const target = configuredBase || 'same-origin backend';
-        throw new Error(`Unable to reach the login server (${target}). If you are running the site locally, start the Node backend on port 3000 or set window.CWS_API_BASE to your API URL.`);
-      }
-    }
-    let payload = response.status === 204 ? null : await response.json().catch(() => ({}));
-
-    // If the first local port responds but is not the auth server (e.g. 404),
-    // try the alternate local port before surfacing a connectivity/banner error.
-    if (!response.ok && alternateUrl) {
+    let lastError = null;
+    const candidateUrls = [requestUrl, ...localFallbackUrls];
+    for (const url of candidateUrls) {
       try {
-        const fallbackResponse = await fetch(alternateUrl, requestOptions);
-        const fallbackPayload = fallbackResponse.status === 204 ? null : await fallbackResponse.json().catch(() => ({}));
-        if (fallbackResponse.ok) {
-          response = fallbackResponse;
-          payload = fallbackPayload;
-        }
-      } catch (_fallbackError) {
-        // Keep original response/payload and error handling below.
+        response = await fetch(url, requestOptions);
+      } catch (networkError) {
+        lastError = networkError;
+        continue;
       }
+
+      if (response.ok) {
+        break;
+      }
+
+      if (url === requestUrl && localFallbackUrls.length > 0) {
+        continue;
+      }
+      break;
     }
+
+    if (!response) {
+      const configuredBase = getApiBase();
+      const target = configuredBase || 'same-origin backend';
+      throw new Error(`Unable to reach the login server (${target}). If you are running the site locally, start the Node backend on port 3000 or set window.CWS_API_BASE to your API URL.`);
+    }
+
+    let payload = response.status === 204 ? null : await response.json().catch(() => ({}));
 
     if (!response.ok) {
       const error = new Error((payload && payload.error) || 'Request failed');
@@ -268,7 +309,16 @@
     }
 
     state.loadingPromise = apiRequest('/api/auth/session', { method: 'GET' })
-      .then((payload) => setCurrentUser(payload && payload.authenticated ? payload.user : null))
+      .then((payload) => {
+        if (payload && payload.sessionToken) {
+          saveSessionToken(payload.sessionToken);
+        }
+        if (payload && payload.authenticated) {
+          return setCurrentUser(payload.user);
+        }
+        saveSessionToken(null);
+        return setCurrentUser(null);
+      })
       .catch(() => setCurrentUser(null))
       .finally(() => {
         state.loadingPromise = null;
@@ -337,6 +387,10 @@
     return Boolean(payload && payload.hasCustomerAccounts);
   }
 
+  async function getAuthMeta() {
+    return apiRequest('/api/auth/meta', { method: 'GET' });
+  }
+
   function isCustomerLoggedIn() {
     return Boolean(getCustomer());
   }
@@ -397,6 +451,7 @@
     if (result && result.user) {
       setCustomer(result.user);
     }
+    saveSessionToken(result && result.sessionToken);
     return result;
   }
 
@@ -409,6 +464,7 @@
       })
     });
     clearSupport();
+    saveSessionToken(result && result.sessionToken);
     setCustomer(result && result.user);
     return result && result.user;
   }
@@ -421,6 +477,7 @@
         password: payload.password
       })
     });
+    saveSessionToken(result && result.sessionToken);
     setSupport(result && result.user);
     return result && result.user;
   }
@@ -453,6 +510,20 @@
     });
   }
 
+  async function requestSupportPasswordReset(email) {
+    return apiRequest('/api/auth/support-password-reset/request', {
+      method: 'POST',
+      body: JSON.stringify({ email: normalizeEmail(email) })
+    });
+  }
+
+  async function confirmSupportPasswordReset(token, password) {
+    return apiRequest('/api/auth/support-password-reset/confirm', {
+      method: 'POST',
+      body: JSON.stringify({ token: String(token || '').trim(), password })
+    });
+  }
+
   async function verifyEmail(token) {
     return apiRequest('/api/auth/verify-email', {
       method: 'POST',
@@ -472,6 +543,7 @@
     if (support && support.email) {
       removeOnlineAgent(support.email);
     }
+    saveSessionToken(null);
     setCurrentUser(null);
     if (redirectTo) {
       window.location.href = toAppUrl(redirectTo);
@@ -509,6 +581,7 @@
     clearCustomer,
     clearSupport,
     hasRegisteredAccounts,
+    getAuthMeta,
     isCustomerLoggedIn,
     isSupportLoggedIn,
     requireCustomer,
@@ -521,6 +594,8 @@
     updateCustomerProfile,
     requestPasswordReset,
     confirmPasswordReset,
+    requestSupportPasswordReset,
+    confirmSupportPasswordReset,
     verifyEmail,
     logoutCustomer,
     logoutSupport

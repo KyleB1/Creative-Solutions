@@ -134,15 +134,15 @@
      * Create Square payment form
      */
     createSquareForm: function () {
-      // TODO: Implement Square Web Payments Form
-      // Use Web Payments Form or Card Payment Elements
+      // NOTE: Square Web Payments Form is not implemented in this version.
+      // Use Web Payments Form or Card Payment Elements when integrated.
     },
 
     /**
      * Create PayPal payment form
      */
     createPayPalForm: function () {
-      // TODO: Implement PayPal Buttons
+      // NOTE: PayPal Buttons are not implemented in this version.
     },
 
     /**
@@ -259,7 +259,7 @@
      * Get Square token
      */
     getSquareToken: async function () {
-      // TODO: Implement Square tokenization
+      // NOTE: Square tokenization is not implemented in this version.
       throw new Error('Square tokenization not yet implemented');
     },
 
@@ -267,7 +267,7 @@
      * Process PayPal payment
      */
     processPayPalPayment: async function (amount, currency, customerId) {
-      // TODO: Implement PayPal payment
+      // NOTE: PayPal payment flow is not implemented in this version.
       throw new Error('PayPal integration not yet implemented');
     },
 

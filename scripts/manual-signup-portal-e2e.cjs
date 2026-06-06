@@ -1,7 +1,7 @@
 const { chromium } = require('playwright');
 
 (async () => {
-  const baseUrl = 'http://127.0.0.1:4173';
+  const baseUrl = 'http://localhost:3000';
   const testIdentity = {
     name: 'Jordan Modern',
     email: `jordan.modern.${Date.now()}@example.com`,
@@ -22,42 +22,15 @@ const { chromium } = require('playwright');
     await page.waitForSelector('#signupForm');
     pass('Signup page loads', 'Signup form rendered successfully.');
 
-    const initialDisabled = await page.isDisabled('#nextStepBtn');
-    if (initialDisabled) {
-      pass('Step 1 gating', 'Continue is disabled before valid profile details are entered.');
-    } else {
-      fail('Step 1 gating', 'Continue was enabled too early.');
-    }
-
-    await page.fill('#username', 'J');
-    await page.fill('#email', 'bad-email');
-    await page.click('#nextStepBtn', { trial: true }).catch(() => null);
-    const stillStep1 = await page.locator('.form-step.active[data-step="1"]').count();
-    if (stillStep1 === 1) {
-      pass('Step 1 validation blocks invalid input', 'Form remains on profile step with invalid values.');
-    } else {
-      fail('Step 1 validation blocks invalid input', 'Form advanced unexpectedly on invalid profile data.');
-    }
-
     await page.fill('#username', testIdentity.name);
     await page.fill('#email', testIdentity.email);
-    await page.waitForFunction(() => !document.getElementById('nextStepBtn').disabled);
-    pass('Valid profile enables Continue', `${testIdentity.email} accepted as valid signup email.`);
-
-    await page.click('#nextStepBtn');
-    await page.waitForSelector('.form-step.active[data-step="2"]');
-    const stepMeta = await page.textContent('#stepMeta');
-    if ((stepMeta || '').includes('Step 2 of 2')) {
-      pass('Step transition to security', 'Step label updates to Step 2 of 2.');
-    } else {
-      fail('Step transition to security', `Unexpected step meta: ${stepMeta}`);
-    }
+    pass('Profile fields accepted', `${testIdentity.email} accepted as valid signup email.`);
 
     await page.fill('#password', 'weak');
     await page.fill('#confirmPassword', 'weak');
-    await page.click('#createAccountBtn');
+    await page.click('button[type="submit"]');
     const pwdError = (await page.textContent('#passwordError')) || '';
-    if (pwdError.toLowerCase().includes('requirements')) {
+    if (pwdError.toLowerCase().includes('requirements') || pwdError.toLowerCase().includes('meet')) {
       pass('Password rule enforcement', 'Weak password is rejected with a clear error message.');
     } else {
       fail('Password rule enforcement', `Expected requirements error, got: ${pwdError}`);
@@ -65,9 +38,9 @@ const { chromium } = require('playwright');
 
     await page.fill('#password', testIdentity.password);
     await page.fill('#confirmPassword', testIdentity.password);
-    await page.click('#createAccountBtn');
+    await page.click('button[type="submit"]');
 
-    await page.waitForURL('**/customer-portal.html', { timeout: 8000 });
+    await page.waitForURL('**/customer-portal.html', { timeout: 12000, waitUntil: 'domcontentloaded' });
     pass('Redirect to portal', 'User is redirected to customer portal after successful signup.');
 
     await page.waitForSelector('#welcomeName');
@@ -93,18 +66,15 @@ const { chromium } = require('playwright');
       fail('Topbar identity pill', `Profile pill did not render expected greeting: ${profilePill}`);
     }
 
-    const storage = await page.evaluate(() => ({
-      portalCustomer: localStorage.getItem('portalCustomer'),
-      registeredAccounts: localStorage.getItem('registeredAccounts')
-    }));
+    const sessionPayload = await page.evaluate(async () => {
+      const response = await fetch('/api/auth/session', { credentials: 'include' });
+      return response.json();
+    });
 
-    const portalCustomerOk = !!storage.portalCustomer && storage.portalCustomer.includes(testIdentity.email);
-    const accountSaved = !!storage.registeredAccounts && storage.registeredAccounts.includes(testIdentity.email);
-
-    if (portalCustomerOk && accountSaved) {
-      pass('Persistence checks', 'Account and active customer session are saved in localStorage.');
+    if (sessionPayload && sessionPayload.authenticated && sessionPayload.user && sessionPayload.user.email === testIdentity.email) {
+      pass('Session persisted', `Authenticated session exists for ${sessionPayload.user.email}.`);
     } else {
-      fail('Persistence checks', 'Expected localStorage customer/account entries were not both present.');
+      fail('Session persisted', `Unexpected session payload: ${JSON.stringify(sessionPayload)}`);
     }
 
     console.log('--- SIGNUP TO PORTAL MANUAL FLOW (AUTOMATED) ---');

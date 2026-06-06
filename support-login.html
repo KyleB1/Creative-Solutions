@@ -167,6 +167,10 @@
         <div class="benefit"><span class="benefit-dot"></span><span>Track customer requests in one place</span></div>
         <div class="benefit"><span class="benefit-dot"></span><span>View ticket details and activity</span></div>
         <div class="benefit"><span class="benefit-dot"></span><span>Update status and resolve issues faster</span></div>
+        <div class="benefit"><span class="benefit-dot"></span><span>Collaborate with your team and share notes</span></div>
+        <div class="benefit"><span class="benefit-dot"></span><span>Access the support portal from anywhere</span></div>
+        <div class="benefit"><span class="benefit-dot"></span><span>Provide better service and keep customers happy</span></div>
+        <div class="benefit"><span class="benefit-dot"></span><span>Enjoy a modern, user-friendly interface</span></div>
       </div>
       <div class="agent-counts">
         <div class="agent-count">
@@ -182,12 +186,16 @@
 
     <main class="form-panel">
       <div class="back-links">
-        <a class="secondary-btn" href="index.htm">ÃƒÂ¢Ã¢â‚¬Â Ã‚Â Home</a>
-        <a class="secondary-btn" href="login.html">ÃƒÂ¢Ã¢â‚¬Â Ã‚Â Customer Login</a>
+        <a class="secondary-btn" href="index.htm"><- Home</a>
+        <a class="secondary-btn" href="login.html"><- Customer Login</a>
       </div>
       <h2>Agent sign in</h2>
       <p>Enter your staff credentials to access the support portal.</p>
-      <p id="apiStatusBanner" class="status-banner info" role="status" aria-live="polite">Checking login server availability...</p>
+      <div style="display:flex; gap:0.5rem; align-items:center; margin:0 0 1rem; flex-wrap:wrap;">
+        <p id="apiStatusBanner" class="status-banner info" role="status" aria-live="polite" style="margin:0; flex:1 1 320px;">Checking login server availability...</p>
+        <button id="retryStatusBtn" type="button" class="ghost-btn" style="min-height:2.1rem;">Retry</button>
+      </div>
+      <p id="backendHint" class="page-footnote" style="margin:0 0 1rem; font-size:0.9rem; color:#475569;">Backend API base: <span id="backendUrlText">Checking...</span></p>
       <form id="supportLoginForm">
         <div class="form-group">
           <label for="supportEmail">Work email</label>
@@ -200,13 +208,14 @@
         <button type="submit" class="primary-btn">Sign In</button>
       </form>
       <p id="loginError" class="error-message"></p>
+      <p class="page-footnote"><a href="support-password-reset.html">Forgot password?</a></p>
       <p class="page-footnote">Need help? Contact your team lead or use the customer portal support desk.</p>
     </main>
   </div>
 
   <script>
     if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      window.CWS_API_BASE = 'http://localhost:3100';
+      window.CWS_API_BASE = 'http://localhost:3000';
     }
   </script>
   <script src="auth.js"></script>
@@ -271,6 +280,10 @@
 
     const loginError = document.getElementById('loginError');
     const apiStatusBanner = document.getElementById('apiStatusBanner');
+    const retryStatusBtn = document.getElementById('retryStatusBtn');
+    const supportLoginForm = document.getElementById('supportLoginForm');
+    const submitButton = supportLoginForm.querySelector('button[type="submit"]');
+    let supportLoginEnabled = true;
     updateAgentCounts();
 
     const setBannerState = (state, message) => {
@@ -279,10 +292,45 @@
       apiStatusBanner.textContent = message;
     };
 
-    const checkApiConnectivity = async () => {
-      setBannerState('info', 'Checking login server availability...');
+    const backendUrlText = document.getElementById('backendUrlText');
+    const getAuthMetaUrl = () => SiteAuth.buildApiUrl('/api/auth/meta');
+    const getBackendUrl = () => {
+      const metaUrl = getAuthMetaUrl();
+      return String(metaUrl).replace(/\/api\/auth\/meta$/, '') || metaUrl;
+    };
+    const getLocalBackendHint = (metaUrl) => {
+      return metaUrl.startsWith('http://localhost') || metaUrl.startsWith('http://127.0.0.1')
+        ? ' If you are testing locally, try the backend on http://localhost:3000 or set window.CWS_API_BASE to your API URL.'
+        : '';
+    };
+    const updateBackendHint = () => {
+      const metaUrl = getAuthMetaUrl();
+      const backendUrl = getBackendUrl();
+      backendUrlText.textContent = backendUrl;
+      return {
+        metaUrl,
+        backendUrl,
+        localBackendHint: getLocalBackendHint(metaUrl)
+      };
+    };
 
-      const timeoutMs = 6500;
+    let lastBackendUrl = getBackendUrl();
+    const watchBackendUrl = () => {
+      const nextUrl = getBackendUrl();
+      if (nextUrl !== lastBackendUrl) {
+        lastBackendUrl = nextUrl;
+        backendUrlText.textContent = nextUrl;
+      }
+    };
+    setInterval(watchBackendUrl, 1500);
+
+    const checkApiConnectivity = async () => {
+      const { metaUrl, localBackendHint } = updateBackendHint();
+      setBannerState('info', `Checking login server availability at ${metaUrl} ...`);
+      retryStatusBtn.disabled = true;
+      retryStatusBtn.textContent = 'Checking...';
+
+      const timeoutMs = 15000;
       const timeoutPromise = new Promise((_, reject) => {
         const timer = setTimeout(() => {
           clearTimeout(timer);
@@ -291,21 +339,48 @@
       });
 
       try {
-        await Promise.race([
-          SiteAuth.hasRegisteredAccounts(),
+        const meta = await Promise.race([
+          SiteAuth.getAuthMeta(),
           timeoutPromise
         ]);
-        setBannerState('ok', 'Login server is online. You can sign in now.');
+
+        if (!meta || !meta.supportLoginConfigured) {
+          supportLoginEnabled = false;
+          submitButton.disabled = true;
+          submitButton.textContent = 'Support Login Disabled';
+          setBannerState('error', `Support login is disabled at ${metaUrl} because no support password is configured on the server. Set SUPPORT_PORTAL_PASSWORD or set a support password in the admin console.`);
+          return;
+        }
+
+        supportLoginEnabled = true;
+        submitButton.disabled = false;
+        submitButton.textContent = 'Sign In';
+        setBannerState('ok', `Login server is online at ${metaUrl} and support login is configured. You can sign in now.`);
       } catch (_error) {
-        setBannerState('error', 'Login server is unreachable right now. If you are testing locally, start the Node backend, or configure window.CWS_API_BASE to your API URL.');
+        supportLoginEnabled = false;
+        submitButton.disabled = true;
+        submitButton.textContent = 'Server Unreachable';
+        setBannerState('error', `Login server is unreachable at ${metaUrl}.${localBackendHint}`);
+      } finally {
+        retryStatusBtn.disabled = false;
+        retryStatusBtn.textContent = 'Retry';
       }
     };
 
-    const supportLoginForm = document.getElementById('supportLoginForm');
+    retryStatusBtn.addEventListener('click', () => {
+      checkApiConnectivity();
+    });
+
     supportLoginForm.addEventListener('submit', async (event) => {
       event.preventDefault();
       const email = SiteAuth.normalizeEmail(document.getElementById('supportEmail').value);
       const password = document.getElementById('supportPassword').value.trim();
+
+      if (!supportLoginEnabled) {
+        loginError.textContent = 'Support login is currently unavailable. Check the banner above for the required server configuration.';
+        return;
+      }
+
       if (!password) {
         loginError.textContent = 'Please enter your password.';
         return;

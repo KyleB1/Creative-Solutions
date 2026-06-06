@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Transparent pricing for web design, portals, and automation services. Choose the tier that fits your needs.">
+  <meta name="title" content="Pricing - Creative Web Solutions">
+  <title>Pricing - Creative Web Solutions</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 1rem; }
+    .pricing-hero { text-align: center; margin-bottom: 3rem; }
+    .pricing-hero h1 { font-size: 2.5rem; margin: 0 0 0.5rem; }
+    .pricing-hero p { font-size: 1.1rem; color: var(--muted); margin: 0; }
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 2rem 0; }
+    .pricing-card { background: var(--surface); border: 2px solid var(--surface-contrast); border-radius: 20px; padding: 2rem; display: flex; flex-direction: column; position: relative; transition: all 0.3s ease; }
+    .pricing-card:hover { transform: translateY(-4px); border-color: var(--primary); box-shadow: 0 20px 45px rgba(15, 111, 255, 0.15); }
+    .pricing-card.featured { border-color: var(--primary); background: linear-gradient(135deg, rgba(37,99,235,0.05), rgba(99,164,255,0.05)); }
+    .pricing-badge { position: absolute; top: -12px; left: 1.5rem; background: #2563eb; color: white; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600; }
+    .pricing-name { font-size: 1.4rem; font-weight: 700; margin: 0 0 0.5rem; }
+    .pricing-desc { color: var(--muted); margin: 0 0 1.5rem; font-size: 0.95rem; }
+    .pricing-amount { font-size: 2.8rem; font-weight: 800; margin: 0 0 0.25rem; }
+    .pricing-period { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
+    .pricing-cta { display: inline-block; padding: 0.85rem 1.5rem; background: #2563eb; color: white; border-radius: 999px; text-decoration: none; font-weight: 600; margin-bottom: 1.5rem; border: none; cursor: pointer; text-align: center; }
+    .pricing-cta:hover { opacity: 0.9; }
+    .pricing-features { list-style: none; padding: 0; margin: 1rem 0; flex-grow: 1; }
+    .pricing-features li { padding: 0.6rem 0; border-bottom: 1px solid var(--surface-contrast); color: var(--text); display: flex; align-items: start; gap: 0.6rem; }
+    .pricing-features li:last-child { border-bottom: none; }
+    .pricing-features li::before { content: "✓"; color: #10b981; font-weight: bold; flex-shrink: 0; }
+    .pricing-features li.unavailable { opacity: 0.5; }
+    .pricing-features li.unavailable::before { content: "✕"; color: #ef4444; }
+    .faq-section { margin-top: 3rem; background: var(--surface-alt); border-radius: 16px; padding: 2rem; }
+    .faq-section h2 { margin: 0 0 1.5rem; font-size: 1.8rem; }
+    .faq-item { margin-bottom: 1.5rem; }
+    .faq-q { font-weight: 600; margin-bottom: 0.5rem; color: var(--text); cursor: pointer; }
+    .faq-a { color: var(--muted); line-height: 1.7; }
+    @media (max-width: 900px) { .pricing-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main class="wrap" id="main">
+    <section class="pricing-hero">
+      <h1>Simple, Transparent Pricing</h1>
+      <p>No hidden fees. Pay for what you need. Scale as you grow.</p>
+    </section>
+
+    <div class="pricing-grid">
+      <!-- Starter Tier -->
+      <div class="pricing-card">
+        <div class="pricing-name">Starter</div>
+        <p class="pricing-desc">Perfect for small businesses and startups</p>
+        <div class="pricing-amount">$2,500</div>
+        <p class="pricing-period">One-time project cost</p>
+        <button class="pricing-cta" onclick="handlePricingCTA('Starter')">Get Started</button>
+        <ul class="pricing-features">
+          <li>5-page website</li>
+          <li>Mobile responsive</li>
+          <li>Basic SEO setup</li>
+          <li>Contact form + email notifications</li>
+          <li>1 month of free support</li>
+          <li class="unavailable">Advanced integrations</li>
+          <li class="unavailable">Logo design</li>
+        </ul>
+      </div>
+
+      <!-- Professional Tier (Featured) -->
+      <div class="pricing-card featured">
+        <div class="pricing-badge">Most Popular</div>
+        <div class="pricing-name">Professional</div>
+        <p class="pricing-desc">For growing businesses needing more features</p>
+        <div class="pricing-amount">$6,500</div>
+        <p class="pricing-period">One-time project cost</p>
+        <button class="pricing-cta" onclick="handlePricingCTA('Professional')">Get Started</button>
+        <ul class="pricing-features">
+          <li>Custom design (10+ pages)</li>
+          <li>Client portal with login</li>
+          <li>Payment processing integration</li>
+          <li>Email marketing setup</li>
+          <li>Advanced analytics</li>
+          <li>3 months of support included</li>
+          <li class="unavailable">Custom integrations</li>
+        </ul>
+      </div>
+
+      <!-- Enterprise Tier -->
+      <div class="pricing-card">
+        <div class="pricing-name">Enterprise</div>
+        <p class="pricing-desc">Full-featured solution with ongoing support</p>
+        <div class="pricing-amount">$12,000+</div>
+        <p class="pricing-period">Project + support plan</p>
+        <button class="pricing-cta" onclick="handlePricingCTA('Enterprise')">Contact Us</button>
+        <ul class="pricing-features">
+          <li>Everything in Professional</li>
+          <li>Custom integrations (CRM, ERP, APIs)</li>
+          <li>Multi-user portal with role-based access</li>
+          <li>Dedicated account manager</li>
+          <li>Priority support (24/7)</li>
+          <li>Monthly optimization reviews</li>
+          <li>Custom branding & white-label options</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+      <h2>Pricing FAQs</h2>
+      <div class="faq-item">
+        <div class="faq-q">💡 What's included in the support period?</div>
+        <div class="faq-a">Support includes bug fixes, minor adjustments, performance optimization, and email assistance. Major feature additions are billed separately.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">💡 Can I upgrade my plan mid-project?</div>
+        <div class="faq-a">Absolutely. If you started with Starter but need Professional features, we'll adjust the scope and pricing accordingly.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">💡 Do you offer maintenance packages after launch?</div>
+        <div class="faq-a">Yes. We offer ongoing support packages starting at $500/month for performance monitoring, security updates, and minor changes.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">💡 Payment terms?</div>
+        <div class="faq-a">50% deposit to start, 50% due at launch. We accept credit cards, bank transfers, and can work with your accounting needs.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">💡 What if I need custom features not listed?</div>
+        <div class="faq-a">Contact us. We'll assess your requirements and provide a custom quote. Most custom work starts at $150/hour.</div>
+      </div>
+    </section>
+  </main>
+
+  <script src="auth.js"></script>
+  <script src="header.js"></script>
+  <script src="site-enhancements.js"></script>
+  <script>
+    function handlePricingCTA(tier) {
+      if (window.gtag) gtag('event', 'pricing_cta_click', { tier: tier });
+      const message = tier === 'Enterprise' ? 'Let\'s discuss your project needs!'  : 'Ready to get started with ' + tier + '?';
+      window.location.href = 'signup.html?tier=' + encodeURIComponent(tier);
+    }
+  </script>
+
+  <footer></footer>
+
+  <script src="footer.js"></script>
+</body>
+</html>
