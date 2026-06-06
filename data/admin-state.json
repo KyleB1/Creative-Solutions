@@ -186,6 +186,30 @@
   ],
   "auditLog": [
     {
+      "id": "a8dcd8bb-f449-4b00-9fcf-7c489d10ee28",
+      "action": "support.login",
+      "title": "Admin signed in",
+      "description": "System Administrator session started for admin@creativewebsolutions.com.",
+      "actorEmail": "admin@creativewebsolutions.com",
+      "actorName": "Admin",
+      "actorRole": "System Administrator",
+      "targetType": "support-user",
+      "targetId": "admin@creativewebsolutions.com",
+      "createdAt": "2026-06-06T23:26:37.707Z"
+    },
+    {
+      "id": "fbb48cd5-1876-4647-bbd7-26899ac399c4",
+      "action": "session.logout",
+      "title": "Admin logged out",
+      "description": "admin@creativewebsolutions.com ended their session.",
+      "actorEmail": "admin@creativewebsolutions.com",
+      "actorName": "Admin",
+      "actorRole": "System Administrator",
+      "targetType": "session",
+      "targetId": "91ae639c47985d4d073962ae02cc2c00571fb04ac09ff93e5c17784c795a5056",
+      "createdAt": "2026-06-06T23:07:11.573Z"
+    },
+    {
       "id": "aca3b352-9bf1-4671-a40f-3776c73a3dff",
       "action": "support.login",
       "title": "Admin signed in",
