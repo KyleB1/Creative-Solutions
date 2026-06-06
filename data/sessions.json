@@ -24,6 +24,15 @@
         "supportRole": "System Administrator"
       },
       "expiresAt": 1780823962176
+    },
+    "27b8749905db78d0fba26c7b8ba3a0c80cbbca2ca742efed38f6503d799d5f1b": {
+      "user": {
+        "role": "admin",
+        "email": "kyle.creativesolutions@gmail.com",
+        "name": "Kyle Creativesolutions",
+        "supportRole": "System Administrator"
+      },
+      "expiresAt": 1780825697366
     }
   }
 }
