@@ -5,7 +5,7 @@
  * 1. Install dependencies: npm install express stripe cors dotenv
  * 2. Set environment variables in .env
  * 3. Run: node server.js
- * 4. Server will be available at http://localhost:3000
+ * 5. Server will be available at http://localhost:3000
  */
 
 require('dotenv').config();

@@ -69,7 +69,7 @@
     }
 
     // When the site is opened from a local static server, route auth calls to
-    // the Node backend on port 3000 by default (server.js default).
+    // the Node backend on port 3000 by default.
     if (isLocalHostName(normalizedHost) && port && port !== '3000') {
       return `http://${normalizedHost}:3000`;
     }
