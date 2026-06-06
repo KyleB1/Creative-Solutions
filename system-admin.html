@@ -423,6 +423,7 @@
         <a href="index.htm">Home</a>
         <a href="support-portal.html">Support Portal</a>
         <a href="crm.html">CRM</a>
+        <a href="#financialReports">Financial reports</a>
         <div class="admin-session" id="adminSession" hidden>
           <div class="admin-session-text">
             <strong id="adminSessionName">System Administrator</strong>
@@ -580,6 +581,20 @@
           <div class="ticket-list" id="supportTicketList"></div>
         </section>
 
+        <section class="admin-section" id="financialReports">
+          <div class="section-head">
+            <div>
+              <h2>Financial reports</h2>
+              <p>View every item that includes financial report details across audit logs, tickets, and account notes.</p>
+            </div>
+            <span class="section-chip" id="financialReportChip">0 items</span>
+          </div>
+          <div class="filter-row">
+            <input id="financialReportSearchInput" type="search" placeholder="Search financial report entries">
+          </div>
+          <div class="activity-list" id="financialReportList"></div>
+        </section>
+
         <section class="admin-section">
           <div class="section-head">
             <div>
@@ -637,6 +652,9 @@
     const customerPlanFilter = document.getElementById('customerPlanFilter');
     const ticketSearchInput = document.getElementById('ticketSearchInput');
     const ticketStatusFilter = document.getElementById('ticketStatusFilter');
+    const financialReportSearchInput = document.getElementById('financialReportSearchInput');
+    const financialReportList = document.getElementById('financialReportList');
+    const financialReportChip = document.getElementById('financialReportChip');
 
     let currentOverview = null;
 
@@ -856,6 +874,61 @@
       `).join('') || '<article class="ticket-item"><strong>No matching tickets</strong><p>No tickets match the current filters.</p></article>';
     };
 
+    const renderFinancialReports = (overview) => {
+      const query = financialReportSearchInput.value.trim().toLowerCase();
+      const keywords = /financial report|financial reports|invoice|billing statement|payment report|revenue report/i;
+      const normalize = (value) => String(value || '');
+      const matches = [];
+
+      (overview.auditLog || []).forEach((entry) => {
+        const text = `${normalize(entry.title)} ${normalize(entry.description)} ${normalize(entry.action)} ${normalize(entry.actorEmail)}`;
+        if (keywords.test(text) || (query && text.toLowerCase().includes(query))) {
+          matches.push({
+            type: 'Audit log',
+            title: entry.title || 'Audit entry',
+            summary: entry.description || entry.action || 'Financial report-related entry',
+            meta: `${entry.actorEmail || 'System'} • ${formatDateTime(entry.createdAt)}`
+          });
+        }
+      });
+
+      (overview.supportTickets || []).forEach((entry) => {
+        const text = `${normalize(entry.subject)} ${normalize(entry.description)} ${normalize(entry.product)} ${normalize(entry.customer)}`;
+        if (keywords.test(text) || (query && text.toLowerCase().includes(query))) {
+          matches.push({
+            type: 'Ticket',
+            title: `${entry.subject || 'Support ticket'} (${entry.id || 'unknown'})`,
+            summary: `${entry.customer || 'Customer'} • ${entry.status || 'Status unknown'}`,
+            meta: `${entry.priority || 'Priority unknown'} • ${formatDateTime(entry.updatedAt)}`
+          });
+        }
+      });
+
+      (overview.customers || []).forEach((entry) => {
+        const text = `${normalize(entry.name)} ${normalize(entry.email)} ${normalize(entry.plan)} ${normalize(entry.monthlySpend)} ${normalize(entry.notes)} ${normalize(entry.accountNotes)} ${normalize(entry.billingNotes)}`;
+        if (keywords.test(text) || (query && text.toLowerCase().includes(query))) {
+          matches.push({
+            type: 'Customer',
+            title: `${entry.name || entry.email || 'Customer record'}`,
+            summary: `${entry.plan || 'Plan not set'} • ${entry.monthlySpend || 'Spend not recorded'}`,
+            meta: `Created ${formatDateTime(entry.createdAt)}`
+          });
+        }
+      });
+
+      financialReportChip.textContent = `${matches.length} items`;
+      financialReportList.innerHTML = matches.slice(0, 12).map((entry) => `
+        <article class="activity-item">
+          <strong>${entry.title}</strong>
+          <p>${entry.summary}</p>
+          <div class="item-meta">
+            <span class="pill admin">${entry.type}</span>
+            <span>${entry.meta}</span>
+          </div>
+        </article>
+      `).join('') || '<article class="activity-item"><strong>No financial reports found</strong><p>Try a broader search or verify that report-related activity has been recorded.</p></article>';
+    };
+
     const renderOverview = (overview) => {
       currentOverview = overview;
       snapshotTimestamp.textContent = formatDateTime(overview.generatedAt);
@@ -870,6 +943,7 @@
       renderSessions(overview.activeSessions || []);
       renderCustomers(overview.customers || []);
       renderSupportTickets(overview.supportTickets || []);
+      renderFinancialReports(overview);
       passwordRotationStatus.textContent = overview.supportPasswordUpdatedAt
         ? `Last rotated ${formatDateTime(overview.supportPasswordUpdatedAt)}.`
         : 'Using the server default support password.';
@@ -912,7 +986,7 @@
       }
     });
 
-    [auditSearchInput, sessionSearchInput, sessionRoleFilter, customerSearchInput, customerPlanFilter, ticketSearchInput, ticketStatusFilter].forEach((element) => {
+    [auditSearchInput, sessionSearchInput, sessionRoleFilter, customerSearchInput, customerPlanFilter, ticketSearchInput, ticketStatusFilter, financialReportSearchInput].forEach((element) => {
       element.addEventListener('input', () => {
         if (currentOverview) {
           renderOverview(currentOverview);

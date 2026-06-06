@@ -201,6 +201,12 @@
       color: #111827;
     }
 
+    .project-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+      cursor: pointer;
+    }
+
     .project-card span,
     .invoice-card span,
     .message-card span {
@@ -491,6 +497,126 @@
       font-size: 0.95rem;
     }
 
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: rgba(15, 23, 42, 0.55);
+      padding: 1rem;
+      z-index: 1200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-window {
+      width: min(560px, 100%);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: 0 35px 80px rgba(15, 23, 42, 0.28);
+      padding: 1.5rem;
+      max-height: min(90vh, 760px);
+      overflow: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 1.35rem;
+    }
+
+    .modal-close {
+      width: 2.5rem;
+      height: 2.5rem;
+      border: none;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.08);
+      color: #111827;
+      font-size: 1.25rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .modal-form {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .modal-form label {
+      display: grid;
+      gap: 0.35rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .modal-form input,
+    .modal-form select,
+    .modal-form textarea {
+      width: 100%;
+      padding: 0.95rem 1rem;
+      border-radius: 16px;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: #111827;
+      font: inherit;
+    }
+
+    .modal-form textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: flex-end;
+      margin-top: 0.5rem;
+    }
+
+    .modal-note {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+
+    body.dark-mode .modal-window {
+      background: #111827;
+      border-color: #374151;
+      color: #e5e7eb;
+    }
+
+    body.dark-mode .modal-close {
+      background: rgba(255, 255, 255, 0.08);
+      color: #e5e7eb;
+    }
+
+    body.dark-mode .modal-form input,
+    body.dark-mode .modal-form select,
+    body.dark-mode .modal-form textarea {
+      background: #0f172a;
+      color: #e5e7eb;
+      border-color: #334155;
+    }
+
+    body.dark-mode .modal-note {
+      color: #c2cffd;
+    }
+
     @media (max-width: 1100px) {
       .layout,
       .status-card,
@@ -541,7 +667,7 @@
           <p style="margin: 0; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.75rem;">Dashboard Overview</p>
           <h1 style="margin: 0.35rem 0 0; font-size: clamp(2rem, 2.8vw, 2.7rem);">Welcome back, <span id="welcomeName">Taylor</span></h1>
         </div>
-        <button style="padding: 0.95rem 1.25rem; border: none; border-radius: 18px; background: #7c3aed; color: white; font-weight: 700; cursor: pointer;">New project</button>
+        <button id="newProjectBtn" type="button" style="padding: 0.95rem 1.25rem; border: none; border-radius: 18px; background: #7c3aed; color: white; font-weight: 700; cursor: pointer;">New project</button>
       </div>
     </section>
 
@@ -730,6 +856,79 @@
       </main>
     </div>
   </div>
+
+  <div class="modal-overlay" id="projectModal" hidden>
+    <div class="modal-window" role="dialog" aria-modal="true" aria-labelledby="projectModalTitle">
+      <div class="modal-header">
+        <h2 id="projectModalTitle">Create a new project</h2>
+        <button type="button" class="modal-close" data-close>&times;</button>
+      </div>
+      <form id="projectCreationForm" class="modal-form">
+        <label>
+          Project name
+          <input id="projectTitleInput" type="text" placeholder="Project name" required />
+        </label>
+        <label>
+          Project owner
+          <input id="projectOwnerInput" type="text" placeholder="Owner or team" />
+        </label>
+        <label>
+          Due date
+          <input id="projectDueInput" type="date" />
+        </label>
+        <label>
+          Status
+          <select id="projectStatusSelect">
+            <option value="Planning">Planning</option>
+            <option value="Design">Design</option>
+            <option value="In review">In review</option>
+            <option value="Active">Active</option>
+            <option value="Completed">Completed</option>
+          </select>
+        </label>
+        <span id="projectFormStatus" class="modal-note"></span>
+        <div class="modal-actions">
+          <button type="button" class="inline-button" data-cancel>Cancel</button>
+          <button type="submit" class="inline-button primary">Create project</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="projectDetailModal" hidden>
+    <div class="modal-window" role="dialog" aria-modal="true" aria-labelledby="projectDetailTitle">
+      <div class="modal-header">
+        <h2 id="projectDetailTitle">Manage project</h2>
+        <button type="button" class="modal-close" data-detail-close>&times;</button>
+      </div>
+      <div class="modal-form" id="projectDetailContent">
+        <div class="detail-row" style="display:grid; gap:0.75rem; margin-bottom:1rem;">
+          <div><strong>Owner</strong><span id="projectDetailOwner"></span></div>
+          <div><strong>Due</strong><span id="projectDetailDue"></span></div>
+          <div><strong>Status</strong><span id="projectDetailStatus"></span></div>
+        </div>
+        <label>
+          Add a project note
+          <textarea id="projectNoteInput" placeholder="Write a note for this project"></textarea>
+        </label>
+        <button type="button" id="addProjectNoteBtn" class="inline-button primary">Add note</button>
+        <label>
+          Assign a team member
+          <input id="projectTeamInput" type="text" placeholder="Name or email" />
+        </label>
+        <button type="button" id="addProjectTeamBtn" class="inline-button primary">Assign member</button>
+        <div class="detail-section" style="margin-top:1rem;">
+          <h3 style="margin:0 0 0.75rem; font-size:1rem;">Team members</h3>
+          <div id="projectTeamList"></div>
+        </div>
+        <div class="detail-section" style="margin-top:1rem;">
+          <h3 style="margin:0 0 0.75rem; font-size:1rem;">Notes</h3>
+          <div id="projectNotesList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
       window.CWS_API_BASE = 'http://localhost:3000';
@@ -864,11 +1063,21 @@
     const navLinks = document.querySelectorAll('.nav-link[data-section]');
     const contentSections = document.querySelectorAll('.content-section');
 
-    const customerProjects = customerData?.projects || [
-      { title: 'Website refresh', owner: 'Team Alpha', due: 'Apr 6', status: 'In review' },
-      { title: 'E-commerce launch', owner: 'Client Omega', due: 'May 12', status: 'Design phase' },
-      { title: 'SEO upgrade', owner: 'Marketing Team', due: 'Apr 22', status: 'Ready to publish' }
-    ];
+    const normalizeProjects = (projects) => projects.map((project, index) => ({
+      id: project.id || index + 1,
+      title: project.title || 'Untitled project',
+      owner: project.owner || 'Team member',
+      due: project.due || 'TBD',
+      status: project.status || 'Planning',
+      notes: Array.isArray(project.notes) ? project.notes : [],
+      teamMembers: Array.isArray(project.teamMembers) ? project.teamMembers : []
+    }));
+
+    const customerProjects = normalizeProjects(customerData?.projects || [
+      { id: 1, title: 'Website refresh', owner: 'Team Alpha', due: 'Apr 6', status: 'In review', notes: ['Final design review scheduled.', 'Brand guidelines approved.'], teamMembers: ['Mason', 'Avery'] },
+      { id: 2, title: 'E-commerce launch', owner: 'Client Omega', due: 'May 12', status: 'Design phase', notes: ['Checkout flow prototype ready.'], teamMembers: ['Jesse', 'Noah'] },
+      { id: 3, title: 'SEO upgrade', owner: 'Marketing Team', due: 'Apr 22', status: 'Ready to publish', notes: ['Keyword audit completed.', 'Content calendar shared.'], teamMembers: ['Riley'] }
+    ]);
 
     const customerInvoices = [
       { number: '#118', amount: '$860', due: 'Apr 2', status: 'Paid' },
@@ -887,13 +1096,25 @@
       customerProjects.forEach(project => {
         const card = document.createElement('div');
         card.className = 'project-card';
+        card.tabIndex = 0;
         card.innerHTML = `
           <strong>${project.title}</strong>
           <span>${project.owner} | Due ${project.due}</span>
           <span>Status: ${project.status}</span>
+          <span>${project.teamMembers.length} team member${project.teamMembers.length === 1 ? '' : 's'} · ${project.notes.length} note${project.notes.length === 1 ? '' : 's'}</span>
         `;
+        card.addEventListener('click', () => openProjectDetail(project));
+        card.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            openProjectDetail(project);
+          }
+        });
         list.appendChild(card);
       });
+      if (!customerProjects.length) {
+        list.innerHTML = '<div class="project-card"><strong>No projects yet</strong><span>Use the New project button to add your first project.</span></div>';
+      }
     };
 
     const renderInvoices = () => {
@@ -941,6 +1162,145 @@
         event.preventDefault();
         showSection(link.dataset.section);
       });
+      link.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          showSection(link.dataset.section);
+        }
+      });
+    });
+
+    const projectModal = document.getElementById('projectModal');
+    const projectCreationForm = document.getElementById('projectCreationForm');
+    const projectTitleInput = document.getElementById('projectTitleInput');
+    const projectOwnerInput = document.getElementById('projectOwnerInput');
+    const projectDueInput = document.getElementById('projectDueInput');
+    const projectStatusSelect = document.getElementById('projectStatusSelect');
+    const projectFormStatus = document.getElementById('projectFormStatus');
+    const projectCancelBtn = projectModal?.querySelector('[data-cancel]');
+    const projectCloseBtn = projectModal?.querySelector('[data-close]');
+
+    const openProjectModal = () => {
+      if (!projectModal) return;
+      showSection('projects');
+      projectModal.hidden = false;
+      projectModal.classList.add('active');
+      projectFormStatus.textContent = '';
+      setTimeout(() => projectTitleInput?.focus(), 50);
+    };
+
+    const closeProjectModal = () => {
+      if (!projectModal) return;
+      projectModal.classList.remove('active');
+      projectModal.hidden = true;
+      projectCreationForm?.reset();
+      projectFormStatus.textContent = '';
+    };
+
+    document.getElementById('newProjectBtn')?.addEventListener('click', openProjectModal);
+    projectCancelBtn?.addEventListener('click', closeProjectModal);
+    projectCloseBtn?.addEventListener('click', closeProjectModal);
+    projectModal?.addEventListener('click', (event) => {
+      if (event.target === projectModal) {
+        closeProjectModal();
+      }
+    });
+
+    projectCreationForm?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const title = projectTitleInput.value.trim();
+      if (!title) {
+        projectFormStatus.textContent = 'Please enter a project name.';
+        projectFormStatus.style.color = '#dc2626';
+        return;
+      }
+      const newProject = {
+        id: Date.now(),
+        title,
+        owner: projectOwnerInput.value.trim() || 'Team member',
+        due: projectDueInput.value ? new Date(projectDueInput.value).toLocaleDateString([], { month: 'short', day: 'numeric' }) : 'TBD',
+        status: projectStatusSelect.value || 'Planning',
+        notes: [],
+        teamMembers: []
+      };
+      customerProjects.unshift(newProject);
+      renderProjects();
+      closeProjectModal();
+      showSection('projects');
+    });
+
+    const projectDetailModal = document.getElementById('projectDetailModal');
+    const projectDetailTitle = document.getElementById('projectDetailTitle');
+    const projectDetailOwner = document.getElementById('projectDetailOwner');
+    const projectDetailDue = document.getElementById('projectDetailDue');
+    const projectDetailStatus = document.getElementById('projectDetailStatus');
+    const projectNotesList = document.getElementById('projectNotesList');
+    const projectTeamList = document.getElementById('projectTeamList');
+    const projectNoteInput = document.getElementById('projectNoteInput');
+    const projectTeamInput = document.getElementById('projectTeamInput');
+    const addProjectNoteBtn = document.getElementById('addProjectNoteBtn');
+    const addProjectTeamBtn = document.getElementById('addProjectTeamBtn');
+    const projectDetailCloseBtn = projectDetailModal?.querySelector('[data-detail-close]');
+    let activeProject = null;
+
+    const updateProjectDetail = () => {
+      if (!activeProject) return;
+      projectDetailTitle.textContent = `Manage ${activeProject.title}`;
+      projectDetailOwner.textContent = activeProject.owner;
+      projectDetailDue.textContent = activeProject.due;
+      projectDetailStatus.textContent = activeProject.status;
+      projectNotesList.innerHTML = activeProject.notes.length
+        ? activeProject.notes.map(note => `<div class="message-card"><span>${note}</span></div>`).join('')
+        : '<div class="message-card"><span>No notes yet.</span></div>';
+      projectTeamList.innerHTML = activeProject.teamMembers.length
+        ? activeProject.teamMembers.map(member => `<div class="message-card"><span>${member}</span></div>`).join('')
+        : '<div class="message-card"><span>No team members assigned.</span></div>';
+    };
+
+    const openProjectDetail = (project) => {
+      if (!projectDetailModal) return;
+      activeProject = project;
+      updateProjectDetail();
+      projectDetailModal.hidden = false;
+      projectDetailModal.classList.add('active');
+      projectNoteInput.value = '';
+      projectTeamInput.value = '';
+    };
+
+    const closeProjectDetail = () => {
+      if (!projectDetailModal) return;
+      activeProject = null;
+      projectDetailModal.classList.remove('active');
+      projectDetailModal.hidden = true;
+      projectNoteInput.value = '';
+      projectTeamInput.value = '';
+    };
+
+    projectDetailCloseBtn?.addEventListener('click', closeProjectDetail);
+    projectDetailModal?.addEventListener('click', (event) => {
+      if (event.target === projectDetailModal) {
+        closeProjectDetail();
+      }
+    });
+
+    addProjectNoteBtn?.addEventListener('click', () => {
+      if (!activeProject) return;
+      const noteText = projectNoteInput.value.trim();
+      if (!noteText) return;
+      activeProject.notes.unshift(noteText);
+      projectNoteInput.value = '';
+      updateProjectDetail();
+      renderProjects();
+    });
+
+    addProjectTeamBtn?.addEventListener('click', () => {
+      if (!activeProject) return;
+      const memberText = projectTeamInput.value.trim();
+      if (!memberText) return;
+      activeProject.teamMembers.push(memberText);
+      projectTeamInput.value = '';
+      updateProjectDetail();
+      renderProjects();
     });
 
     const themeToggle = document.getElementById('themeToggle');
