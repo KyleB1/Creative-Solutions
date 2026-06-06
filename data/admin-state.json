@@ -1,11 +1,11 @@
 {
   "supportSettings": {
-    "passwordSalt": null,
-    "passwordHash": null,
+    "passwordSalt": "aa88d6c5d2fa8e55fb0a7df0b293a469",
+    "passwordHash": "28d820e0663f0ab06002258dd84fd3852f57605704b90e93fbdad57bc15753c63ae546db912c00d0b4229d93c2d08346922cbfceeec7817d849f3a27143c5275",
     "passwordResetTokenHash": null,
     "passwordResetExpiresAt": null,
-    "updatedAt": "2026-05-26T00:00:00.000Z",
-    "updatedBy": "system"
+    "updatedAt": "2026-06-06T21:17:58.630Z",
+    "updatedBy": "support-password-reset"
   },
   "supportTickets": [
     {
@@ -185,6 +185,54 @@
     }
   ],
   "auditLog": [
+    {
+      "id": "5c8bc811-3e6a-44b1-b5e3-073643f1fc79",
+      "action": "support.login",
+      "title": "Kyle Creativesolutions signed in",
+      "description": "System Administrator session started for kyle.creativesolutions@gmail.com.",
+      "actorEmail": "kyle.creativesolutions@gmail.com",
+      "actorName": "Kyle Creativesolutions",
+      "actorRole": "System Administrator",
+      "targetType": "support-user",
+      "targetId": "kyle.creativesolutions@gmail.com",
+      "createdAt": "2026-06-06T21:26:21.574Z"
+    },
+    {
+      "id": "76dd72c6-5e05-4117-a4a3-0c8f72c0bfeb",
+      "action": "support.login",
+      "title": "Kyle Creativesolutions signed in",
+      "description": "System Administrator session started for kyle.creativesolutions@gmail.com.",
+      "actorEmail": "kyle.creativesolutions@gmail.com",
+      "actorName": "Kyle Creativesolutions",
+      "actorRole": "System Administrator",
+      "targetType": "support-user",
+      "targetId": "kyle.creativesolutions@gmail.com",
+      "createdAt": "2026-06-06T21:19:22.176Z"
+    },
+    {
+      "id": "dc3d1c43-dcb0-409a-a32a-63aae901aa84",
+      "action": "support.password_reset.completed",
+      "title": "Support password reset completed",
+      "description": "The shared support password was updated via password reset.",
+      "actorEmail": null,
+      "actorName": null,
+      "actorRole": "support",
+      "targetType": "support-password",
+      "targetId": "support-password",
+      "createdAt": "2026-06-06T21:17:58.634Z"
+    },
+    {
+      "id": "699e3522-25d7-413f-a70b-c9e3c47b288f",
+      "action": "support.password_reset.requested",
+      "title": "Support password reset requested by kyle.creativesolutions@gmail.com",
+      "description": "A support password reset token was requested for kyle.creativesolutions@gmail.com.",
+      "actorEmail": "kyle.creativesolutions@gmail.com",
+      "actorName": "kyle creativesolutions",
+      "actorRole": "support",
+      "targetType": "support-password",
+      "targetId": "kyle.creativesolutions@gmail.com",
+      "createdAt": "2026-06-06T21:17:22.620Z"
+    },
     {
       "id": "7ff69754-64fd-4035-82a3-e02d6d796a01",
       "action": "customer.signup",
