@@ -57,6 +57,19 @@ body {
   line-height: 1.62;
 }
 
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.12;
+  background-image: url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=80');
+  background-size: cover;
+  background-position: center;
+  filter: blur(1.8px) saturate(1.05);
+  pointer-events: none;
+}
+
 h1,
 h2,
 h3,
@@ -142,6 +155,79 @@ button:focus-visible {
 .hero-section .eyebrow {
   letter-spacing: 0.24em;
   color: var(--primary);
+}
+
+.hero-side {
+  display: grid;
+  gap: 1rem;
+}
+
+.hero-visual {
+  border-radius: 26px;
+  overflow: hidden;
+  min-height: 100%;
+  box-shadow: var(--shadow-lift);
+  background: #101c33;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+.hero-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.image-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 220px;
+  background-size: cover;
+  background-position: center;
+  color: #ffffff;
+}
+
+.image-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.12), rgba(15, 23, 42, 0.72));
+}
+
+.image-card .mini-card-content {
+  position: relative;
+  z-index: 1;
+}
+
+.image-card h3,
+.image-card p {
+  color: #fff;
+}
+
+.section-card {
+  border-radius: 22px;
+  border: 1px solid var(--surface-contrast);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  padding: 1.2rem;
+}
+
+.section-card.image-bg {
+  background-image: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.82)), url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1300&q=80');
+  background-size: cover;
+  background-position: center;
+  color: var(--text);
+}
+
+.section-card.image-bg .section-head h2,
+.section-card.image-bg .section-head p {
+  color: var(--text);
+}
+
+@media (max-width: 960px) {
+  .hero-side {
+    grid-template-columns: 1fr;
+  }
 }
 
 footer.footer,

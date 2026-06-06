@@ -188,6 +188,38 @@
       transition: transform 0.18s ease, box-shadow 0.18s ease;
     }
 
+    .image-card {
+      min-height: 220px;
+      padding: 1.2rem;
+      color: #fff;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      overflow: hidden;
+      border-color: transparent;
+    }
+
+    .image-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.16), rgba(15, 23, 42, 0.78));
+    }
+
+    .image-card .mini-card-content {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 0.4rem;
+      align-content: end;
+      min-height: 100%;
+    }
+
+    .image-card h3,
+    .image-card p {
+      color: #fff;
+    }
+
     .mini-card:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-lift);
@@ -290,20 +322,25 @@
             <a class="cta soft" href="layout-lab.html">Try Layout Lab</a>
           </div>
         </div>
-        <aside class="hero-stats" aria-label="Business impact highlights">
-          <div>
-            <strong>42%</strong>
-            <span>Avg. lead conversion lift after redesigns</span>
+        <div class="hero-side">
+          <div class="hero-visual">
+            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1000&q=80" alt="Professional design team collaborating" />
           </div>
-          <div>
-            <strong>2.1s</strong>
-            <span>Typical homepage load target</span>
-          </div>
-          <div>
-            <strong>24-48h</strong>
-            <span>Response window for project inquiries</span>
-          </div>
-        </aside>
+          <aside class="hero-stats" aria-label="Business impact highlights">
+            <div>
+              <strong>42%</strong>
+              <span>Avg. lead conversion lift after redesigns</span>
+            </div>
+            <div>
+              <strong>2.1s</strong>
+              <span>Typical homepage load target</span>
+            </div>
+            <div>
+              <strong>24-48h</strong>
+              <span>Response window for project inquiries</span>
+            </div>
+          </aside>
+        </div>
       </div>
     </section>
 
@@ -313,17 +350,23 @@
         <p>From first launch to scale stage, every deliverable is designed for long-term performance.</p>
       </div>
       <div class="service-grid">
-        <article class="mini-card">
-          <h3><a href="custom-web-design.html">Custom Website Builds</a></h3>
-          <p>Brand-driven pages with strong information flow and measurable conversion paths.</p>
+        <article class="mini-card image-card" style="background-image:url('https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=900&q=80');">
+          <div class="mini-card-content">
+            <h3><a href="custom-web-design.html">Custom Website Builds</a></h3>
+            <p>Brand-driven pages with strong information flow and measurable conversion paths.</p>
+          </div>
         </article>
-        <article class="mini-card">
-          <h3><a href="ecommerce-development.html">E-commerce Experiences</a></h3>
-          <p>Conversion-focused storefronts with secure checkout and growth-ready infrastructure.</p>
+        <article class="mini-card image-card" style="background-image:url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=900&q=80');">
+          <div class="mini-card-content">
+            <h3><a href="ecommerce-development.html">E-commerce Experiences</a></h3>
+            <p>Conversion-focused storefronts with secure checkout and growth-ready infrastructure.</p>
+          </div>
         </article>
-        <article class="mini-card">
-          <h3><a href="seo-optimization.html">SEO + Performance</a></h3>
-          <p>Technical optimization, search visibility, and stronger page speed baselines.</p>
+        <article class="mini-card image-card" style="background-image:url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=80');">
+          <div class="mini-card-content">
+            <h3><a href="seo-optimization.html">SEO + Performance</a></h3>
+            <p>Technical optimization, search visibility, and stronger page speed baselines.</p>
+          </div>
         </article>
       </div>
     </section>
@@ -334,17 +377,23 @@
         <p>Practical outcomes we routinely build for modern teams.</p>
       </div>
       <div class="portfolio-grid">
-        <article class="mini-card">
-          <h3><a href="custom-web-design.html">Launch Sites</a></h3>
-          <p>Clean, focused marketing pages with CRM-ready lead capture.</p>
+        <article class="mini-card image-card" style="background-image:url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=900&q=80');">
+          <div class="mini-card-content">
+            <h3><a href="custom-web-design.html">Launch Sites</a></h3>
+            <p>Clean, focused marketing pages with CRM-ready lead capture.</p>
+          </div>
         </article>
-        <article class="mini-card">
-          <h3><a href="customer-portal.html">Client Portals</a></h3>
-          <p>Secure account areas with billing, tickets, and status visibility.</p>
+        <article class="mini-card image-card" style="background-image:url('https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=900&q=80');">
+          <div class="mini-card-content">
+            <h3><a href="customer-portal.html">Client Portals</a></h3>
+            <p>Secure account areas with billing, tickets, and status visibility.</p>
+          </div>
         </article>
-        <article class="mini-card">
-          <h3><a href="support-portal.html">Support Systems</a></h3>
-          <p>Operational dashboards that reduce handling time and improve response quality.</p>
+        <article class="mini-card image-card" style="background-image:url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=80');">
+          <div class="mini-card-content">
+            <h3><a href="support-portal.html">Support Systems</a></h3>
+            <p>Operational dashboards that reduce handling time and improve response quality.</p>
+          </div>
         </article>
       </div>
     </section>
