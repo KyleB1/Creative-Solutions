@@ -90,7 +90,8 @@ app.use(helmet({
       // NOTE: Inline page scripts remain for now; externalizing them would allow
       // removing 'unsafe-inline' from scriptSrc and hardening CSP further.
       scriptSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net'],
-      styleSrc: ["'self'", 'https:', "'unsafe-inline'"]
+      styleSrc: ["'self'", 'https:', "'unsafe-inline'"],
+      imgSrc: ["'self'", 'data:', 'https://images.unsplash.com']
     }
   }
 }));

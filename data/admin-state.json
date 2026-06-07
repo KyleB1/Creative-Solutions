@@ -186,6 +186,54 @@
   ],
   "auditLog": [
     {
+      "id": "0f6153a9-2803-4ae4-9a24-0258b2f87206",
+      "action": "support.login",
+      "title": "Kyle Creativesolutions signed in",
+      "description": "System Administrator session started for kyle.creativesolutions@gmail.com.",
+      "actorEmail": "kyle.creativesolutions@gmail.com",
+      "actorName": "Kyle Creativesolutions",
+      "actorRole": "System Administrator",
+      "targetType": "support-user",
+      "targetId": "kyle.creativesolutions@gmail.com",
+      "createdAt": "2026-06-07T07:31:17.728Z"
+    },
+    {
+      "id": "4dea5635-5960-4750-b3b0-6ff5fe9e3168",
+      "action": "session.logout",
+      "title": "Kyle Creativesolutions logged out",
+      "description": "kyle.creativesolutions@gmail.com ended their session.",
+      "actorEmail": "kyle.creativesolutions@gmail.com",
+      "actorName": "Kyle Creativesolutions",
+      "actorRole": "System Administrator",
+      "targetType": "session",
+      "targetId": "4b2f8159ead8c7d1b9c7c31a5b41315a6fa24378cd4d87b40c4e1ac2dab06002",
+      "createdAt": "2026-06-07T05:55:45.602Z"
+    },
+    {
+      "id": "03f662e4-5149-4508-ab27-3ca8f3c948b9",
+      "action": "support.login",
+      "title": "Kyle Creativesolutions signed in",
+      "description": "System Administrator session started for kyle.creativesolutions@gmail.com.",
+      "actorEmail": "kyle.creativesolutions@gmail.com",
+      "actorName": "Kyle Creativesolutions",
+      "actorRole": "System Administrator",
+      "targetType": "support-user",
+      "targetId": "kyle.creativesolutions@gmail.com",
+      "createdAt": "2026-06-07T05:55:26.668Z"
+    },
+    {
+      "id": "0fdb1a05-2331-45ef-a9f7-44e08b1690a4",
+      "action": "customer.signup",
+      "title": "Test User created an account",
+      "description": "unique-1780809771848@example.com signed up for the Growth plan plan.",
+      "actorEmail": "unique-1780809771848@example.com",
+      "actorName": "Test User",
+      "actorRole": "customer",
+      "targetType": "customer",
+      "targetId": "unique-1780809771848@example.com",
+      "createdAt": "2026-06-07T05:22:51.922Z"
+    },
+    {
       "id": "a8dcd8bb-f449-4b00-9fcf-7c489d10ee28",
       "action": "support.login",
       "title": "Admin signed in",

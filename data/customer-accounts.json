@@ -435,6 +435,27 @@
       "passwordResetTokenHash": null,
       "passwordResetExpiresAt": null,
       "createdAt": "2026-06-06T20:29:16.768Z"
+    },
+    "unique-1780809771848@example.com": {
+      "role": "customer",
+      "plan": "Growth plan",
+      "renewal": "May 18",
+      "activeProjects": 8,
+      "newLeads": 24,
+      "supportTickets": 3,
+      "monthlySpend": "$2.4K",
+      "notifications": false,
+      "customerId": "808eb101-ef77-4723-a898-c88cdfc4d6f1",
+      "name": "Test User",
+      "email": "unique-1780809771848@example.com",
+      "passwordSalt": "052572de887b96aefc5fbb98de26fe8d",
+      "passwordHash": "9c46d24f15b93d3837db82b9581ff9e2b76cc2706e251cd5344b10139248cd4c4ecc86604f000f2421965f4a6497c02e2f0c17e33275858ec4f29528eafec0bb",
+      "emailVerified": true,
+      "emailVerificationTokenHash": null,
+      "emailVerificationExpiresAt": null,
+      "passwordResetTokenHash": null,
+      "passwordResetExpiresAt": null,
+      "createdAt": "2026-06-07T05:22:51.922Z"
     }
   }
 }
