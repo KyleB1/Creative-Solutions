@@ -186,6 +186,30 @@
   ],
   "auditLog": [
     {
+      "id": "67892b1e-abe2-477d-99ae-ae964f633944",
+      "action": "session.logout",
+      "title": "Kyle Creativesolutions logged out",
+      "description": "kyle.creativesolutions@gmail.com ended their session.",
+      "actorEmail": "kyle.creativesolutions@gmail.com",
+      "actorName": "Kyle Creativesolutions",
+      "actorRole": "System Administrator",
+      "targetType": "session",
+      "targetId": "3cb08177424999fa3aa3d0cc07a6ed295d5aaa743a48b9afda48e24eac5ed207",
+      "createdAt": "2026-06-06T23:51:13.251Z"
+    },
+    {
+      "id": "161547e1-4c76-46b3-98f2-9ea3bdd126b8",
+      "action": "support.login",
+      "title": "Kyle Creativesolutions signed in",
+      "description": "System Administrator session started for kyle.creativesolutions@gmail.com.",
+      "actorEmail": "kyle.creativesolutions@gmail.com",
+      "actorName": "Kyle Creativesolutions",
+      "actorRole": "System Administrator",
+      "targetType": "support-user",
+      "targetId": "kyle.creativesolutions@gmail.com",
+      "createdAt": "2026-06-06T23:48:45.791Z"
+    },
+    {
       "id": "32d303cb-1b4e-4685-910d-30f0345ff247",
       "action": "session.logout",
       "title": "Admin logged out",

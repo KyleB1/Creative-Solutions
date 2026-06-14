@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Authorized legal information for Creative Web Solutions support and administrators." />
+  <title>Legal Resources | Creative Web Solutions</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .legal-shell { max-width: 1040px; margin: 5rem auto 3rem; padding: 0 1.25rem; }
+    .legal-hero { background: rgba(255,255,255,0.96); border: 1px solid #e5e7eb; border-radius: 26px; padding: 2.25rem; box-shadow: 0 20px 50px rgba(15,23,42,0.08); }
+    .legal-hero h1 { margin: 0 0 1rem; font-size: clamp(2.1rem, 3vw, 2.8rem); }
+    .legal-hero p { margin: 0; color: #4b5563; line-height: 1.8; }
+    .legal-note { margin-top: 1.5rem; padding: 1.15rem 1.25rem; border-radius: 18px; background: #eef2ff; border: 1px solid #dbeafe; color: #1e40af; }
+    .legal-content { margin-top: 2rem; display: grid; gap: 2rem; }
+    .legal-section { background: rgba(255,255,255,0.95); border: 1px solid #e5e7eb; border-radius: 24px; padding: 1.75rem; }
+    .legal-section h2 { margin-top: 0; }
+    .legal-section p { color: #4b5563; line-height: 1.8; }
+    .legal-list { margin: 1rem 0 0; padding-left: 1.25rem; color: #374151; }
+    .legal-list li { margin: 0.65rem 0; }
+    .legal-footer { margin-top: 2rem; text-align: center; color: #6b7280; }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <main class="legal-shell">
+    <section class="legal-hero">
+      <span class="svc-eyebrow">Authorized Access Only</span>
+      <h1>Legal Resources</h1>
+      <p>This page contains sensitive legal guidance and compliance references intended for support and administrative staff only.</p>
+      <div class="legal-note">
+        <strong>Important:</strong> Access to this page is restricted. If you are not authorized, you will be redirected to the support login page.
+      </div>
+    </section>
+
+    <section id="legalContent" class="legal-content hidden">
+      <section class="legal-section">
+        <h2>Confidential Legal Notices</h2>
+        <p>Use this section to store internal policies, contract review notes, and compliance expectations for approved personnel.</p>
+        <ul class="legal-list">
+          <li>Internal privacy and data handling standards.</li>
+          <li>Non-disclosure and confidentiality expectations for customer conversations.</li>
+          <li>Authorized procedures for incident reporting and escalation.</li>
+        </ul>
+      </section>
+
+      <section class="legal-section">
+        <h2>Authorized Personnel</h2>
+        <p>The following staff categories are allowed to view this content:</p>
+        <ul class="legal-list">
+          <li>System Administrators</li>
+          <li>Support Agents</li>
+          <li>Approved legal operations personnel</li>
+        </ul>
+      </section>
+
+      <section class="legal-section">
+        <h2>Current Session</h2>
+        <p id="legalSessionText">Verifying authorization...</p>
+      </section>
+
+      <section class="legal-section hidden" id="adminOnlySection">
+        <h2>Admin-Only Legal Notes</h2>
+        <p>This section is visible only to system administrators and contains internal compliance actions, audit notes, and change-control reminders.</p>
+      </section>
+    </section>
+
+    <div id="legalLoading" class="legal-note">Loading secure legal content...</div>
+    <div class="legal-footer">Creative Web Solutions — internal legal resource access is logged and monitored.</div>
+  </main>
+
+  <footer></footer>
+  <script>
+    if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      window.CWS_API_BASE = 'http://localhost:3000';
+    }
+  </script>
+  <script src="auth.js"></script>
+  <script defer src="header.js"></script>
+  <script>
+    (async () => {
+      try {
+        await SiteAuth.init();
+        const support = await SiteAuth.requireSupport('support-login.html');
+        if (!support) {
+          return;
+        }
+        document.getElementById('legalLoading').classList.add('hidden');
+        const content = document.getElementById('legalContent');
+        content.classList.remove('hidden');
+        document.getElementById('legalSessionText').textContent = `Signed in as ${support.name || support.email || 'an authorized user'} (${support.supportRole || support.role}).`;
+        if (SiteAuth.isSystemAdministrator(support)) {
+          document.getElementById('adminOnlySection').classList.remove('hidden');
+        }
+      } catch (error) {
+        document.getElementById('legalLoading').textContent = 'You are not authorized to view this page.';
+      }
+    })();
+  </script>
+</body>
+</html>

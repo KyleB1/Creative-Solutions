@@ -682,6 +682,7 @@
       <button type="button" class="tab-button active" data-tab="overview">Overview</button>
       <button type="button" class="tab-button" data-tab="financial">Financial reports</button>
       <button type="button" class="tab-button" data-tab="security">Security</button>
+      <button type="button" class="tab-button" data-tab="legal">Legal</button>
     </div>
     <div id="overviewPanel" class="tab-panel active">
       <div class="admin-grid">
@@ -867,6 +868,29 @@
         </div>
       </section>
     </div>
+
+    <div id="legalPanel" class="tab-panel" hidden>
+      <section class="admin-section">
+        <div class="section-head">
+          <div>
+            <h2>Legal resources</h2>
+            <p>Authorized legal guidance, compliance references, and internal policies for admins and support staff.</p>
+          </div>
+          <span class="section-chip">Legal</span>
+        </div>
+        <p>Only authorized personnel should access this content. Document access is logged as part of our internal security policy.</p>
+        <div class="legal-content">
+          <article class="control-item">
+            <strong>Confidential legal notices</strong>
+            <p>Reference terms, privacy, incident response processes, and customer confidentiality requirements.</p>
+          </article>
+          <article class="control-item">
+            <strong>Audit and compliance</strong>
+            <p>This section is intended for system administrators and support leadership reviewing legal compliance workflows.</p>
+          </article>
+        </div>
+      </section>
+    </div>
   </div>
 
   <div id="financialPanel" class="tab-panel" hidden>
@@ -977,6 +1001,7 @@
     const pageTabButtons = document.querySelectorAll('.tab-button');
     const overviewPanel = document.getElementById('overviewPanel');
     const securityPanel = document.getElementById('securityPanel');
+    const legalPanel = document.getElementById('legalPanel');
     const financialPanel = document.getElementById('financialPanel');
     const financialTabLink = document.getElementById('financialTabLink');
     let activeFinancialChart = 'list';
@@ -1335,9 +1360,11 @@
       });
       overviewPanel.classList.toggle('active', tab === 'overview');
       securityPanel.classList.toggle('active', tab === 'security');
+      legalPanel.classList.toggle('active', tab === 'legal');
       financialPanel.classList.toggle('active', tab === 'financial');
       overviewPanel.hidden = tab !== 'overview';
       securityPanel.hidden = tab !== 'security';
+      legalPanel.hidden = tab !== 'legal';
       financialPanel.hidden = tab !== 'financial';
     };
 
