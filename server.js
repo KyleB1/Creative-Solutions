@@ -19,7 +19,33 @@ const logger = require('./logger');
 // Initialize Express
 const app = express();
 const DEFAULT_PORT = 3000;
-const PORT = Number(process.env.PORT || DEFAULT_PORT);
+const requestedPort = Number(process.env.PORT || DEFAULT_PORT);
+
+function resolvePort(port) {
+  if (!Number.isInteger(port) || port <= 0 || port > 65535) {
+    return DEFAULT_PORT;
+  }
+  return port;
+}
+
+function startServer(port) {
+  const normalizedPort = resolvePort(port);
+  const server = app.listen(normalizedPort, onListening.bind(null, normalizedPort));
+  server.on('error', err => {
+    if (err.code === 'EADDRINUSE') {
+      const nextPort = normalizedPort + 1;
+      if (nextPort > 65535) {
+        throw err;
+      }
+      logger.warn(`Port ${normalizedPort} is already in use. Trying ${nextPort} instead.`);
+      startServer(nextPort);
+    } else {
+      throw err;
+    }
+  });
+  activeServer = server;
+  return server;
+}
 
 app.disable('x-powered-by');
 app.set('trust proxy', 1);
@@ -264,22 +290,6 @@ app.use((err, req, res, next) => {
 // Track the active server instance so SIGTERM shutdown works correctly.
 let activeServer = null;
 
-// Start server on a single configured port and fail loudly if it is already in use.
-function startServer(port) {
-  const normalizedPort = Number(port);
-  const s = app.listen(normalizedPort, onListening.bind(null, normalizedPort));
-  s.on('error', err => {
-    if (err.code === 'EADDRINUSE') {
-      logger.error(`Port ${normalizedPort} is already in use. Please free the port or set PORT to a different value before starting the server.`);
-      process.exit(1);
-    } else {
-      throw err;
-    }
-  });
-  activeServer = s;
-  return s;
-}
-
 async function onListening(port) {
   logger.info('\n╔════════════════════════════════════════════════════════════════╗');
   logger.info('║                   STRIPE PAYMENT SERVER                        ║');
@@ -329,6 +339,6 @@ process.on('SIGTERM', () => {
   }
 });
 
-startServer(PORT);
+startServer(requestedPort);
 
 module.exports = app;

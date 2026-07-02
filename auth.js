@@ -86,6 +86,12 @@
       return DEFAULT_HOSTED_API_BASE;
     }
 
+    // For local HTTP/HTTPS pages, use the same origin as the frontend so the
+    // browser and auth API share the same port automatically.
+    if (protocol === 'http:' || protocol === 'https:') {
+      return window.location.origin;
+    }
+
     // When the site is running on localhost or 127.0.0.1, route auth calls
     // to the local Node backend on the desired port.
     if (isLocalHostName(normalizedHost)) {
@@ -255,7 +261,10 @@
       if (!isLocalHostName(host)) return [];
 
       const fallbackPorts = new Set();
-      const candidatePorts = [3000];
+      const candidatePorts = [getLocalApiPort(), 3000, 3100, 5000, 8000, 8080].filter((port, index, ports) => {
+        const numericPort = Number(port);
+        return Number.isInteger(numericPort) && numericPort > 0 && numericPort <= 65535 && ports.indexOf(port) === index;
+      });
       const url = (() => {
         try {
           return new URL(requestUrl);
@@ -303,7 +312,7 @@
     if (!response) {
       const configuredBase = getApiBase();
       const target = configuredBase || 'same-origin backend';
-      throw new Error(`Unable to reach the login server (${target}). If you are running the site locally, start the Node backend on port 3000. For custom local ports, set window.CWS_API_BASE or window.CWS_API_BASE_PORT.`);
+      throw new Error(`Unable to reach the login server (${target}). If you are running the site locally, start the Node backend and make sure it is reachable on the expected local port. You can also set window.CWS_API_BASE or window.CWS_API_BASE_PORT.`);
     }
 
     let payload = response.status === 204 ? null : await response.json().catch(() => ({}));
