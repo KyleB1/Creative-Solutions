@@ -18,6 +18,23 @@
 
   const DEFAULT_HOSTED_API_BASE = 'https://creative-solutions.onrender.com';
   const DEFAULT_LOCAL_API_BASE = 'http://localhost:3000';
+  const DEFAULT_LOCAL_API_PORT = 3000;
+
+  function getLocalApiPort() {
+    if (typeof window === 'undefined') {
+      return DEFAULT_LOCAL_API_PORT;
+    }
+
+    const explicitPort = window.CWS_API_BASE_PORT;
+    if (explicitPort != null) {
+      const port = Number(String(explicitPort).trim());
+      if (Number.isInteger(port) && port > 0 && port <= 65535) {
+        return port;
+      }
+    }
+
+    return DEFAULT_LOCAL_API_PORT;
+  }
 
   function loadStoredSessionToken() {
     if (typeof localStorage === 'undefined') return null;
@@ -61,17 +78,19 @@
     }
 
     if (protocol === 'file:') {
-      return DEFAULT_LOCAL_API_BASE;
+      const port = getLocalApiPort();
+      return `http://localhost:${port}`;
     }
 
     if (normalizedHost.endsWith('.github.io')) {
       return DEFAULT_HOSTED_API_BASE;
     }
 
-    // When the site is opened from a local static server, route auth calls to
-    // the Node backend on port 3000 by default.
-    if (isLocalHostName(normalizedHost) && port && port !== '3000') {
-      return `http://${normalizedHost}:3000`;
+    // When the site is running on localhost or 127.0.0.1, route auth calls
+    // to the local Node backend on the desired port.
+    if (isLocalHostName(normalizedHost)) {
+      const port = getLocalApiPort();
+      return `http://${normalizedHost}:${port}`;
     }
 
     return '';
@@ -284,7 +303,7 @@
     if (!response) {
       const configuredBase = getApiBase();
       const target = configuredBase || 'same-origin backend';
-      throw new Error(`Unable to reach the login server (${target}). If you are running the site locally, start the Node backend on port 3000 or set window.CWS_API_BASE to your API URL.`);
+      throw new Error(`Unable to reach the login server (${target}). If you are running the site locally, start the Node backend on port 3000. For custom local ports, set window.CWS_API_BASE or window.CWS_API_BASE_PORT.`);
     }
 
     let payload = response.status === 204 ? null : await response.json().catch(() => ({}));

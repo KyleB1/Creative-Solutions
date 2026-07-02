@@ -56,11 +56,6 @@
       <p class="auth-meta">Don't have an account? <a href="signup.html">Create one</a></p>
     </main>
   </div>
-  <script>
-      if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        window.CWS_API_BASE = 'http://localhost:3000';
-      }
-  </script>
   <script src="auth.js"></script>
   <script defer src="header.js"></script>
   <script>
@@ -140,7 +135,7 @@
         customerLoginEnabled = false;
         submitButton.disabled = true;
         submitButton.textContent = 'Server Unreachable';
-        setBannerState('error', `Login server is unreachable at ${authMetaUrl}. If you are testing locally, start the Node backend, or configure window.CWS_API_BASE to your API URL.`);
+        setBannerState('error', `Login server is unreachable at ${authMetaUrl}. If you are testing locally, start the Node backend on port 3000.`);
       } finally {
         retryStatusBtn.disabled = false;
         retryStatusBtn.textContent = 'Retry';
