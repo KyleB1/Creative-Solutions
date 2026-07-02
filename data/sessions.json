@@ -24,15 +24,6 @@
         "supportRole": "System Administrator"
       },
       "expiresAt": 1780823962176
-    },
-    "d86e23da230d162583e55bddf83ffef0badf8a5c9ff7b31cee1e1fb6439e2851": {
-      "user": {
-        "role": "admin",
-        "email": "admin@creativewebsolutions.com",
-        "name": "Admin",
-        "supportRole": "System Administrator"
-      },
-      "expiresAt": 1780831597707
     }
   }
 }

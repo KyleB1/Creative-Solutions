@@ -188,6 +188,7 @@ app.get('/health', (req, res) => {
 
 // API routes
 const authRoutes = require('./auth-routes');
+const { getActiveSession } = require('./auth-routes');
 const billingRoutes = require('./billing-routes');
 const contactRoutes = require('./contact-routes');
 
@@ -200,6 +201,14 @@ app.use('/api/auth/support-login', authLimiter);
 app.use('/api/auth', authRoutes);
 app.use('/api/billing', paymentLimiter, billingRoutes);
 app.use('/api/contact', contactLimiter, contactRoutes);
+
+app.get(['/legal', '/legal.html'], (req, res) => {
+  const session = getActiveSession(req);
+  if (!session || !session.user || !(session.user.role === 'admin' || session.user.role === 'support')) {
+    return res.status(403).send('Forbidden');
+  }
+  return res.sendFile(path.join(__dirname, 'legal.html'));
+});
 
 // Static files (if serving frontend from same server)
 app.use((req, res, next) => {
