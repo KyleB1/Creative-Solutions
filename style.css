@@ -45,16 +45,24 @@ body {
   min-height: 100%;
   font-family: 'Manrope', 'Segoe UI', sans-serif;
   color: var(--text);
-  background: #f2f5fb;
+  background: #091222;
 }
 
 body {
   background:
-    radial-gradient(circle at 8% -10%, rgba(15, 111, 255, 0.16), transparent 32%),
-    radial-gradient(circle at 95% 12%, rgba(255, 122, 24, 0.12), transparent 34%),
-    linear-gradient(180deg, #f8fbff 0%, #edf4ff 48%, #e7f0ff 100%);
+    radial-gradient(circle at 8% -10%, rgba(99, 164, 255, 0.12), transparent 32%),
+    radial-gradient(circle at 95% 12%, rgba(255, 155, 74, 0.08), transparent 34%),
+    linear-gradient(180deg, #091222 0%, #0a1628 48%, #0d1b33 100%);
   color: var(--text);
   line-height: 1.62;
+}
+
+body.dark-mode {
+  background:
+    radial-gradient(circle at 8% -10%, rgba(99, 164, 255, 0.12), transparent 32%),
+    radial-gradient(circle at 95% 12%, rgba(255, 155, 74, 0.08), transparent 34%),
+    linear-gradient(180deg, #091222 0%, #0a1628 48%, #0d1b33 100%);
+  color: var(--text);
 }
 
 body::before {
@@ -143,13 +151,13 @@ button:focus-visible {
 }
 
 .section-bg {
-  background: linear-gradient(180deg, #f8fbff 0%, #edf4ff 100%);
+  background: linear-gradient(180deg, var(--bg) 0%, var(--surface-alt) 100%);
 }
 
 .hero-section {
   background:
-    radial-gradient(circle at 14% -8%, rgba(15, 111, 255, 0.18), transparent 42%),
-    linear-gradient(180deg, #f8fbff 0%, #edf4ff 44%, #e7f1ff 100%);
+    radial-gradient(circle at 14% -8%, rgba(99, 164, 255, 0.14), transparent 42%),
+    linear-gradient(180deg, var(--bg) 0%, var(--surface-alt) 44%, var(--surface) 100%);
 }
 
 .hero-section .eyebrow {
