@@ -4,7 +4,7 @@
   "description": "Creative Web Solutions — marketing site with customer auth, support portal, and Stripe billing",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node -e \"process.env.PORT=3000;\" server.js",
     "dev": "nodemon server.js",
     "test": "npm run test:summary && npm run test:route-permissions",
     "test:summary": "node test-site-summary.js",
