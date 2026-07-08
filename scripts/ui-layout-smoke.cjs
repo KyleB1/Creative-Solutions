@@ -2,7 +2,7 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 
-const BASE = 'http://localhost:3000';
+const BASE = 'http://localhost:4000';
 const PAGES = [
   { path: '/index.htm', selector: '.home-shell' },
   { path: '/services.html', selector: '.services-wrap' },

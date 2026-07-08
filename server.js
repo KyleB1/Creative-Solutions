@@ -5,7 +5,7 @@
  * 1. Install dependencies: npm install express stripe cors dotenv
  * 2. Set environment variables in .env
  * 3. Run: node server.js
- * 5. Server will be available at http://localhost:3000
+ * 5. Server will be available at http://localhost:4000
  */
 
 require('dotenv').config();
@@ -87,8 +87,8 @@ function buildCorsOptions(req) {
   const inferredOrigin = normalizeOrigin(`${req.protocol}://${req.get('host')}`);
   const allowedOrigins = new Set([
     inferredOrigin,
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
+    'http://localhost:4000',
+    'http://127.0.0.1:4000',
     'https://kyleb1.github.io',
     ...configuredOrigins
   ]);
@@ -129,8 +129,8 @@ app.use((req, res, next) => {
   const inferredOrigin = normalizeOrigin(`${req.protocol}://${req.get('host')}`);
   const allowedOrigins = new Set([
     inferredOrigin,
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
+    'http://localhost:4000',
+    'http://127.0.0.1:4000',
     'https://kyleb1.github.io',
     ...configuredOrigins
   ]);

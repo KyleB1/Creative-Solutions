@@ -14,7 +14,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
+const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;
 const BASE_URL = `http://localhost:${PORT}`;
 
 let testsPassed = 0;

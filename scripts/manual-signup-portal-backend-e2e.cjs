@@ -1,8 +1,8 @@
 const { chromium } = require('playwright');
 
 (async () => {
-  const frontendBase = 'http://localhost:3000';
-  const backendBase = 'http://localhost:3000';
+  const frontendBase = 'http://localhost:4000';
+  const backendBase = 'http://localhost:4000';
 
   const testIdentity = {
     name: 'Jordan Backend',

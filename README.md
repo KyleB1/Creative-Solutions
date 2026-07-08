@@ -47,7 +47,7 @@ Files added for deployment:
 4. Start the server:
 	- Standard: `npm start`
 	- Windows PowerShell (execution-policy safe): `./start-local.cmd`
-5. Open `http://localhost:3000`.
+5. Open `http://localhost:4000`.
 
 > Note: this app now enforces port `3000` explicitly. If `PORT` is set to a different value, the server will refuse to start.
 

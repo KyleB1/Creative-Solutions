@@ -13,7 +13,7 @@
 const http = require('http');
 const crypto = require('crypto');
 
-const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
+const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;
 const BASE_URL = `http://localhost:${PORT}`;
 const BILLING_JWT_SECRET = process.env.BILLING_JWT_SECRET || null;
 

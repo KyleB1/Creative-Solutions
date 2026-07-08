@@ -17,8 +17,8 @@
   const SESSION_TOKEN_STORAGE_KEY = 'cwsSessionToken';
 
   const DEFAULT_HOSTED_API_BASE = 'https://creative-solutions.onrender.com';
-  const DEFAULT_LOCAL_API_BASE = 'http://localhost:3000';
-  const DEFAULT_LOCAL_API_PORT = 3000;
+  const DEFAULT_LOCAL_API_BASE = 'http://localhost:4000';
+  const DEFAULT_LOCAL_API_PORT = 4000;
 
   function getLocalApiPort() {
     if (typeof window === 'undefined') {

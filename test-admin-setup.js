@@ -12,7 +12,7 @@ const http = require('http');
 
 const ADMIN_EMAIL = 'admin@creativewebsolutions.com';
 const ADMIN_PASSWORD = process.env.SUPPORT_PORTAL_PASSWORD || 'AdminPass123!@';
-const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
+const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;
 
 async function request(method, path, body = null, headers = {}) {
   return new Promise((resolve) => {
@@ -84,7 +84,7 @@ async function request(method, path, body = null, headers = {}) {
     console.log('2. Restart the server:');
     console.log('   node server.js\n');
     console.log('3. Access admin panel:');
-    console.log('   - Support Portal: http://localhost:3000/support-portal.html');
+    console.log('   - Support Portal: http://localhost:4000/support-portal.html');
     console.log('   - Login with:');
     console.log(`     Email: ${ADMIN_EMAIL}`);
     console.log(`     Password: ${ADMIN_PASSWORD}\n`);

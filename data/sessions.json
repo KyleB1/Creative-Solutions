@@ -1,9 +1,9 @@
 {
   "sessions": {
-    "bccd72a5e1abe8415624ec4ed7270aa7e6b346d13077ba0da6c3b818d0f88f39": {
+    "5c0d6a93e4eef106f0dbbc84da57e804c1a4545876d0790eed32a4aaf518e7d9": {
       "user": {
         "role": "customer",
-        "email": "unique-1780809771848@example.com",
+        "email": "unique-1783553007118@example.com",
         "name": "Test User",
         "plan": "Growth plan",
         "renewal": "May 18",
@@ -12,18 +12,34 @@
         "supportTickets": 3,
         "monthlySpend": "$2.4K",
         "notifications": false,
-        "customerId": "808eb101-ef77-4723-a898-c88cdfc4d6f1"
+        "customerId": "fd9b796e-ef9f-4a39-bf50-31633ffbc5e3"
       },
-      "expiresAt": 1780852971923
+      "expiresAt": 1783596207193
     },
-    "28590946c17696ceea57a237b7d386338a351058eeb459a31f3fc9eaac3eca5a": {
+    "78d35759f36d586c1e5d3e2b61bbbf84cce04b4786fed16909553d505ab32602": {
+      "user": {
+        "role": "customer",
+        "email": "unique-1783553522747@example.com",
+        "name": "Test User",
+        "plan": "Growth plan",
+        "renewal": "May 18",
+        "activeProjects": 8,
+        "newLeads": 24,
+        "supportTickets": 3,
+        "monthlySpend": "$2.4K",
+        "notifications": false,
+        "customerId": "521e3207-b6cf-4cb4-9e79-e23cb7f02714"
+      },
+      "expiresAt": 1783596722820
+    },
+    "ef2dbaec0eca36c2476924dd5dd76546f2f7fa7aa3a88ea84c0484cc9b9d834b": {
       "user": {
         "role": "admin",
         "email": "kyle.creativesolutions@gmail.com",
         "name": "Kyle Creativesolutions",
         "supportRole": "System Administrator"
       },
-      "expiresAt": 1780860677727
+      "expiresAt": 1783597031478
     }
   }
 }

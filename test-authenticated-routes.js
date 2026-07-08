@@ -1,6 +1,6 @@
 const http = require('http');
 
-const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
+const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;
 
 async function request(method, path, body = null, headers = {}) {
   return new Promise((resolve) => {

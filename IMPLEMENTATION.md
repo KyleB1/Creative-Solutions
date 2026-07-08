@@ -61,7 +61,7 @@ npm run dev
 
 ### 6. Test Payments
 ```bash
-curl -X POST http://localhost:3000/api/billing/payment-intent \
+curl -X POST http://localhost:4000/api/billing/payment-intent \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer test" \
   -d '{
@@ -321,7 +321,7 @@ You'll know it's working when:
 1. **Server starts** without Stripe errors
    ```
    ✓ Stripe connection successful
-   Server running on http://localhost:3000
+  Server running on http://localhost:4000
    ```
 
 2. **Payment form renders** in browser
@@ -368,7 +368,7 @@ hostname -I            # Linux
 ipconfig               # Windows
 
 # Then on phone, visit:
-http://YOUR_LOCAL_IP:3000/api/billing/payment-intent
+http://YOUR_LOCAL_IP:4000/api/billing/payment-intent
 ```
 
 ---
