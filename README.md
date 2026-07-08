@@ -62,5 +62,5 @@ node test-admin-setup.js
 This script assumes the backend is available on port `3000` and that
 `SUPPORT_PORTAL_PASSWORD` is set in your `.env` file.
 
-If the backend starts on a different port, set `PORT=3000` before starting
+If the backend starts on a different port, set `PORT=4000` before starting
 or modify the script's `PORT` constant.

@@ -18,7 +18,7 @@ const logger = require('./logger');
 
 // Initialize Express
 const app = express();
-const DEFAULT_PORT = 3000;
+const DEFAULT_PORT = 4000;
 const requestedPort = Number(process.env.PORT || DEFAULT_PORT);
 
 function resolvePort(port) {
