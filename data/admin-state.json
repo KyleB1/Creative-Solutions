@@ -186,6 +186,18 @@
   ],
   "auditLog": [
     {
+      "id": "582ca535-422e-4f08-b3a7-c382ce8eab19",
+      "action": "support.login",
+      "title": "Kyle Creativesolutions signed in",
+      "description": "System Administrator session started for kyle.creativesolutions@gmail.com.",
+      "actorEmail": "kyle.creativesolutions@gmail.com",
+      "actorName": "Kyle Creativesolutions",
+      "actorRole": "System Administrator",
+      "targetType": "support-user",
+      "targetId": "kyle.creativesolutions@gmail.com",
+      "createdAt": "2026-07-29T12:09:45.692Z"
+    },
+    {
       "id": "28027f39-7653-4f29-8f5c-9bd819b45592",
       "action": "support.login",
       "title": "Kyle Creativesolutions signed in",

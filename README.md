@@ -39,17 +39,33 @@ Files added for deployment:
 
 ## Local run
 
-1. Install dependencies with `npm install`.
-2. Copy `.env.example` to `.env` and fill in the required values.
-3. Ensure support login is enabled locally by setting `SUPPORT_PORTAL_PASSWORD` in `.env`.
-   - The system admin account `kyle.creativesolutions@gmail.com` is configured as `System Administrator` and can access the admin console via `support-login.html` once support login is configured.
-   - If you forget the support password, use the "Forgot password?" link on `support-login.html` to reset it locally.
-4. Start the server:
-	- Standard: `npm start`
-	- Windows PowerShell (execution-policy safe): `./start-local.cmd`
-5. Open `http://localhost:4000`.
+1. Install dependencies:
 
-> Note: this app now enforces port `3000` explicitly. If `PORT` is set to a different value, the server will refuse to start.
+```powershell
+npm install
+```
+
+2. Copy `.env.example` to `.env` and fill in the required values (at minimum, set `SUPPORT_PORTAL_PASSWORD` for support login).
+
+3. Start the backend server (defaults to port `4000`):
+
+```powershell
+node server.js
+```
+
+Or use the helper script on Windows:
+
+```powershell
+./start-local.cmd
+```
+
+4. Recommended: Serve the frontend from the same origin as the backend so API calls share cookies and origin. Open the site at `http://localhost:4000/login.html` (the backend serves static assets by default).
+
+5. Alternate: If you run a separate frontend dev server (for example on port `3000`), set `window.CWS_API_BASE` (or `window.CWS_API_BASE_PORT`) before `auth.js` loads so the frontend directs `/api/*` calls to the backend on `http://localhost:4000`.
+
+Notes:
+- The server default port is `4000`. If you set `PORT` in your environment, the server will attempt to start on that port and will increment on conflicts.
+- Serving frontend and backend from the same origin is the simplest setup for local testing because sessions and cookies work without additional CORS configuration.
 
 ## Support login smoke test
 
@@ -59,8 +75,39 @@ To verify the local support login flow and admin access, run the built-in smoke 
 node test-admin-setup.js
 ```
 
-This script assumes the backend is available on port `3000` and that
+This script assumes the backend is available on port `4000` and that
 `SUPPORT_PORTAL_PASSWORD` is set in your `.env` file.
 
-If the backend starts on a different port, set `PORT=4000` before starting
+If the backend starts on a different port, set `PORT` before starting
 or modify the script's `PORT` constant.
+
+## PM2 (run as a persistent service)
+
+To run the app persistently on your machine, use `pm2`. Install it globally and start the ecosystem file included in the repo:
+
+```powershell
+npm install -g pm2
+npm run pm2:start
+pm2 save
+pm2 startup
+```
+
+To stop or remove the process:
+
+```powershell
+npm run pm2:stop
+pm2 delete creative-solutions
+```
+
+Notes for Windows: PM2 requires extra setup to run as a Windows service. Install `pm2-windows-service` or use `nssm` to register Node directly as a service if you prefer a native Windows service.
+
+## CI / Render deploy secrets
+
+If you enabled the GitHub Action `/.github/workflows/deploy-to-render.yml`, add these repository secrets so the workflow can trigger Render deploys:
+
+- `RENDER_API_KEY` — your Render API key (create in Render dashboard → Account → API Keys).
+- `RENDER_SERVICE_ID` — your Render service ID (find in your Render service Settings → General → API ID).
+
+Add them in GitHub: Repository → Settings → Secrets → Actions → New repository secret.
+
+After adding the secrets, push a branch or open a PR — the workflow will run and post the Render API response to PRs.

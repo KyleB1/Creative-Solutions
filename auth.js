@@ -20,6 +20,20 @@
   const DEFAULT_LOCAL_API_BASE = 'http://localhost:4000';
   const DEFAULT_LOCAL_API_PORT = 4000;
 
+  // When running the frontend from localhost/127.0.0.1, default the
+  // API base to the local Node backend so all pages hit the same origin
+  // (this makes frontend and backend communicate consistently during dev).
+  try {
+    if (typeof window !== 'undefined' && window.location) {
+      const _host = String(window.location.hostname || '').toLowerCase();
+      if ((_host === 'localhost' || _host === '127.0.0.1') && !window.CWS_API_BASE) {
+        window.CWS_API_BASE = `http://localhost:${DEFAULT_LOCAL_API_PORT}`;
+      }
+    }
+  } catch (e) {
+    // ignore in non-browser environments
+  }
+
   function getLocalApiPort() {
     if (typeof window === 'undefined') {
       return DEFAULT_LOCAL_API_PORT;
