@@ -1,7 +1,7 @@
 const { chromium } = require('playwright');
 
 (async () => {
-  const baseUrl = 'http://localhost:3000';
+  const baseUrl = 'http://localhost:4000';
   const testIdentity = {
     name: 'Jordan Modern',
     email: `jordan.modern.${Date.now()}@example.com`,

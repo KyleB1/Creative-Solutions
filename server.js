@@ -5,7 +5,7 @@
  * 1. Install dependencies: npm install express stripe cors dotenv
  * 2. Set environment variables in .env
  * 3. Run: node server.js
- * 5. Server will be available at http://localhost:3000
+ * 5. Server will be available at http://localhost:4000
  */
 
 require('dotenv').config();
@@ -18,8 +18,34 @@ const logger = require('./logger');
 
 // Initialize Express
 const app = express();
-const DEFAULT_PORT = 3000;
-const PORT = Number(process.env.PORT || DEFAULT_PORT);
+const DEFAULT_PORT = 4000;
+const requestedPort = Number(process.env.PORT || DEFAULT_PORT);
+
+function resolvePort(port) {
+  if (!Number.isInteger(port) || port <= 0 || port > 65535) {
+    return DEFAULT_PORT;
+  }
+  return port;
+}
+
+function startServer(port) {
+  const normalizedPort = resolvePort(port);
+  const server = app.listen(normalizedPort, onListening.bind(null, normalizedPort));
+  server.on('error', err => {
+    if (err.code === 'EADDRINUSE') {
+      const nextPort = normalizedPort + 1;
+      if (nextPort > 65535) {
+        throw err;
+      }
+      logger.warn(`Port ${normalizedPort} is already in use. Trying ${nextPort} instead.`);
+      startServer(nextPort);
+    } else {
+      throw err;
+    }
+  });
+  activeServer = server;
+  return server;
+}
 
 app.disable('x-powered-by');
 app.set('trust proxy', 1);
@@ -61,8 +87,8 @@ function buildCorsOptions(req) {
   const inferredOrigin = normalizeOrigin(`${req.protocol}://${req.get('host')}`);
   const allowedOrigins = new Set([
     inferredOrigin,
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
+    'http://localhost:4000',
+    'http://127.0.0.1:4000',
     'https://kyleb1.github.io',
     ...configuredOrigins
   ]);
@@ -103,8 +129,8 @@ app.use((req, res, next) => {
   const inferredOrigin = normalizeOrigin(`${req.protocol}://${req.get('host')}`);
   const allowedOrigins = new Set([
     inferredOrigin,
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
+    'http://localhost:4000',
+    'http://127.0.0.1:4000',
     'https://kyleb1.github.io',
     ...configuredOrigins
   ]);
@@ -189,6 +215,7 @@ app.get('/health', (req, res) => {
 
 // API routes
 const authRoutes = require('./auth-routes');
+const { getActiveSession } = require('./auth-routes');
 const billingRoutes = require('./billing-routes');
 const contactRoutes = require('./contact-routes');
 
@@ -201,6 +228,14 @@ app.use('/api/auth/support-login', authLimiter);
 app.use('/api/auth', authRoutes);
 app.use('/api/billing', paymentLimiter, billingRoutes);
 app.use('/api/contact', contactLimiter, contactRoutes);
+
+app.get(['/legal', '/legal.html'], (req, res) => {
+  const session = getActiveSession(req);
+  if (!session || !session.user || !(session.user.role === 'admin' || session.user.role === 'support')) {
+    return res.status(403).send('Forbidden');
+  }
+  return res.sendFile(path.join(__dirname, 'legal.html'));
+});
 
 // Static files (if serving frontend from same server)
 app.use((req, res, next) => {
@@ -256,22 +291,6 @@ app.use((err, req, res, next) => {
 // Track the active server instance so SIGTERM shutdown works correctly.
 let activeServer = null;
 
-// Start server on a single configured port and fail loudly if it is already in use.
-function startServer(port) {
-  const normalizedPort = Number(port);
-  const s = app.listen(normalizedPort, onListening.bind(null, normalizedPort));
-  s.on('error', err => {
-    if (err.code === 'EADDRINUSE') {
-      logger.error(`Port ${normalizedPort} is already in use. Please free the port or set PORT to a different value before starting the server.`);
-      process.exit(1);
-    } else {
-      throw err;
-    }
-  });
-  activeServer = s;
-  return s;
-}
-
 async function onListening(port) {
   logger.info('\n╔════════════════════════════════════════════════════════════════╗');
   logger.info('║                   STRIPE PAYMENT SERVER                        ║');
@@ -321,6 +340,6 @@ process.on('SIGTERM', () => {
   }
 });
 
-startServer(PORT);
+startServer(requestedPort);
 
 module.exports = app;

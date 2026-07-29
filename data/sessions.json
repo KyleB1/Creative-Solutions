@@ -1,29 +1,13 @@
 {
   "sessions": {
-    "bccd72a5e1abe8415624ec4ed7270aa7e6b346d13077ba0da6c3b818d0f88f39": {
-      "user": {
-        "role": "customer",
-        "email": "unique-1780809771848@example.com",
-        "name": "Test User",
-        "plan": "Growth plan",
-        "renewal": "May 18",
-        "activeProjects": 8,
-        "newLeads": 24,
-        "supportTickets": 3,
-        "monthlySpend": "$2.4K",
-        "notifications": false,
-        "customerId": "808eb101-ef77-4723-a898-c88cdfc4d6f1"
-      },
-      "expiresAt": 1780852971923
-    },
-    "28590946c17696ceea57a237b7d386338a351058eeb459a31f3fc9eaac3eca5a": {
+    "c632d6849b6f2d9daf3fb5e0aebcfc2b8d1994f7b4009e83f1fe195c1dbe8800": {
       "user": {
         "role": "admin",
         "email": "kyle.creativesolutions@gmail.com",
         "name": "Kyle Creativesolutions",
         "supportRole": "System Administrator"
       },
-      "expiresAt": 1780860677727
+      "expiresAt": 1785370185690
     }
   }
 }

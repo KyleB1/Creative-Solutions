@@ -40,7 +40,7 @@
       '    <a href="index.htm#about">About</a>' +
       '  </nav>' +
       '  <div class="global-header__actions">' +
-      '    <button id="globalThemeToggle" class="gh-btn" type="button" aria-pressed="false">Dark Mode</button>' +
+      '    <button id="globalThemeToggle" class="gh-btn" type="button" aria-pressed="true">Light Mode</button>' +
       '    <a id="globalCrmBtn" class="gh-btn" href="crm.html">CRM</a>' +
       '    <a id="globalSupportBtn" class="gh-btn" href="support-login.html">Support Login</a>' +
       '    <a id="globalPrimaryBtn" class="gh-btn" href="login.html">Login</a>' +
@@ -69,7 +69,7 @@
         const current = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
         applyTheme(current === 'dark' ? 'light' : 'dark');
       });
-      applyTheme(localStorage.getItem('siteTheme') || 'light');
+      applyTheme(localStorage.getItem('siteTheme') || 'dark');
     }
 
     if (!support && crmBtn) crmBtn.style.display = 'none';

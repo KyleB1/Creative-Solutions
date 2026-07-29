@@ -456,6 +456,48 @@
       "passwordResetTokenHash": null,
       "passwordResetExpiresAt": null,
       "createdAt": "2026-06-07T05:22:51.922Z"
+    },
+    "unique-1783553007118@example.com": {
+      "role": "customer",
+      "plan": "Growth plan",
+      "renewal": "May 18",
+      "activeProjects": 8,
+      "newLeads": 24,
+      "supportTickets": 3,
+      "monthlySpend": "$2.4K",
+      "notifications": false,
+      "customerId": "fd9b796e-ef9f-4a39-bf50-31633ffbc5e3",
+      "name": "Test User",
+      "email": "unique-1783553007118@example.com",
+      "passwordSalt": "0b6188d242f7b43853523ef61a01faa8",
+      "passwordHash": "bdc4e19a27d0df33d8256b88a19d0fac6834ea05aec09b569dc17eea7db699eaf0d6c7e79e3264eaf804d3ba677e1eef3f28b4691c7be396f05937d2e24c341e",
+      "emailVerified": true,
+      "emailVerificationTokenHash": null,
+      "emailVerificationExpiresAt": null,
+      "passwordResetTokenHash": null,
+      "passwordResetExpiresAt": null,
+      "createdAt": "2026-07-08T23:23:27.192Z"
+    },
+    "unique-1783553522747@example.com": {
+      "role": "customer",
+      "plan": "Growth plan",
+      "renewal": "May 18",
+      "activeProjects": 8,
+      "newLeads": 24,
+      "supportTickets": 3,
+      "monthlySpend": "$2.4K",
+      "notifications": false,
+      "customerId": "521e3207-b6cf-4cb4-9e79-e23cb7f02714",
+      "name": "Test User",
+      "email": "unique-1783553522747@example.com",
+      "passwordSalt": "10b292b2dc82b108d986fcbd72a60314",
+      "passwordHash": "6a1549a236ee0dbf6c65b2bec7fce9b466dbe1a1949820ddd71ae89276e929851862a0c7b49fe5effc547872a6232984e97fb0898b622f1690697c9044e2d6d8",
+      "emailVerified": true,
+      "emailVerificationTokenHash": null,
+      "emailVerificationExpiresAt": null,
+      "passwordResetTokenHash": null,
+      "passwordResetExpiresAt": null,
+      "createdAt": "2026-07-08T23:32:02.818Z"
     }
   }
 }
