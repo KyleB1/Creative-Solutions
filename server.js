@@ -5,21 +5,24 @@
  * 1. Install dependencies: npm install express stripe cors dotenv
  * 2. Set environment variables in .env
  * 3. Run: node server.js
- * 5. Server will be available at http://localhost:4000
+ * 5. Server will be available at http://localhost:3000
  */
 
 require('dotenv').config();
 
 const express = require('express');
+const crypto = require('crypto');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const path = require('path');
 const logger = require('./logger');
+const dataStore = require('./data-store');
 
 // Initialize Express
 const app = express();
-const DEFAULT_PORT = 4000;
+const DEFAULT_PORT = 3000;
 const requestedPort = Number(process.env.PORT || DEFAULT_PORT);
+const isProduction = String(process.env.NODE_ENV || 'development').toLowerCase() === 'production';
 
 function resolvePort(port) {
   if (!Number.isInteger(port) || port <= 0 || port > 65535) {
@@ -33,12 +36,8 @@ function startServer(port) {
   const server = app.listen(normalizedPort, onListening.bind(null, normalizedPort));
   server.on('error', err => {
     if (err.code === 'EADDRINUSE') {
-      const nextPort = normalizedPort + 1;
-      if (nextPort > 65535) {
-        throw err;
-      }
-      logger.warn(`Port ${normalizedPort} is already in use. Trying ${nextPort} instead.`);
-      startServer(nextPort);
+      logger.error(`Port ${normalizedPort} is already in use. Please stop the conflicting process or set PORT to a different value.`);
+      process.exit(1);
     } else {
       throw err;
     }
@@ -82,27 +81,34 @@ function isLocalDevelopmentOrigin(origin) {
   }
 }
 
-function buildCorsOptions(req) {
+function getAllowedOrigins(req) {
   const configuredOrigins = getConfiguredOrigins();
   const inferredOrigin = normalizeOrigin(`${req.protocol}://${req.get('host')}`);
-  const allowedOrigins = new Set([
+  return new Set([
     inferredOrigin,
-    'http://localhost:4000',
-    'http://127.0.0.1:4000',
-    'https://kyleb1.github.io',
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
     ...configuredOrigins
   ]);
-  const requestOrigin = normalizeOrigin(req.get('origin'));
-  const isAllowedOrigin = !requestOrigin
+}
+
+function isAllowedOrigin(requestOrigin, allowedOrigins) {
+  return !requestOrigin
     || requestOrigin === 'null'
     || allowedOrigins.has(requestOrigin)
     || isLocalDevelopmentOrigin(requestOrigin);
+}
+
+function buildCorsOptions(req) {
+  const allowedOrigins = getAllowedOrigins(req);
+  const requestOrigin = normalizeOrigin(req.get('origin'));
+  const allowed = isAllowedOrigin(requestOrigin, allowedOrigins);
 
   return {
-    origin: isAllowedOrigin ? (requestOrigin || true) : false,
+    origin: allowed ? (requestOrigin || true) : false,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Admin-Token', 'X-Customer-Id'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Admin-Token', 'X-Customer-Id', 'X-CWS-Session', 'X-CSRF-Token'],
     optionsSuccessStatus: 204
   };
 }
@@ -117,35 +123,34 @@ app.use(helmet({
       // removing 'unsafe-inline' from scriptSrc and hardening CSP further.
       scriptSrc: ["'self'", "'unsafe-inline'", 'https://cdn.jsdelivr.net'],
       styleSrc: ["'self'", 'https:', "'unsafe-inline'"],
-      imgSrc: ["'self'", 'data:', 'https://images.unsplash.com']
+      imgSrc: ["'self'", 'data:', 'https://images.unsplash.com'],
+      objectSrc: ["'none'"],
+      baseUri: ["'self'"],
+      frameAncestors: ["'none'"],
+      formAction: ["'self'"],
+      connectSrc: ["'self'", 'https://creative-solutions.onrender.com', 'http://localhost:3000', 'http://127.0.0.1:3000']
     }
-  }
+  },
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+  hsts: isProduction ? {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  } : false
 }));
 
 // CORS configuration
 app.use((req, res, next) => {
   const requestOrigin = normalizeOrigin(req.get('origin'));
-  const configuredOrigins = getConfiguredOrigins();
-  const inferredOrigin = normalizeOrigin(`${req.protocol}://${req.get('host')}`);
-  const allowedOrigins = new Set([
-    inferredOrigin,
-    'http://localhost:4000',
-    'http://127.0.0.1:4000',
-    'https://kyleb1.github.io',
-    ...configuredOrigins
-  ]);
+  const allowedOrigins = getAllowedOrigins(req);
+  const allowed = isAllowedOrigin(requestOrigin, allowedOrigins);
 
-  const isAllowedOrigin = !requestOrigin
-    || requestOrigin === 'null'
-    || allowedOrigins.has(requestOrigin)
-    || isLocalDevelopmentOrigin(requestOrigin);
-
-  if (isAllowedOrigin && requestOrigin) {
+  if (allowed && requestOrigin) {
     res.setHeader('Access-Control-Allow-Origin', requestOrigin);
     res.setHeader('Vary', 'Origin');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,PATCH,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Admin-Token,X-Customer-Id');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Admin-Token,X-Customer-Id,X-CWS-Session,X-CSRF-Token');
   }
 
   if (req.method === 'OPTIONS') {
@@ -155,10 +160,108 @@ app.use((req, res, next) => {
   next();
 });
 
+const CSRF_COOKIE_NAME = 'cws_csrf';
+const CSRF_HEADER_NAME = 'x-csrf-token';
+
+function parseCookies(headerValue) {
+  return String(headerValue || '')
+    .split(';')
+    .map((entry) => entry.trim())
+    .filter(Boolean)
+    .reduce((accumulator, entry) => {
+      const separatorIndex = entry.indexOf('=');
+      if (separatorIndex === -1) {
+        return accumulator;
+      }
+
+      const key = entry.slice(0, separatorIndex).trim();
+      const value = entry.slice(separatorIndex + 1).trim();
+      accumulator[key] = decodeURIComponent(value);
+      return accumulator;
+    }, {});
+}
+
+function appendSetCookie(res, cookieValue) {
+  const current = res.getHeader('Set-Cookie');
+  if (!current) {
+    res.setHeader('Set-Cookie', cookieValue);
+    return;
+  }
+
+  if (Array.isArray(current)) {
+    res.setHeader('Set-Cookie', [...current, cookieValue]);
+    return;
+  }
+
+  res.setHeader('Set-Cookie', [current, cookieValue]);
+}
+
+function serializeCsrfCookie(token) {
+  const cookieParts = [
+    `${CSRF_COOKIE_NAME}=${encodeURIComponent(token)}`,
+    'Path=/',
+    'SameSite=Lax',
+    `Max-Age=${Math.floor((1000 * 60 * 60 * 12) / 1000)}`
+  ];
+
+  if (isProduction) {
+    cookieParts.push('Secure');
+  }
+
+  return cookieParts.join('; ');
+}
+
+function shouldEnforceBrowserCsrf(req) {
+  if (req.method === 'GET' || req.method === 'HEAD' || req.method === 'OPTIONS') {
+    return false;
+  }
+
+  if (req.path === '/billing/webhook') {
+    return false;
+  }
+
+  const secFetchSite = String(req.get('sec-fetch-site') || '').trim();
+  const secFetchMode = String(req.get('sec-fetch-mode') || '').trim();
+  const origin = String(req.get('origin') || '').trim();
+  const hasBrowserHints = Boolean(secFetchSite || secFetchMode || origin);
+
+  // Keep non-browser API clients and test scripts working without a CSRF bootstrap call.
+  return hasBrowserHints;
+}
+
+app.use('/api', (req, res, next) => {
+  const cookies = parseCookies(req.headers.cookie);
+  const existingToken = String(cookies[CSRF_COOKIE_NAME] || '').trim();
+  const csrfToken = existingToken || crypto.randomBytes(24).toString('hex');
+  if (!existingToken) {
+    appendSetCookie(res, serializeCsrfCookie(csrfToken));
+  }
+
+  if (!shouldEnforceBrowserCsrf(req)) {
+    return next();
+  }
+
+  const requestToken = String(req.get(CSRF_HEADER_NAME) || '').trim();
+  if (!requestToken || requestToken !== csrfToken) {
+    return res.status(403).json({ error: 'CSRF token missing or invalid.' });
+  }
+
+  return next();
+});
+
+function parseRateLimitMax(value, fallback) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : fallback;
+}
+
+const PAYMENT_RATE_LIMIT_MAX = parseRateLimitMax(process.env.PAYMENT_RATE_LIMIT_MAX, isProduction ? 5 : 100);
+const AUTH_RATE_LIMIT_MAX = parseRateLimitMax(process.env.AUTH_RATE_LIMIT_MAX, isProduction ? 10 : 200);
+const CONTACT_RATE_LIMIT_MAX = parseRateLimitMax(process.env.CONTACT_RATE_LIMIT_MAX, isProduction ? 5 : 50);
+
 // Rate limiting for payment endpoints
 const paymentLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,  // 15 minutes
-  max: 5,  // 5 attempts per billing endpoint
+  max: PAYMENT_RATE_LIMIT_MAX,
   message: { error: 'Too many payment attempts, please try again later.' },
   standardHeaders: true,
   legacyHeaders: false,
@@ -167,7 +270,7 @@ const paymentLimiter = rateLimit({
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10,  // 10 attempts per auth endpoint
+  max: AUTH_RATE_LIMIT_MAX,
   message: { error: 'Too many authentication attempts, please try again later.' },
   standardHeaders: true,
   legacyHeaders: false,
@@ -176,7 +279,7 @@ const authLimiter = rateLimit({
 
 const contactLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 5,
+  max: CONTACT_RATE_LIMIT_MAX,
   message: { error: 'Too many contact submissions, please try again later.' },
   standardHeaders: true,
   legacyHeaders: false
@@ -206,7 +309,8 @@ app.get('/health', (req, res) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
+    dataBackend: dataStore.backend
   });
 });
 
@@ -299,6 +403,7 @@ async function onListening(port) {
   logger.info(`Server running on http://localhost:${port}`);
   logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
   logger.info(`Mode: ${process.env.STRIPE_SECRET_KEY?.startsWith('sk_test') ? 'TEST' : 'LIVE'}\n`);
+  logger.info(`Data backend: ${dataStore.backend}`);
   logger.info(`Customer store: ${process.env.CUSTOMER_STORE_PATH || path.join(__dirname, 'data', 'customer-accounts.json')}`);
   if (!process.env.SUPPORT_PORTAL_PASSWORD) {
     logger.warn('Support login disabled until SUPPORT_PORTAL_PASSWORD is configured.');

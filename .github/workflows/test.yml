@@ -1,0 +1,70 @@
+name: Node Site Tests
+
+on:
+  push:
+    branches:
+      - main
+      - KyleB1-patch-1
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  non-stripe-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NODE_ENV: development
+      PORT: 3000
+      SUPPORT_PORTAL_PASSWORD: CISupportPass123!
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start server
+        run: |
+          node server.js > server-ci.log 2>&1 &
+          echo $! > server.pid
+
+      - name: Wait for health endpoint
+        run: |
+          for i in {1..40}; do
+            if curl -fsS http://127.0.0.1:3000/health >/dev/null; then
+              echo "Server is ready"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Server failed to become ready"
+          exit 1
+
+      - name: Run non-Stripe test suite
+        run: |
+          node test-site-summary.js
+          node test-route-permissions.js
+          node test-authenticated-routes.js
+          node test-email-validation.js
+          node test-admin-setup.js
+
+      - name: Upload server log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-ci-log
+          path: server-ci.log
+
+      - name: Stop server
+        if: always()
+        run: |
+          if [ -f server.pid ]; then
+            kill $(cat server.pid) || true
+          fi

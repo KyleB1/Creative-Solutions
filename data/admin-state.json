@@ -186,6 +186,54 @@
   ],
   "auditLog": [
     {
+      "id": "fc523dce-3d35-452d-b9bd-b2b138ca44af",
+      "action": "customer.signup",
+      "title": "Test User created an account",
+      "description": "unique-1785469463307@example.com signed up for the Growth plan plan.",
+      "actorEmail": "unique-1785469463307@example.com",
+      "actorName": "Test User",
+      "actorRole": "customer",
+      "targetType": "customer",
+      "targetId": "unique-1785469463307@example.com",
+      "createdAt": "2026-07-31T03:44:23.450Z"
+    },
+    {
+      "id": "803b2159-a5fe-48e6-8f4d-4acceae13462",
+      "action": "customer.signup",
+      "title": "Test User created an account",
+      "description": "unique-1785469252746@example.com signed up for the Growth plan plan.",
+      "actorEmail": "unique-1785469252746@example.com",
+      "actorName": "Test User",
+      "actorRole": "customer",
+      "targetType": "customer",
+      "targetId": "unique-1785469252746@example.com",
+      "createdAt": "2026-07-31T03:40:52.913Z"
+    },
+    {
+      "id": "920ed0cf-0b2c-4025-9713-a7b5bb0b08e6",
+      "action": "customer.signup",
+      "title": "Valid Test created an account",
+      "description": "valid-1785456498291@example.com signed up for the Growth plan plan.",
+      "actorEmail": "valid-1785456498291@example.com",
+      "actorName": "Valid Test",
+      "actorRole": "customer",
+      "targetType": "customer",
+      "targetId": "valid-1785456498291@example.com",
+      "createdAt": "2026-07-31T00:08:18.458Z"
+    },
+    {
+      "id": "fa3c6173-d7b3-4f7d-96c0-5abefac86aae",
+      "action": "customer.signup",
+      "title": "Test User created an account",
+      "description": "unique-1785456497619@example.com signed up for the Growth plan plan.",
+      "actorEmail": "unique-1785456497619@example.com",
+      "actorName": "Test User",
+      "actorRole": "customer",
+      "targetType": "customer",
+      "targetId": "unique-1785456497619@example.com",
+      "createdAt": "2026-07-31T00:08:17.860Z"
+    },
+    {
       "id": "28027f39-7653-4f29-8f5c-9bd819b45592",
       "action": "support.login",
       "title": "Kyle Creativesolutions signed in",

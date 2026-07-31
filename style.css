@@ -571,6 +571,140 @@ body.dark-mode textarea::placeholder {
   z-index: 1200;
 }
 
+.auth-page-shell {
+  margin: 5.5rem auto 2rem;
+}
+
+.auth-meta-left {
+  margin: 0 0 1rem;
+  text-align: left;
+}
+
+.status-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0 0 1rem;
+  flex-wrap: wrap;
+}
+
+.status-grow {
+  margin: 0;
+  flex: 1 1 320px;
+}
+
+.retry-btn-compact {
+  min-height: 2.1rem;
+}
+
+.auth-error {
+  color: #b91c1c;
+}
+
+body.dark-mode .auth-error {
+  color: #fecaca;
+}
+
+.backend-hint-inline {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+body.dark-mode .backend-hint-inline {
+  color: #cbd5ff;
+}
+
+.cws-backend-offline-hint {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 9999;
+  width: min(32rem, calc(100% - 2rem));
+  padding: 0.85rem 0.95rem;
+  border-radius: 14px;
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #991b1b;
+  box-shadow: var(--shadow-lift);
+}
+
+.cws-backend-offline-hint.inline {
+  position: static;
+  right: auto;
+  bottom: auto;
+  width: 100%;
+  max-width: none;
+  margin: 0 0 1rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.cws-backend-offline-hint-title {
+  display: block;
+  margin: 0 0 0.45rem;
+  font-family: 'Sora', 'Segoe UI', sans-serif;
+  font-size: 0.95rem;
+}
+
+.cws-backend-offline-hint-note {
+  margin: 0 0 0.45rem;
+  text-align: left;
+}
+
+.cws-backend-offline-hint-copy {
+  margin: 0 0 0.55rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: #111827;
+  color: #f8fafc;
+  overflow: auto;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.cws-backend-offline-hint-actions {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.cws-backend-offline-hint .ghost-btn {
+  min-height: 2rem;
+  padding: 0.44rem 0.68rem;
+  border-color: #fca5a5;
+  background: #fff;
+  color: #7f1d1d;
+}
+
+.cws-backend-offline-hint .ghost-btn:hover {
+  background: #fee2e2;
+  border-color: #ef4444;
+}
+
+body.dark-mode .cws-backend-offline-hint {
+  border-color: #7f1d1d;
+  background: #3f1d1d;
+  color: #fecaca;
+}
+
+body.dark-mode .cws-backend-offline-hint-copy {
+  border-color: rgba(148, 163, 184, 0.35);
+  background: #0b1120;
+  color: #e5e7eb;
+}
+
+body.dark-mode .cws-backend-offline-hint .ghost-btn {
+  border-color: #b91c1c;
+  background: #4c1d1d;
+  color: #fecaca;
+}
+
+body.dark-mode .cws-backend-offline-hint .ghost-btn:hover {
+  border-color: #fca5a5;
+  background: #7f1d1d;
+}
+
 .services-wrap {
   max-width: 1120px;
   margin: 0 auto;

@@ -1,6 +1,11 @@
 const { chromium } = require('playwright');
 
 (async () => {
+  const basePort = process.env.FRONTEND_PORT ? Number(process.env.FRONTEND_PORT) : (process.env.PORT ? Number(process.env.PORT) : 3000);
+  const baseUrl = `http://localhost:${basePort}`;
+  const supportEmail = process.env.SUPPORT_E2E_EMAIL || 'kyle.creativesolutions@gmail.com';
+  const supportPassword = process.env.SUPPORT_E2E_PASSWORD || process.env.SUPPORT_PORTAL_PASSWORD || '';
+
   const browser = await chromium.launch({
     headless: true,
     executablePath: 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe'
@@ -31,9 +36,9 @@ const { chromium } = require('playwright');
     console.log('SUPPORT_LOGIN_RESPONSE', response.status(), response.url(), body);
   });
 
-  await page.goto('http://localhost:4000/support-login.html', { waitUntil: 'domcontentloaded' });
-  await page.fill('#supportEmail', 'kyle.creativesolutions@gmail.com');
-  await page.fill('#supportPassword', 'N6vTyyad9y2M2sUoop%!!GBa');
+  await page.goto(`${baseUrl}/support-login.html`, { waitUntil: 'domcontentloaded' });
+  await page.fill('#supportEmail', supportEmail);
+  await page.fill('#supportPassword', supportPassword);
   await page.click('button[type="submit"]');
   await page.waitForTimeout(4000);
 

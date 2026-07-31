@@ -1,25 +1,7 @@
-const http = require('http');
+const { getPort, getBaseUrl, request } = require('./tests/test-utils');
 
-const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;
-const BASE_URL = `http://localhost:${PORT}`;
-
-async function request(method, path) {
-  return new Promise((resolve) => {
-    const url = new URL(path, BASE_URL);
-    const opts = {
-      hostname: url.hostname,
-      port: url.port,
-      path: url.pathname + url.search,
-      method,
-      headers: { 'User-Agent': 'test' }
-    };
-    const req = http.request(opts, (res) => {
-      resolve({ status: res.statusCode });
-    });
-    req.on('error', (err) => resolve({ status: 0, error: err.message }));
-    req.end();
-  });
-}
+const PORT = getPort();
+const BASE_URL = getBaseUrl();
 
 (async () => {
   console.log('\n╔════════════════════════════════════════════════════════╗');
@@ -51,6 +33,15 @@ async function request(method, path) {
     const res = await request('GET', api.path);
     const isOk = res.status === api.expected;
     console.log(`   ${isOk ? '✓' : '✗'} ${api.path} (${res.status}, expected ${api.expected})`);
+
+    if (api.path === '/health' && isOk) {
+      const backend = res.body && typeof res.body === 'object' ? res.body.dataBackend : null;
+      if (backend === 'postgres' || backend === 'sqlite' || backend === 'file') {
+        console.log(`     ↳ dataBackend: ${backend}`);
+      } else {
+        console.log('     ↳ dataBackend: (missing or invalid)');
+      }
+    }
   }
 
   console.log('\n🛡️  SECURITY:');

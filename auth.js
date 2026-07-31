@@ -1,24 +1,23 @@
 // auth.js - shared auth helpers backed by the server-side session API
 (function () {
-  const SUPPORT_ROLES = Object.freeze({
-    'support@creativewebsolutions.com': 'Support Agent',
-    'helpdesk@creativewebsolutions.com': 'Help Desk Agent',
-    'admin@creativewebsolutions.com': 'System Administrator',
-    'kyle.creativesolutions@gmail.com': 'System Administrator'
-  });
+  let supportRoles = Object.create(null);
 
   const state = {
     currentUser: null,
     loaded: false,
     loadingPromise: null,
-    sessionToken: null
+    sessionToken: null,
+    csrfToken: null,
+    csrfTokenPromise: null
   };
 
   const SESSION_TOKEN_STORAGE_KEY = 'cwsSessionToken';
+  const CSRF_COOKIE_NAME = 'cws_csrf';
+  const BACKEND_OFFLINE_HINT_ID = 'cwsBackendOfflineHint';
 
   const DEFAULT_HOSTED_API_BASE = 'https://creative-solutions.onrender.com';
-  const DEFAULT_LOCAL_API_BASE = 'http://localhost:4000';
-  const DEFAULT_LOCAL_API_PORT = 4000;
+  const DEFAULT_LOCAL_API_BASE = 'http://localhost:3000';
+  const DEFAULT_LOCAL_API_PORT = 3000;
 
   function getLocalApiPort() {
     if (typeof window === 'undefined') {
@@ -73,10 +72,6 @@
     const { protocol, hostname, port } = window.location;
     const normalizedHost = String(hostname || '').toLowerCase();
 
-    if (normalizedHost === 'kyleb1.github.io') {
-      return DEFAULT_HOSTED_API_BASE;
-    }
-
     if (protocol === 'file:') {
       const port = getLocalApiPort();
       return `http://localhost:${port}`;
@@ -86,17 +81,17 @@
       return DEFAULT_HOSTED_API_BASE;
     }
 
-    // For local HTTP/HTTPS pages, use the same origin as the frontend so the
-    // browser and auth API share the same port automatically.
-    if (protocol === 'http:' || protocol === 'https:') {
-      return window.location.origin;
-    }
-
     // When the site is running on localhost or 127.0.0.1, route auth calls
-    // to the local Node backend on the desired port.
+    // to the local Node backend on the desired port instead of the current
+    // preview port.
     if (isLocalHostName(normalizedHost)) {
       const port = getLocalApiPort();
       return `http://${normalizedHost}:${port}`;
+    }
+
+    // For other HTTP/HTTPS pages, use the same origin as the frontend.
+    if (protocol === 'http:' || protocol === 'https:') {
+      return window.location.origin;
     }
 
     return '';
@@ -130,8 +125,70 @@
     }
   }
 
+  function readCookie(name) {
+    if (typeof document === 'undefined') return '';
+    const cookies = String(document.cookie || '').split(';').map((part) => part.trim());
+    const match = cookies.find((entry) => entry.startsWith(`${name}=`));
+    if (!match) return '';
+    return decodeURIComponent(match.slice(name.length + 1));
+  }
+
+  function getCsrfToken() {
+    const token = String(readCookie(CSRF_COOKIE_NAME) || '').trim();
+    state.csrfToken = token || null;
+    return state.csrfToken;
+  }
+
+  function isMutatingMethod(method) {
+    const normalized = String(method || 'GET').toUpperCase();
+    return !['GET', 'HEAD', 'OPTIONS'].includes(normalized);
+  }
+
+  async function ensureCsrfToken() {
+    const existingToken = getCsrfToken();
+    if (existingToken) {
+      return existingToken;
+    }
+
+    if (!state.csrfTokenPromise) {
+      state.csrfTokenPromise = (async () => {
+        try {
+          await fetch(buildApiUrl('/api/auth/meta'), {
+            method: 'GET',
+            credentials: getRequestCredentials(),
+            headers: {
+              Accept: 'application/json'
+            }
+          });
+        } catch (_error) {
+          // Ignore bootstrap errors; the next request will fail with a clear server response if needed.
+        }
+        return getCsrfToken();
+      })().finally(() => {
+        state.csrfTokenPromise = null;
+      });
+    }
+
+    return state.csrfTokenPromise;
+  }
+
   function normalizeEmail(value) {
     return String(value || '').trim().toLowerCase();
+  }
+
+  function hydrateSupportRoles(meta) {
+    const roles = meta && meta.supportRoles && typeof meta.supportRoles === 'object'
+      ? meta.supportRoles
+      : null;
+    if (!roles) return;
+
+    const normalizedRoles = Object.create(null);
+    for (const [email, role] of Object.entries(roles)) {
+      const normalizedEmail = normalizeEmail(email);
+      if (!normalizedEmail || !role) continue;
+      normalizedRoles[normalizedEmail] = String(role);
+    }
+    supportRoles = normalizedRoles;
   }
 
   function isSupportSession(user) {
@@ -143,11 +200,11 @@
   }
 
   function getAuthorizedSupportEmails() {
-    return Object.keys(SUPPORT_ROLES);
+    return Object.keys(supportRoles);
   }
 
   function getSupportRoleForEmail(email) {
-    return SUPPORT_ROLES[normalizeEmail(email)] || null;
+    return supportRoles[normalizeEmail(email)] || null;
   }
 
   function toAppUrl(path) {
@@ -203,6 +260,9 @@
     const stored = safeParse(localStorage.getItem('supportOnlineAgents') || '[]', []);
     if (!Array.isArray(stored)) return [];
     const authorized = getAuthorizedSupportEmails();
+    if (authorized.length === 0) {
+      return [...new Set(stored.map(normalizeEmail).filter(Boolean))];
+    }
     return [...new Set(
       stored
         .map(normalizeEmail)
@@ -238,6 +298,77 @@
     return state.currentUser;
   }
 
+  function buildHealthUrl() {
+    return String(buildApiUrl('/health'));
+  }
+
+  function hideBackendOfflineHint() {
+    if (typeof document === 'undefined') return;
+    const existing = document.getElementById(BACKEND_OFFLINE_HINT_ID);
+    if (existing) {
+      existing.style.display = 'none';
+    }
+  }
+
+  function showBackendOfflineHint() {
+    if (typeof document === 'undefined' || !document.body) return;
+
+    // Login pages render their own dedicated offline hints.
+    if (document.getElementById('localServerHint') || document.getElementById('supportLocalServerHint')) {
+      return;
+    }
+
+    let panel = document.getElementById(BACKEND_OFFLINE_HINT_ID);
+    if (!panel) {
+      panel = document.createElement('section');
+      panel.id = BACKEND_OFFLINE_HINT_ID;
+      panel.setAttribute('role', 'status');
+      panel.setAttribute('aria-live', 'polite');
+      panel.className = 'cws-backend-offline-hint';
+      panel.innerHTML = [
+        '<strong class="cws-backend-offline-hint-title">Local backend is unreachable.</strong>',
+        '<div class="auth-meta cws-backend-offline-hint-note">Run this in the project folder:</div>',
+        '<pre id="cwsBackendOfflineCmd" class="cws-backend-offline-hint-copy">start-local.cmd</pre>',
+        '<div class="cws-backend-offline-hint-actions">',
+        '  <button id="cwsCopyBackendCmd" type="button" class="ghost-btn">Copy command</button>',
+        '  <a id="cwsOpenHealth" target="_blank" rel="noopener noreferrer" class="ghost-btn">Open /health</a>',
+        '  <button id="cwsDismissBackendHint" type="button" class="ghost-btn">Dismiss</button>',
+        '</div>'
+      ].join('');
+
+      document.body.appendChild(panel);
+
+      const copyBtn = panel.querySelector('#cwsCopyBackendCmd');
+      const commandEl = panel.querySelector('#cwsBackendOfflineCmd');
+      const dismissBtn = panel.querySelector('#cwsDismissBackendHint');
+
+      copyBtn.addEventListener('click', async () => {
+        const command = commandEl ? String(commandEl.textContent || '').trim() : 'start-local.cmd';
+        try {
+          await navigator.clipboard.writeText(command);
+          copyBtn.textContent = 'Copied';
+        } catch (_error) {
+          copyBtn.textContent = 'Copy failed';
+        }
+
+        setTimeout(() => {
+          copyBtn.textContent = 'Copy command';
+        }, 1400);
+      });
+
+      dismissBtn.addEventListener('click', () => {
+        panel.style.display = 'none';
+      });
+    }
+
+    const healthLink = panel.querySelector('#cwsOpenHealth');
+    if (healthLink) {
+      healthLink.setAttribute('href', buildHealthUrl());
+    }
+
+    panel.style.display = 'block';
+  }
+
   async function apiRequest(path, options) {
     const requestOptions = Object.assign({
       credentials: getRequestCredentials(),
@@ -252,6 +383,13 @@
 
     if (state.sessionToken && !requestOptions.headers['X-CWS-Session']) {
       requestOptions.headers['X-CWS-Session'] = state.sessionToken;
+    }
+
+    if (isMutatingMethod(requestOptions.method)) {
+      const csrfToken = await ensureCsrfToken();
+      if (csrfToken && !requestOptions.headers['X-CSRF-Token']) {
+        requestOptions.headers['X-CSRF-Token'] = csrfToken;
+      }
     }
 
     const requestUrl = buildApiUrl(path);
@@ -312,6 +450,7 @@
     if (!response) {
       const configuredBase = getApiBase();
       const target = configuredBase || 'same-origin backend';
+      showBackendOfflineHint();
       throw new Error(`Unable to reach the login server (${target}). If you are running the site locally, start the Node backend and make sure it is reachable on the expected local port. You can also set window.CWS_API_BASE or window.CWS_API_BASE_PORT.`);
     }
 
@@ -323,6 +462,8 @@
       error.payload = payload;
       throw error;
     }
+
+    hideBackendOfflineHint();
 
     return payload;
   }
@@ -412,11 +553,54 @@
 
   async function hasRegisteredAccounts() {
     const payload = await apiRequest('/api/auth/meta', { method: 'GET' });
+    hydrateSupportRoles(payload);
     return Boolean(payload && payload.hasCustomerAccounts);
   }
 
+  async function getAuthHealth() {
+    try {
+      return await apiRequest('/health', { method: 'GET' });
+    } catch (_error) {
+      return null;
+    }
+  }
+
+  async function getAuthStatus() {
+    const health = await getAuthHealth();
+    if (health && health.status === 'ok') {
+      try {
+        const meta = await apiRequest('/api/auth/meta', { method: 'GET' });
+        hydrateSupportRoles(meta);
+        return {
+          online: true,
+          health,
+          meta: meta || null,
+          metaUrl: buildApiUrl('/api/auth/meta')
+        };
+      } catch (_error) {
+        return {
+          online: true,
+          health,
+          meta: null,
+          metaUrl: buildApiUrl('/api/auth/meta')
+        };
+      }
+    }
+
+    const meta = await apiRequest('/api/auth/meta', { method: 'GET' }).catch(() => null);
+    hydrateSupportRoles(meta);
+    return {
+      online: Boolean(meta),
+      health: health || null,
+      meta: meta || null,
+      metaUrl: buildApiUrl('/api/auth/meta')
+    };
+  }
+
   async function getAuthMeta() {
-    return apiRequest('/api/auth/meta', { method: 'GET' });
+    const meta = await apiRequest('/api/auth/meta', { method: 'GET' });
+    hydrateSupportRoles(meta);
+    return meta;
   }
 
   function isCustomerLoggedIn() {
@@ -505,6 +689,7 @@
         password: payload.password
       })
     });
+    await getAuthMeta().catch(() => null);
     saveSessionToken(result && result.sessionToken);
     setSupport(result && result.user);
     return result && result.user;
@@ -609,6 +794,8 @@
     clearCustomer,
     clearSupport,
     hasRegisteredAccounts,
+    getAuthHealth,
+    getAuthStatus,
     getAuthMeta,
     isCustomerLoggedIn,
     isSupportLoggedIn,

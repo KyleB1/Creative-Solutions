@@ -9,7 +9,7 @@
 </head>
 <body>
   <button id="themeToggle" class="ghost-btn theme-fab" type="button">Dark Mode</button>
-  <div class="split-shell" style="margin: 5.5rem auto 2rem;">
+  <div class="split-shell auth-page-shell">
     <aside class="split-intro">
       <h1>Welcome back</h1>
       <p>Sign in to access your portfolio, track project updates, and manage billing all in one place.</p>
@@ -19,7 +19,6 @@
         <span class="pill-chip">Billing + Support</span>
         <span class="pill-chip">Resource Library</span>
         <span class="pill-chip">Collaboration intergation</span>
-        </span>
       </div>
     </aside>
 
@@ -29,10 +28,10 @@
         <a href="index.htm" class="ghost-btn">Home</a>
       </div>
       <h2>Sign in to your account</h2>
-      <p class="auth-meta" style="margin:0 0 1rem; text-align:left;">Access your workspace and continue where you left off.</p>
-      <div style="display:flex; gap:0.5rem; align-items:center; margin:0 0 1rem; flex-wrap:wrap;">
-        <p id="apiStatusBanner" class="status-banner info" role="status" aria-live="polite" style="margin:0; flex:1 1 320px;">Checking login server availability...</p>
-        <button id="retryStatusBtn" type="button" class="ghost-btn" style="min-height:2.1rem;">Retry</button>
+      <p class="auth-meta auth-meta-left">Access your workspace and continue where you left off.</p>
+      <div class="status-row">
+        <p id="apiStatusBanner" class="status-banner info status-grow" role="status" aria-live="polite">Checking login server availability...</p>
+        <button id="retryStatusBtn" type="button" class="ghost-btn retry-btn-compact">Retry</button>
       </div>
       <form class="auth-form">
         <div class="auth-field">
@@ -51,119 +50,14 @@
         </div>
 
         <button type="submit" class="auth-submit">Log In</button>
-        <p id="loginError" class="auth-meta" style="color:#b91c1c;"></p>
+        <p id="loginError" class="auth-meta auth-error"></p>
       </form>
       <p class="auth-meta">Don't have an account? <a href="signup.html">Create one</a></p>
     </main>
   </div>
   <script src="auth.js"></script>
   <script defer src="header.js"></script>
-  <script>
-    const loginForm = document.querySelector('form');
-    const themeToggle = document.getElementById('themeToggle');
-    const loginError = document.getElementById('loginError');
-    const apiStatusBanner = document.getElementById('apiStatusBanner');
-    const retryStatusBtn = document.getElementById('retryStatusBtn');
-    const submitButton = loginForm.querySelector('button[type="submit"]');
-    const storedTheme = localStorage.getItem('siteTheme') || 'light';
-    let customerLoginEnabled = true;
-
-    const applyTheme = (theme) => {
-      document.body.classList.toggle('dark-mode', theme === 'dark');
-      themeToggle.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
-      localStorage.setItem('siteTheme', theme);
-    };
-
-    loginForm.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      loginError.textContent = '';
-
-      if (!customerLoginEnabled) {
-        loginError.textContent = 'Customer login is currently unavailable because the login server cannot be reached.';
-        return;
-      }
-
-      try {
-        await SiteAuth.loginCustomer({
-          email: document.getElementById('email').value,
-          password: document.getElementById('password').value
-        });
-        window.location.href = SiteAuth.toAppUrl('customer-portal.html');
-      } catch (error) {
-        loginError.textContent = error.message || 'Unable to log in right now.';
-      }
-    });
-
-    const setBannerState = (state, message) => {
-      apiStatusBanner.classList.remove('info', 'ok', 'error');
-      apiStatusBanner.classList.add(state);
-      apiStatusBanner.textContent = message;
-    };
-
-    const authMetaUrl = SiteAuth.buildApiUrl('/api/auth/meta');
-
-    const checkApiConnectivity = async () => {
-      setBannerState('info', `Checking login server availability at ${authMetaUrl} ...`);
-      retryStatusBtn.disabled = true;
-      retryStatusBtn.textContent = 'Checking...';
-
-      const timeoutMs = 15000;
-      const timeoutPromise = new Promise((_, reject) => {
-        const timer = setTimeout(() => {
-          clearTimeout(timer);
-          reject(new Error('timeout'));
-        }, timeoutMs);
-      });
-
-      try {
-        const meta = await Promise.race([
-          SiteAuth.getAuthMeta(),
-          timeoutPromise
-        ]);
-
-        customerLoginEnabled = true;
-        submitButton.disabled = false;
-        submitButton.textContent = 'Log In';
-
-        if (meta && meta.hasCustomerAccounts === false) {
-          setBannerState('info', `Login server is online at ${authMetaUrl}. No customer accounts are registered yet, so create an account first.`);
-          return;
-        }
-
-        setBannerState('ok', `Login server is online at ${authMetaUrl}. You can sign in now.`);
-      } catch (_error) {
-        customerLoginEnabled = false;
-        submitButton.disabled = true;
-        submitButton.textContent = 'Server Unreachable';
-        setBannerState('error', `Login server is unreachable at ${authMetaUrl}. If you are testing locally, start the Node backend on port 3000.`);
-      } finally {
-        retryStatusBtn.disabled = false;
-        retryStatusBtn.textContent = 'Retry';
-      }
-    };
-
-    retryStatusBtn.addEventListener('click', () => {
-      checkApiConnectivity();
-    });
-
-    themeToggle.addEventListener('click', () => {
-      const nextTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
-      applyTheme(nextTheme);
-    });
-
-    applyTheme(storedTheme);
-
-    (async () => {
-      await checkApiConnectivity();
-      await SiteAuth.init();
-      const activeSupport = SiteAuth.getSupport();
-      if (activeSupport) {
-        window.location.href = SiteAuth.getSupportLandingUrl(activeSupport);
-        return;
-      }
-      await SiteAuth.redirectIfCustomer('customer-portal.html');
-    })();
-  </script>
+  <script defer src="login-page.js"></script>
   <footer></footer>
   <script defer src="footer.js"></script>
 </body>

@@ -8,39 +8,11 @@
  * 4. Admin endpoints return proper data
  */
 
-const http = require('http');
+const { getPort, request, requireSupportPassword, extractCookieHeader } = require('./tests/test-utils');
 
 const ADMIN_EMAIL = 'admin@creativewebsolutions.com';
-const ADMIN_PASSWORD = process.env.SUPPORT_PORTAL_PASSWORD || 'AdminPass123!@';
-const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;
-
-async function request(method, path, body = null, headers = {}) {
-  return new Promise((resolve) => {
-    const opts = {
-      hostname: 'localhost',
-      port: PORT,
-      path,
-      method,
-      headers: { 'Content-Type': 'application/json', ...headers }
-    };
-    const req = http.request(opts, (res) => {
-      let data = '';
-      res.setEncoding('utf8');
-      res.on('data', (chunk) => { data += chunk; });
-      res.on('end', () => {
-        try {
-          const json = JSON.parse(data);
-          resolve({ status: res.statusCode, body: json, headers: res.headers });
-        } catch (e) {
-          resolve({ status: res.statusCode, body: data, headers: res.headers });
-        }
-      });
-    });
-    req.on('error', (err) => resolve({ status: 0, body: { error: err.message } }));
-    if (body) req.write(JSON.stringify(body));
-    req.end();
-  });
-}
+const ADMIN_PASSWORD = requireSupportPassword('test-admin-setup.js');
+const PORT = getPort();
 
 (async () => {
   console.log('╔════════════════════════════════════════════════════════╗');
@@ -64,17 +36,40 @@ async function request(method, path, body = null, headers = {}) {
   // Step 2: Attempt support login with admin credentials
   console.log('Step 2: Attempt admin support login');
   console.log(`  Email: ${ADMIN_EMAIL}`);
-  console.log(`  Password: ${ADMIN_PASSWORD}`);
+  console.log('  Password: [set via SUPPORT_PORTAL_PASSWORD]');
   
   const loginRes = await request('POST', '/api/auth/support-login', {
     email: ADMIN_EMAIL,
     password: ADMIN_PASSWORD
   });
+
+  let effectiveLoginRes = loginRes;
+  if (effectiveLoginRes.status === 401) {
+    console.log('  Initial login failed with 401. Attempting support password reset for this environment...');
+    const resetRequest = await request('POST', '/api/auth/support-password-reset/request', {
+      email: ADMIN_EMAIL
+    });
+
+    const resetToken = resetRequest.body && resetRequest.body.resetToken;
+    if (resetRequest.status === 200 && resetToken) {
+      const resetConfirm = await request('POST', '/api/auth/support-password-reset/confirm', {
+        token: resetToken,
+        password: ADMIN_PASSWORD
+      });
+
+      if (resetConfirm.status === 200) {
+        effectiveLoginRes = await request('POST', '/api/auth/support-login', {
+          email: ADMIN_EMAIL,
+          password: ADMIN_PASSWORD
+        });
+      }
+    }
+  }
   
-  console.log(`  Response Status: ${loginRes.status}`);
-  console.log(`  Response: ${loginRes.body.error || loginRes.body.user?.role || 'Unknown'}\n`);
+  console.log(`  Response Status: ${effectiveLoginRes.status}`);
+  console.log(`  Response: ${effectiveLoginRes.body.error || effectiveLoginRes.body.user?.role || 'Unknown'}\n`);
   
-  if (loginRes.status === 503) {
+  if (effectiveLoginRes.status === 503) {
     console.log('⚠️  Support login is DISABLED (503 Service Unavailable)');
     console.log('   This is expected if SUPPORT_PORTAL_PASSWORD is not set.\n');
     console.log('═══════════════════════════════════════════════════════\n');
@@ -84,29 +79,29 @@ async function request(method, path, body = null, headers = {}) {
     console.log('2. Restart the server:');
     console.log('   node server.js\n');
     console.log('3. Access admin panel:');
-    console.log('   - Support Portal: http://localhost:4000/support-portal.html');
+    console.log('   - Support Portal: http://localhost:3000/support-portal.html');
     console.log('   - Login with:');
     console.log(`     Email: ${ADMIN_EMAIL}`);
-    console.log(`     Password: ${ADMIN_PASSWORD}\n`);
+    console.log('     Password: [your SUPPORT_PORTAL_PASSWORD value]\n');
     console.log('4. Once logged in as System Administrator, you\'ll see');
     console.log('   "Admin Console" link to access: system-admin.html\n');
     process.exit(0);
   }
   
-  if (loginRes.status !== 200) {
-    console.log(`✗ Login failed with status ${loginRes.status}`);
-    console.log(`  Error: ${loginRes.body.error}\n`);
+  if (effectiveLoginRes.status !== 200) {
+    console.log(`✗ Login failed with status ${effectiveLoginRes.status}`);
+    console.log(`  Error: ${effectiveLoginRes.body.error}\n`);
     process.exit(1);
   }
   
   // Step 3: Extract session cookie
-  const sessionCookie = loginRes.headers['set-cookie']?.[0];
-  const sessionId = loginRes.body.sessionToken;
+  const sessionCookie = extractCookieHeader(effectiveLoginRes.headers['set-cookie']);
+  const sessionId = effectiveLoginRes.body.sessionToken;
   
   console.log('✓ Admin login successful!\n');
   console.log(`  Session ID: ${sessionId?.slice(0, 20)}...`);
-  console.log(`  User: ${loginRes.body.user?.email}`);
-  console.log(`  Role: ${loginRes.body.user?.supportRole}\n`);
+  console.log(`  User: ${effectiveLoginRes.body.user?.email}`);
+  console.log(`  Role: ${effectiveLoginRes.body.user?.supportRole}\n`);
   
   // Step 4: Access admin overview endpoint
   console.log('Step 3: Access /api/auth/admin/overview');

@@ -1,0 +1,170 @@
+
+╔════════════════════════════════════════════════════════════════╗
+║                   STRIPE PAYMENT SERVER                        ║
+╚════════════════════════════════════════════════════════════════╝
+
+Server running on http://localhost:3000
+Environment: development
+Mode: TEST
+
+Customer store: C:\Users\kyleb\OneDrive\Desktop\creatvieweb_solutions\data\customer-accounts.json
+✓ Stripe connection successful
+Available endpoints:
+  POST   /api/billing/payment-intent    - Create payment intent
+  POST   /api/billing/charge            - Process payment
+  POST   /api/billing/payment-methods   - Store payment method
+  GET    /api/billing/payment-methods   - List payment methods
+  DELETE /api/billing/payment-methods/:id - Delete payment method
+  GET    /api/billing/payments          - Payment history
+  POST   /api/billing/refund            - Refund (admin only)
+  POST   /api/billing/webhook           - Stripe webhook
+
+[2026-07-31T00:07:57.225Z] GET /health 200 12ms
+[2026-07-31T00:08:08.364Z] GET / 200 770ms
+[2026-07-31T00:08:08.755Z] GET /login.html 200 231ms
+[2026-07-31T00:08:09.054Z] GET /signup.html 200 111ms
+[2026-07-31T00:08:09.685Z] GET /support-login.html 200 246ms
+[2026-07-31T00:08:10.108Z] GET /support-portal.html 200 168ms
+[2026-07-31T00:08:10.984Z] GET /system-admin.html 200 505ms
+[2026-07-31T00:08:11.339Z] GET /pricing.html 200 97ms
+[2026-07-31T00:08:11.487Z] GET /health 200 1ms
+[2026-07-31T00:08:11.606Z] GET /meta 200 5ms
+[2026-07-31T00:08:11.614Z] GET /admin/overview 401 4ms
+[2026-07-31T00:08:11.847Z] GET /customer/tickets 401 1ms
+[2026-07-31T00:08:12.443Z] GET /admin/overview 401 0ms
+[2026-07-31T00:08:13.698Z] POST /refund 403 4ms
+[2026-07-31T00:08:13.863Z] POST /payment-intent 401 1ms
+[2026-07-31T00:08:14.036Z] GET /customer/tickets 401 1ms
+[2026-07-31T00:08:14.217Z] GET /support/tickets 401 0ms
+[contact] New submission from john@example.com (86d5071ccbb0f385)
+[2026-07-31T00:08:15.203Z] POST / 201 981ms
+[2026-07-31T00:08:15.464Z] POST /login 400 2ms
+[2026-07-31T00:08:15.798Z] POST /signup 400 3ms
+[2026-07-31T00:08:15.907Z] GET /meta 200 0ms
+[2026-07-31T00:08:16.234Z] POST /payment-intent 401 2ms
+[2026-07-31T00:08:16.375Z] POST /payment-intent 401 2ms
+[2026-07-31T00:08:16.454Z] POST /refund 403 0ms
+[2026-07-31T00:08:16.993Z] POST /admin/support-password 401 2ms
+[2026-07-31T00:08:17.073Z] GET /support/tickets 401 1ms
+[2026-07-31T00:08:17.179Z] POST /customer/tickets 401 2ms
+[2026-07-31T00:08:17.278Z] GET /payment-methods 401 1ms
+[2026-07-31T00:08:17.375Z] DELETE /payment-methods/pm_test123 401 1ms
+[2026-07-31T00:08:17.402Z] GET /payments 401 1ms
+[2026-07-31T00:08:17.510Z] POST /signup 400 1ms
+[2026-07-31T00:08:17.528Z] POST /signup 400 1ms
+[2026-07-31T00:08:17.581Z] POST /signup 400 0ms
+[2026-07-31T00:08:17.619Z] POST / 400 1ms
+[2026-07-31T00:08:18.053Z] POST /signup 201 422ms
+[2026-07-31T00:08:18.056Z] POST /signup 409 1ms
+[2026-07-31T00:08:18.060Z] POST /signup 403 1ms
+[2026-07-31T00:08:18.061Z] GET /session 200 0ms
+[2026-07-31T00:08:18.221Z] POST /signup 400 0ms
+[2026-07-31T00:08:18.289Z] POST /login 400 2ms
+[2026-07-31T00:08:18.466Z] POST /signup 201 174ms
+[2026-07-31T00:08:18.469Z] POST /password-reset/request 400 0ms
+[2026-07-31T03:40:50.029Z] GET /health 200 1ms
+[contact] New submission from csrf.missing.1785469252384@example.com (b79328b81930a864)
+[2026-07-31T03:40:52.417Z] POST / 201 5ms
+[2026-07-31T03:40:52.546Z] GET /admin/overview 401 0ms
+[2026-07-31T03:40:52.639Z] POST /refund 403 1ms
+[2026-07-31T03:40:52.642Z] POST /payment-intent 401 0ms
+[2026-07-31T03:40:52.644Z] GET /customer/tickets 401 0ms
+[2026-07-31T03:40:52.647Z] GET /support/tickets 401 0ms
+[contact] New submission from john@example.com (c95cb6d73ae792f6)
+[2026-07-31T03:40:52.682Z] POST / 201 4ms
+[2026-07-31T03:40:52.684Z] POST /login 400 0ms
+[2026-07-31T03:40:52.687Z] POST /signup 400 1ms
+[2026-07-31T03:40:52.705Z] GET /meta 200 1ms
+[2026-07-31T03:40:52.711Z] POST /payment-intent 401 0ms
+[2026-07-31T03:40:52.714Z] POST /payment-intent 401 1ms
+[2026-07-31T03:40:52.717Z] POST /refund 403 1ms
+[2026-07-31T03:40:52.720Z] POST /admin/support-password 401 1ms
+[2026-07-31T03:40:52.725Z] GET /support/tickets 401 0ms
+[2026-07-31T03:40:52.728Z] POST /customer/tickets 401 1ms
+[2026-07-31T03:40:52.730Z] GET /payment-methods 401 1ms
+[2026-07-31T03:40:52.732Z] DELETE /payment-methods/pm_test123 401 1ms
+[2026-07-31T03:40:52.735Z] GET /payments 401 1ms
+[2026-07-31T03:40:52.740Z] POST /signup 400 1ms
+[2026-07-31T03:40:52.743Z] POST /signup 400 1ms
+[2026-07-31T03:40:52.745Z] POST /signup 400 1ms
+[2026-07-31T03:40:52.746Z] POST / 400 0ms
+[2026-07-31T03:40:53.274Z] POST /signup 201 525ms
+[2026-07-31T03:40:53.289Z] POST /signup 409 1ms
+[2026-07-31T03:40:53.291Z] POST /signup 403 0ms
+[2026-07-31T03:40:53.412Z] GET /session 200 4ms
+[2026-07-31T03:42:18.469Z] GET /health 200 0ms
+[2026-07-31T03:43:32.174Z] GET /login.html 200 40ms
+[2026-07-31T03:43:42.725Z] GET /auth.js 200 35ms
+[2026-07-31T03:43:42.804Z] GET /style.css 200 119ms
+[2026-07-31T03:43:43.041Z] GET /header.js 200 2ms
+[2026-07-31T03:43:43.251Z] GET /footer.js 200 21ms
+[2026-07-31T03:43:43.259Z] GET /login-page.js 200 32ms
+[2026-07-31T03:44:22.793Z] GET /admin/overview 401 1ms
+[2026-07-31T03:44:23.177Z] POST /refund 403 0ms
+[2026-07-31T03:44:23.180Z] POST /payment-intent 401 0ms
+[2026-07-31T03:44:23.183Z] GET /customer/tickets 401 1ms
+[2026-07-31T03:44:23.185Z] GET /support/tickets 401 0ms
+[contact] New submission from john@example.com (d333c88b79075cf4)
+[2026-07-31T03:44:23.247Z] POST / 201 6ms
+[2026-07-31T03:44:23.250Z] POST /login 400 1ms
+[2026-07-31T03:44:23.267Z] POST /signup 400 1ms
+[2026-07-31T03:44:23.280Z] GET /meta 200 0ms
+[2026-07-31T03:44:23.282Z] POST /payment-intent 401 0ms
+[2026-07-31T03:44:23.284Z] POST /payment-intent 401 0ms
+[2026-07-31T03:44:23.286Z] POST /refund 403 0ms
+[2026-07-31T03:44:23.288Z] POST /admin/support-password 401 1ms
+[2026-07-31T03:44:23.289Z] GET /support/tickets 401 0ms
+[2026-07-31T03:44:23.293Z] POST /customer/tickets 401 0ms
+[2026-07-31T03:44:23.295Z] GET /payment-methods 401 1ms
+[2026-07-31T03:44:23.296Z] DELETE /payment-methods/pm_test123 401 0ms
+[2026-07-31T03:44:23.298Z] GET /payments 401 1ms
+[2026-07-31T03:44:23.299Z] POST /signup 400 0ms
+[2026-07-31T03:44:23.303Z] POST /signup 400 0ms
+[2026-07-31T03:44:23.305Z] POST /signup 400 0ms
+[2026-07-31T03:44:23.308Z] POST / 400 1ms
+[2026-07-31T03:44:23.454Z] POST /signup 201 144ms
+[2026-07-31T03:44:23.457Z] POST /signup 409 0ms
+[2026-07-31T03:44:23.459Z] POST /signup 403 0ms
+[2026-07-31T03:44:23.461Z] GET /session 200 1ms
+[2026-07-31T03:44:47.211Z] GET /health 200 1ms
+[2026-07-31T03:49:13.459Z] GET /session 200 2ms
+[2026-07-31T03:49:13.483Z] GET /health 200 1ms
+[2026-07-31T03:49:14.448Z] GET /meta 200 1ms
+[2026-07-31T03:50:06.214Z] GET /session 200 5ms
+[2026-07-31T03:50:07.905Z] GET /health 200 383ms
+[2026-07-31T03:50:09.102Z] GET /meta 200 1ms
+[2026-07-31T03:50:10.199Z] GET /session 200 1ms
+[2026-07-31T03:50:10.638Z] GET /health 200 2ms
+[2026-07-31T03:50:11.785Z] GET /meta 200 1ms
+[2026-07-31T03:50:21.293Z] GET /session 200 1ms
+[2026-07-31T03:50:21.351Z] GET /health 200 1ms
+[2026-07-31T03:50:21.754Z] GET /meta 200 2ms
+[2026-07-31T03:50:26.180Z] GET /session 200 1ms
+[2026-07-31T03:50:26.710Z] GET /health 200 1ms
+[2026-07-31T03:50:28.442Z] GET /meta 200 1ms
+[2026-07-31T03:50:52.559Z] GET /session 200 0ms
+[2026-07-31T03:50:52.728Z] GET /health 200 1ms
+[2026-07-31T03:50:52.915Z] GET /meta 200 0ms
+[2026-07-31T03:51:37.042Z] GET /session 200 1ms
+[2026-07-31T03:51:37.298Z] GET /health 200 1ms
+[2026-07-31T03:51:37.731Z] GET /meta 200 0ms
+[2026-07-31T03:51:59.203Z] GET /session 200 1ms
+[2026-07-31T03:51:59.209Z] GET /health 200 1ms
+[2026-07-31T03:51:59.230Z] GET /meta 200 1ms
+[2026-07-31T03:52:10.514Z] GET /session 200 0ms
+[2026-07-31T03:52:11.697Z] GET /health 200 2ms
+[2026-07-31T03:52:12.141Z] GET /meta 200 1ms
+[2026-07-31T03:52:15.061Z] GET /session 200 1ms
+[2026-07-31T03:52:15.177Z] GET /health 200 1ms
+[2026-07-31T03:52:15.505Z] GET /meta 200 0ms
+[2026-07-31T03:52:15.802Z] GET /session 200 1ms
+[2026-07-31T03:52:15.936Z] GET /health 200 1ms
+[2026-07-31T03:52:15.988Z] GET /meta 200 1ms
+[2026-07-31T03:52:16.688Z] GET /session 200 0ms
+[2026-07-31T03:52:16.802Z] GET /health 200 3ms
+[2026-07-31T03:52:16.906Z] GET /meta 200 0ms
+[2026-07-31T03:52:17.458Z] GET /session 200 0ms
+[2026-07-31T03:52:17.611Z] GET /health 200 1ms
+[2026-07-31T03:52:17.746Z] GET /session 200 3ms
+[2026-07-31T03:52:17.860Z] GET /health 200 1ms
+[2026-07-31T03:52:17.906Z] GET /meta 200 1ms

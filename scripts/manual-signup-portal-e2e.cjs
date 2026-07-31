@@ -1,7 +1,8 @@
 const { chromium } = require('playwright');
 
 (async () => {
-  const baseUrl = 'http://localhost:4000';
+  const basePort = process.env.FRONTEND_PORT ? Number(process.env.FRONTEND_PORT) : (process.env.PORT ? Number(process.env.PORT) : 3000);
+  const baseUrl = `http://localhost:${basePort}`;
   const testIdentity = {
     name: 'Jordan Modern',
     email: `jordan.modern.${Date.now()}@example.com`,

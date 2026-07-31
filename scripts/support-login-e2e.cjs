@@ -2,7 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const { chromium } = require('playwright');
 
-const BASE_URL = 'http://localhost:4000';
+const BASE_PORT = process.env.FRONTEND_PORT ? Number(process.env.FRONTEND_PORT) : (process.env.PORT ? Number(process.env.PORT) : 3000);
+const BASE_URL = `http://localhost:${BASE_PORT}`;
 const ADMIN_EMAIL = process.env.SUPPORT_E2E_EMAIL || 'kyle.creativesolutions@gmail.com';
 const ADMIN_PASSWORD = process.env.SUPPORT_E2E_PASSWORD || '';
 const RESULT_PATH = path.join(__dirname, 'support-login-e2e-result.json');
