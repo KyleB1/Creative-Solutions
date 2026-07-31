@@ -286,6 +286,118 @@
       align-items: start;
     }
 
+    .triage-card {
+      display: grid;
+      gap: 0.9rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 1.25rem;
+      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.05);
+    }
+
+    .triage-card h3 {
+      margin: 0;
+      font-size: 1.15rem;
+    }
+
+    .triage-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .triage-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: #4c1d95;
+      font-weight: 800;
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .triage-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .triage-metric {
+      background: var(--surface-alt);
+      border-radius: 18px;
+      border: 1px solid rgba(229, 231, 235, 0.95);
+      padding: 0.95rem;
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .triage-metric span {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .triage-metric strong {
+      color: #111827;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    .triage-next-steps {
+      margin: 0;
+      padding-left: 1.15rem;
+      display: grid;
+      gap: 0.45rem;
+      color: #334155;
+    }
+
+    .triage-next-steps li {
+      line-height: 1.6;
+    }
+
+    .triage-draft {
+      display: grid;
+      gap: 0.35rem;
+      background: var(--surface-alt);
+      border-radius: 18px;
+      border: 1px solid rgba(229, 231, 235, 0.95);
+      padding: 1rem;
+    }
+
+    .triage-draft span {
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+    }
+
+    .triage-draft p {
+      margin: 0;
+      color: #334155;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    .triage-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .triage-helper {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+
     .detail-summary {
       display: grid;
       gap: 1rem;
@@ -567,6 +679,13 @@
     body.dark-mode .profile-pill span { color: #c2cffd; }
     body.dark-mode .theme-toggle,
     body.dark-mode .logout-button { background: #1f2937; color: #e5e7eb; border-color: rgba(148, 163, 184, 0.45); }
+    body.dark-mode .triage-card,
+    body.dark-mode .triage-draft,
+    body.dark-mode .triage-metric { background: #111827; border-color: #374151; }
+    body.dark-mode .triage-badge { background: #312e81; color: #e0e7ff; }
+    body.dark-mode .triage-metric strong,
+    body.dark-mode .triage-draft p,
+    body.dark-mode .triage-next-steps { color: #e2e8f0; }
   </style>
 </head>
 <body>
@@ -715,6 +834,37 @@
           </div>
         </section>
 
+        <section class="triage-card">
+          <div class="triage-header">
+            <h3>Guided triage</h3>
+            <span class="triage-badge" id="triageBadge">Next best action</span>
+          </div>
+          <p class="triage-helper" id="triageSummary">Select a ticket to see the next step, draft response, and triage focus.</p>
+          <div class="triage-grid">
+            <div class="triage-metric">
+              <span>Priority</span>
+              <strong id="triagePriority">—</strong>
+            </div>
+            <div class="triage-metric">
+              <span>SLA focus</span>
+              <strong id="triageSla">—</strong>
+            </div>
+            <div class="triage-metric">
+              <span>Next owner</span>
+              <strong id="triageOwner">Support agent</strong>
+            </div>
+          </div>
+          <ul id="triageSteps" class="triage-next-steps"></ul>
+          <div class="triage-draft">
+            <span>Reply draft</span>
+            <p id="triageDraft">Select a ticket to build a customer-ready reply.</p>
+          </div>
+          <div class="triage-actions">
+            <button id="copyDraftBtn" class="action-btn secondary" type="button">Copy draft</button>
+            <button id="loadDraftBtn" class="action-btn primary" type="button">Load into reply box</button>
+          </div>
+        </section>
+
         <section class="panel ticket-history">
           <h2>Ticket history</h2>
           <div id="ticketHistory" class="history-list"></div>
@@ -838,6 +988,15 @@
     const detailStatus = document.getElementById('detailStatus');
     const resolveTicketBtn = document.getElementById('resolveTicketBtn');
     const replyTicketBtn = document.getElementById('replyTicketBtn');
+    const triageBadge = document.getElementById('triageBadge');
+    const triageSummary = document.getElementById('triageSummary');
+    const triagePriority = document.getElementById('triagePriority');
+    const triageSla = document.getElementById('triageSla');
+    const triageOwner = document.getElementById('triageOwner');
+    const triageSteps = document.getElementById('triageSteps');
+    const triageDraft = document.getElementById('triageDraft');
+    const copyDraftBtn = document.getElementById('copyDraftBtn');
+    const loadDraftBtn = document.getElementById('loadDraftBtn');
     const openCount = document.getElementById('openCount');
     const pendingCount = document.getElementById('pendingCount');
     const resolvedCount = document.getElementById('resolvedCount');
@@ -963,6 +1122,73 @@
       return 'status-resolved';
     };
 
+    const buildTriageContext = (ticket) => {
+      const priority = String(ticket.priority || 'Medium').toLowerCase();
+      const status = String(ticket.status || 'open');
+      const isCustomerWaiting = status === 'waiting';
+      const isHighPriority = priority === 'high' || status === 'inprogress' || status === 'open';
+      const dueFocus = isHighPriority ? 'Respond within 1 hour' : 'Reply within business day';
+      const owner = isCustomerWaiting ? 'Customer follow-up' : 'Support agent';
+
+      const steps = [];
+      if (status === 'open') {
+        steps.push('Confirm the issue and acknowledge receipt.');
+      }
+      if (status === 'inprogress') {
+        steps.push('Share the current fix path and the next checkpoint.');
+      }
+      if (status === 'waiting') {
+        steps.push('Request the missing detail needed to continue.');
+      }
+      if (status === 'pending') {
+        steps.push('Validate the requested change before closing the loop.');
+      }
+      if (status === 'resolved') {
+        steps.push('Send a short closure note and invite follow-up if needed.');
+      }
+
+      if (priority === 'high') {
+        steps.unshift('Escalate this ticket to the priority queue.');
+      } else if (priority === 'low') {
+        steps.unshift('Batch with other lower-touch updates.');
+      }
+
+      return {
+        badge: status === 'resolved' ? 'Closeout flow' : isCustomerWaiting ? 'Waiting for customer' : 'Active triage',
+        summary: `${ticket.product} needs a ${status === 'resolved' ? 'closeout' : 'clear next step'} for ${ticket.customer}.`,
+        sla: dueFocus,
+        owner,
+        steps,
+        draft: status === 'resolved'
+          ? `Hi ${ticket.customer},\n\nThe ${ticket.subject.toLowerCase()} issue is now resolved. If anything still looks off, reply here and we will take another look.\n\nBest,\n${staffData.name}`
+          : status === 'waiting'
+            ? `Hi ${ticket.customer},\n\nWe are ready to continue on ${ticket.subject.toLowerCase()}, but we need one more detail to finish the next step. Please send the missing information when you can.\n\nBest,\n${staffData.name}`
+            : `Hi ${ticket.customer},\n\nI am reviewing ${ticket.subject.toLowerCase()} now and will keep you posted on the next step. If you have any extra context, reply here and I will fold it into the fix plan.\n\nBest,\n${staffData.name}`
+      };
+    };
+
+    const renderTriage = (ticket) => {
+      if (!ticket) {
+        triageBadge.textContent = 'Next best action';
+        triageSummary.textContent = 'Select a ticket to see the next step, draft response, and triage focus.';
+        triagePriority.textContent = '—';
+        triageSla.textContent = '—';
+        triageOwner.textContent = 'Support agent';
+        triageSteps.innerHTML = '';
+        triageDraft.textContent = 'Select a ticket to build a customer-ready reply.';
+        return;
+      }
+
+      const context = buildTriageContext(ticket);
+      triageBadge.textContent = context.badge;
+      triageSummary.textContent = context.summary;
+      triagePriority.textContent = ticket.priority;
+      triageSla.textContent = context.sla;
+      triageOwner.textContent = context.owner;
+      triageSteps.innerHTML = context.steps.map((step) => `<li>${step}</li>`).join('');
+      triageDraft.textContent = context.draft;
+    };
+
     const buildTicketCard = (ticket) => {
       const wrapper = document.createElement('button');
       wrapper.type = 'button';
@@ -1074,6 +1300,7 @@
       detailStatus.className = `pill ${getStatusClass(ticket.status)}`;
       resolveTicketBtn.textContent = ticket.status === 'resolved' ? 'Resolved' : 'Mark resolved';
       resolveTicketBtn.disabled = ticket.status === 'resolved';
+      renderTriage(ticket);
       renderTicketHistory(ticket);
     };
 
@@ -1095,6 +1322,26 @@
     });
 
     replyTicketBtn.addEventListener('click', () => { chatInput.focus(); });
+
+    loadDraftBtn.addEventListener('click', () => {
+      if (!selectedTicket) return;
+      const context = buildTriageContext(selectedTicket);
+      chatInput.value = context.draft;
+      chatInput.focus();
+    });
+
+    copyDraftBtn.addEventListener('click', async () => {
+      if (!selectedTicket) return;
+      const context = buildTriageContext(selectedTicket);
+      try {
+        await navigator.clipboard.writeText(context.draft);
+        copyDraftBtn.textContent = 'Draft copied';
+        setTimeout(() => { copyDraftBtn.textContent = 'Copy draft'; }, 1200);
+      } catch {
+        chatInput.value = context.draft;
+        chatInput.focus();
+      }
+    });
 
     prioritySelect.addEventListener('change', async () => {
       if (!selectedTicket) return;

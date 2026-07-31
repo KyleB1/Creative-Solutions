@@ -99,6 +99,31 @@
       gap: 0.7rem;
     }
 
+    .hero-proof {
+      margin-top: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+    }
+
+    .proof-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.38rem 0.72rem;
+      border-radius: 999px;
+      border: 1px solid var(--surface-contrast);
+      background: var(--surface-alt);
+      color: var(--text);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .proof-chip strong {
+      color: var(--primary);
+      font-weight: 800;
+    }
+
     .cta {
       display: inline-flex;
       align-items: center;
@@ -314,12 +339,17 @@
       <p class="eyebrow">Creative Web Solutions</p>
       <div class="hero-grid">
         <div class="hero-copy">
-          <h1>Launch sharper web experiences that convert faster.</h1>
-          <p>We design and build high-performing websites, customer portals, and support workflows that are built for speed, clarity, and growth. Your team gets a modern digital foundation without the usual complexity.</p>
+          <h1>Build a sharper digital presence that earns trust and converts faster.</h1>
+          <p>We create high-performing websites, customer portals, and support systems for teams that want a clearer story, stronger lead flow, and less operational friction.</p>
           <div class="cta-row">
             <a class="cta primary" href="signup.html">Start a Project</a>
             <a class="cta soft" href="services.html">Explore Services</a>
             <a class="cta soft" href="layout-lab.html">Try Layout Lab</a>
+          </div>
+          <div class="hero-proof" aria-label="Homepage proof points">
+            <span class="proof-chip"><strong>Fast launches</strong> without template feel</span>
+            <span class="proof-chip"><strong>Built-in support</strong> and portal visibility</span>
+            <span class="proof-chip"><strong>Conversion-focused</strong> from first screen to CTA</span>
           </div>
         </div>
         <div class="hero-side">
@@ -328,8 +358,8 @@
           </div>
           <aside class="hero-stats" aria-label="Business impact highlights">
             <div>
-              <strong>42%</strong>
-              <span>Avg. lead conversion lift after redesigns</span>
+              <strong>3-track</strong>
+              <span>Launch, portal, and growth systems planned together</span>
             </div>
             <div>
               <strong>2.1s</strong>
