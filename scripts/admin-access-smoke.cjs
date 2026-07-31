@@ -10,8 +10,10 @@ function makeUnsignedToken(payload) {
 }
 
 (async () => {
-  const backendBase = 'http://127.0.0.1:3101';
-  const frontendBase = 'http://127.0.0.1:4174';
+  const backendPort = process.env.PORT ? Number(process.env.PORT) : 3000;
+  const frontendPort = process.env.FRONTEND_PORT ? Number(process.env.FRONTEND_PORT) : backendPort;
+  const backendBase = `http://127.0.0.1:${backendPort}`;
+  const frontendBase = `http://127.0.0.1:${frontendPort}`;
   const testAdminToken = process.env.ADMIN_TOKEN || 'test-admin-token-smoke';
 
   const checks = [];

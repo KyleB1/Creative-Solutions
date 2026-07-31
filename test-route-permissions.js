@@ -10,40 +10,12 @@
  * - Rate limiting enforcement
  */
 
-const http = require('http');
 const crypto = require('crypto');
+const { getPort, request } = require('./tests/test-utils');
 
-const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
+const PORT = getPort();
 const BASE_URL = `http://localhost:${PORT}`;
 const BILLING_JWT_SECRET = process.env.BILLING_JWT_SECRET || null;
-
-async function request(method, path, body = null, headers = {}) {
-  return new Promise((resolve) => {
-    const opts = {
-      hostname: 'localhost',
-      port: PORT,
-      path,
-      method,
-      headers: { 'Content-Type': 'application/json', ...headers }
-    };
-    const req = http.request(opts, (res) => {
-      let data = '';
-      res.setEncoding('utf8');
-      res.on('data', (chunk) => { data += chunk; });
-      res.on('end', () => {
-        try {
-          const json = JSON.parse(data);
-          resolve({ status: res.statusCode, body: json, headers: res.headers });
-        } catch (e) {
-          resolve({ status: res.statusCode, body: data || null, headers: res.headers });
-        }
-      });
-    });
-    req.on('error', (err) => resolve({ status: 0, body: { error: err.message } }));
-    if (body) req.write(JSON.stringify(body));
-    req.end();
-  });
-}
 
 function createMockJWT(claims) {
   if (!BILLING_JWT_SECRET) {

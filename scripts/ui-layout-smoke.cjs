@@ -2,7 +2,8 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
 
-const BASE = 'http://localhost:3000';
+const BASE_PORT = process.env.FRONTEND_PORT ? Number(process.env.FRONTEND_PORT) : (process.env.PORT ? Number(process.env.PORT) : 3000);
+const BASE = `http://localhost:${BASE_PORT}`;
 const PAGES = [
   { path: '/index.htm', selector: '.home-shell' },
   { path: '/services.html', selector: '.services-wrap' },

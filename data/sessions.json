@@ -1,9 +1,9 @@
 {
   "sessions": {
-    "bccd72a5e1abe8415624ec4ed7270aa7e6b346d13077ba0da6c3b818d0f88f39": {
+    "b612606556ea8218485f094cd5f905f3db94bb45aa20f491bda659f03fda0e3f": {
       "user": {
         "role": "customer",
-        "email": "unique-1780809771848@example.com",
+        "email": "unique-1785456497619@example.com",
         "name": "Test User",
         "plan": "Growth plan",
         "renewal": "May 18",
@@ -12,18 +12,57 @@
         "supportTickets": 3,
         "monthlySpend": "$2.4K",
         "notifications": false,
-        "customerId": "808eb101-ef77-4723-a898-c88cdfc4d6f1"
+        "customerId": "2ae77859-2816-4e97-8412-8b6aea1f960f"
       },
-      "expiresAt": 1780852971923
+      "expiresAt": 1785499698034
     },
-    "28590946c17696ceea57a237b7d386338a351058eeb459a31f3fc9eaac3eca5a": {
+    "217b130ae4a6283ce8eafc17ef706e08e4833e62d9e7ae51c5fa9879acf7751e": {
       "user": {
-        "role": "admin",
-        "email": "kyle.creativesolutions@gmail.com",
-        "name": "Kyle Creativesolutions",
-        "supportRole": "System Administrator"
+        "role": "customer",
+        "email": "valid-1785456498291@example.com",
+        "name": "Valid Test",
+        "plan": "Growth plan",
+        "renewal": "May 18",
+        "activeProjects": 8,
+        "newLeads": 24,
+        "supportTickets": 3,
+        "monthlySpend": "$2.4K",
+        "notifications": false,
+        "customerId": "d43d5476-8617-41b4-b1c4-33f8e53e333f"
       },
-      "expiresAt": 1780860677727
+      "expiresAt": 1785499698463
+    },
+    "89153b8ddf8951bb902324c2186666465fce6c9cdff3ae50e4a638120b81823e": {
+      "user": {
+        "role": "customer",
+        "email": "unique-1785469252746@example.com",
+        "name": "Test User",
+        "plan": "Growth plan",
+        "renewal": "May 18",
+        "activeProjects": 8,
+        "newLeads": 24,
+        "supportTickets": 3,
+        "monthlySpend": "$2.4K",
+        "notifications": false,
+        "customerId": "2a3c3dba-6521-4f73-b64d-f95ef92e7ff7"
+      },
+      "expiresAt": 1785512453271
+    },
+    "b06364106b5c9df2560a2930b54eb1fbced692fbef730c50985b7b6d5bc90483": {
+      "user": {
+        "role": "customer",
+        "email": "unique-1785469463307@example.com",
+        "name": "Test User",
+        "plan": "Growth plan",
+        "renewal": "May 18",
+        "activeProjects": 8,
+        "newLeads": 24,
+        "supportTickets": 3,
+        "monthlySpend": "$2.4K",
+        "notifications": false,
+        "customerId": "7ca10761-eeb1-44c5-b31c-dfac32e419ab"
+      },
+      "expiresAt": 1785512663452
     }
   }
 }

@@ -182,7 +182,8 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.getSessionToken()}`
+            'Authorization': `Bearer ${this.getSessionToken()}`,
+            ...this.getCsrfHeaders('POST')
           },
           body: JSON.stringify({
             amount,
@@ -294,7 +295,8 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.getSessionToken()}`
+            'Authorization': `Bearer ${this.getSessionToken()}`,
+            ...this.getCsrfHeaders('POST')
           },
           body: JSON.stringify({
             paymentMethodId: token, // Only send tokenized payment method ID
@@ -334,7 +336,8 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.getSessionToken()}`
+            'Authorization': `Bearer ${this.getSessionToken()}`,
+            ...this.getCsrfHeaders('POST')
           },
           body: JSON.stringify({
             amount,
@@ -411,7 +414,8 @@
         const response = await fetch(`${this.config.apiBase}/payment-methods/${paymentMethodId}`, {
           method: 'DELETE',
           headers: {
-            'Authorization': `Bearer ${this.getSessionToken()}`
+            'Authorization': `Bearer ${this.getSessionToken()}`,
+            ...this.getCsrfHeaders('DELETE')
           }
         });
 
@@ -493,6 +497,22 @@
      */
     getSessionToken: function () {
       return null;
+    },
+
+    getCsrfToken: function () {
+      const cookieString = typeof document !== 'undefined' ? String(document.cookie || '') : '';
+      const match = cookieString.split(';').map((entry) => entry.trim()).find((entry) => entry.startsWith('cws_csrf='));
+      return match ? decodeURIComponent(match.slice('cws_csrf='.length)) : '';
+    },
+
+    getCsrfHeaders: function (method) {
+      const normalized = String(method || 'GET').toUpperCase();
+      if (normalized === 'GET' || normalized === 'HEAD' || normalized === 'OPTIONS') {
+        return {};
+      }
+
+      const token = this.getCsrfToken();
+      return token ? { 'X-CSRF-Token': token } : {};
     },
 
     /**

@@ -46,7 +46,7 @@
       <div class="footer-section">
         <h4>Newsletter</h4>
         <p>Stay updated with our latest releases and tips.</p>
-        <form class="footer-newsletter" onsubmit="handleFooterNewsletter(event)">
+        <form class="footer-newsletter">
           <input 
             type="email" 
             placeholder="Enter your email" 
@@ -72,8 +72,10 @@
 
   footer.innerHTML = footerHTML;
 
+  const newsletterForm = footer.querySelector('.footer-newsletter');
+
   // Handle footer newsletter signup
-  window.handleFooterNewsletter = function(e) {
+  function handleFooterNewsletter(e) {
     e.preventDefault();
     const input = e.target.querySelector('input[type="email"]');
     const email = input.value;
@@ -102,5 +104,9 @@
       btn.disabled = false;
       input.value = '';
     }, 3000);
-  };
+  }
+
+  if (newsletterForm) {
+    newsletterForm.addEventListener('submit', handleFooterNewsletter);
+  }
 })();

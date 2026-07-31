@@ -149,6 +149,133 @@
       min-height: 120px;
     }
 
+    .command-center {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .command-panel {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(99, 102, 241, 0.04));
+      border: 1px solid rgba(124, 58, 237, 0.14);
+      border-radius: 24px;
+      padding: 1.25rem;
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    .command-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      align-items: start;
+      flex-wrap: wrap;
+    }
+
+    .command-header h2 {
+      margin: 0;
+      font-size: 1.15rem;
+    }
+
+    .command-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: #5b21b6;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .command-note {
+      margin: 0;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    .command-list {
+      display: grid;
+      gap: 0.55rem;
+      margin: 0;
+      padding-left: 1.15rem;
+      color: #334155;
+    }
+
+    .command-list li {
+      line-height: 1.6;
+    }
+
+    .command-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .command-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.95rem 1.15rem;
+      border-radius: 18px;
+      border: 1px solid rgba(124, 58, 237, 0.18);
+      background: #ffffff;
+      color: #5b21b6;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .command-link:hover {
+      transform: translateY(-1px);
+      background: #f5efff;
+    }
+
+    .snapshot-card {
+      display: grid;
+      gap: 0.75rem;
+      background: var(--surface-alt);
+      border-radius: 24px;
+      padding: 1.25rem;
+      border: 1px solid rgba(229, 231, 235, 0.85);
+    }
+
+    .snapshot-card span {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+    }
+
+    .snapshot-card strong {
+      font-size: 1.25rem;
+      color: #111827;
+    }
+
+    .snapshot-stack {
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    .snapshot-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.9rem 1rem;
+      border-radius: 18px;
+      background: #ffffff;
+      border: 1px solid rgba(229, 231, 235, 0.85);
+      color: #334155;
+      font-size: 0.95rem;
+    }
+
+    .snapshot-item strong {
+      font-size: 0.95rem;
+      color: #111827;
+    }
+
     .card-title {
       font-size: 0.95rem;
       color: var(--text-muted);
@@ -414,6 +541,35 @@
     body.dark-mode .nav-link,
     body.dark-mode .profile-pill {
       color: #e5e7eb;
+    }
+
+    body.dark-mode .command-panel {
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(99, 102, 241, 0.08));
+      border-color: rgba(168, 85, 247, 0.2);
+    }
+
+    body.dark-mode .command-badge {
+      background: #312e81;
+      color: #e0e7ff;
+    }
+
+    body.dark-mode .command-note,
+    body.dark-mode .command-list,
+    body.dark-mode .snapshot-card span,
+    body.dark-mode .snapshot-item {
+      color: #c2cffd;
+    }
+
+    body.dark-mode .snapshot-card,
+    body.dark-mode .snapshot-item,
+    body.dark-mode .command-link {
+      background: #111827;
+      border-color: #374151;
+      color: #e5e7eb;
+    }
+
+    body.dark-mode .command-link:hover {
+      background: #1f2937;
     }
 
     body.dark-mode .topbar a:hover,
@@ -715,6 +871,42 @@
             </div>
           </div>
 
+          <div class="command-center">
+            <section class="command-panel">
+              <div class="command-header">
+                <div>
+                  <h2>Command center</h2>
+                  <p class="command-note" id="commandSummary">Your portal will highlight the next best action from your current account status.</p>
+                </div>
+                <span class="command-badge" id="commandBadge">Ready</span>
+              </div>
+              <ul class="command-list" id="commandList"></ul>
+              <div class="command-actions">
+                <a class="command-link" href="#messagesSection" data-jump="messages">Open support desk</a>
+                <a class="command-link" href="#billingSection" data-jump="billing">Review billing</a>
+              </div>
+            </section>
+
+            <aside class="snapshot-card">
+              <span>Today at a glance</span>
+              <strong id="snapshotHeadline">Focus on support and billing</strong>
+              <div class="snapshot-stack">
+                <div class="snapshot-item">
+                  <span>Next renewal</span>
+                  <strong id="snapshotRenewal">May 18</strong>
+                </div>
+                <div class="snapshot-item">
+                  <span>Open support requests</span>
+                  <strong id="snapshotTickets">3</strong>
+                </div>
+                <div class="snapshot-item">
+                  <span>Recommended next move</span>
+                  <strong id="snapshotAction">Reply to latest message</strong>
+                </div>
+              </div>
+            </aside>
+          </div>
+
           <div class="grid-2">
             <section class="recent-activity">
               <h2>Recent activity</h2>
@@ -929,11 +1121,6 @@
     </div>
   </div>
 
-  <script>
-    if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      window.CWS_API_BASE = 'http://localhost:3000';
-    }
-  </script>
   <script src="auth.js"></script>
   <script src="billing-frontend.js"></script>
   <script defer src="header.js"></script>
@@ -963,6 +1150,13 @@
     const ticketDescriptionInput = document.getElementById('ticketDescriptionInput');
     const createTicketBtn = document.getElementById('createTicketBtn');
     const ticketRequestStatus = document.getElementById('ticketRequestStatus');
+    const commandSummary = document.getElementById('commandSummary');
+    const commandBadge = document.getElementById('commandBadge');
+    const commandList = document.getElementById('commandList');
+    const snapshotHeadline = document.getElementById('snapshotHeadline');
+    const snapshotRenewal = document.getElementById('snapshotRenewal');
+    const snapshotTickets = document.getElementById('snapshotTickets');
+    const snapshotAction = document.getElementById('snapshotAction');
 
     let customerTickets = [];
 
@@ -1042,6 +1236,62 @@
     const renderPaymentSummary = () => {
       renderPaymentHistory();
       renderSavedPaymentMethod();
+    };
+
+    const renderCommandCenter = () => {
+      const supportCount = Number(customerData.supportTickets || customerTickets.length || 0);
+      const activeCount = Number(customerData.activeProjects || customerProjects.length || 0);
+      const leadCount = Number(customerData.newLeads || 0);
+
+      let badge = 'Balanced';
+      let summary = 'Your account looks steady, with room to keep momentum on growth work.';
+      let headline = 'Maintain the current pace';
+      let action = 'Review project progress';
+      let items = [
+        'Check your latest project updates before the next milestone.',
+        'Review the billing section to confirm the next renewal date.',
+        'Reply to any open support message while it is still fresh.'
+      ];
+
+      if (supportCount >= 3) {
+        badge = 'Support attention';
+        summary = 'Support requests are the clearest opportunity for a quick win right now.';
+        headline = 'Triage support first';
+        action = 'Open support desk';
+        items = [
+          'Handle the newest support message before moving to lower-priority work.',
+          'Use the support desk to create a fresh ticket if a new issue appears.',
+          'Keep the billing view open if this issue affects payments or access.'
+        ];
+      } else if (leadCount >= 20) {
+        badge = 'Growth mode';
+        summary = 'Your lead flow is healthy, so follow-up speed will matter most this week.';
+        headline = 'Protect the lead pipeline';
+        action = 'Review lead follow-up';
+        items = [
+          'Review recent activity for anything that should be turned into a project task.',
+          'Keep response times short so new leads do not cool off.',
+          'Use the projects view to keep the next deliverable visible.'
+        ];
+      } else if (activeCount >= 8) {
+        badge = 'Delivery focus';
+        summary = 'Project volume is high enough that you should keep milestones moving.';
+        headline = 'Keep projects visible';
+        action = 'Review projects';
+        items = [
+          'Open the projects section to check the next due date.',
+          'Add a note to anything waiting on feedback or assets.',
+          'Use billing to confirm the next renewal will not interrupt delivery.'
+        ];
+      }
+
+      commandBadge.textContent = badge;
+      commandSummary.textContent = summary;
+      snapshotHeadline.textContent = headline;
+      snapshotRenewal.textContent = customerData.renewal;
+      snapshotTickets.textContent = supportCount;
+      snapshotAction.textContent = action;
+      commandList.innerHTML = items.map((item) => `<li>${item}</li>`).join('');
     };
 
     document.getElementById('profilePill').textContent = `Hi, ${customerData.name}`;
@@ -1156,6 +1406,7 @@
     await loadCustomerTickets();
     renderMessages();
     document.getElementById('supportTickets').textContent = customerTickets.length;
+    renderCommandCenter();
 
     navLinks.forEach(link => {
       link.addEventListener('click', (event) => {
@@ -1356,6 +1607,7 @@
         ticketRequestStatus.textContent = 'Support ticket created successfully.';
         ticketRequestStatus.style.color = '#16a34a';
         renderMessages();
+        renderCommandCenter();
       } catch (error) {
         ticketRequestStatus.textContent = error.message || 'Unable to create a support ticket.';
         ticketRequestStatus.style.color = '#dc2626';
@@ -1391,6 +1643,7 @@
         document.getElementById('settingsPlan').textContent = customerData.plan;
         settingsStatusMsg.textContent = 'Account settings updated successfully.';
         settingsStatusMsg.style.color = '#16a34a';
+        renderCommandCenter();
       } catch (error) {
         settingsStatusMsg.textContent = error.message || 'Unable to save your account settings.';
         settingsStatusMsg.style.color = '#dc2626';
@@ -1442,6 +1695,7 @@
         paymentCvv.value = '';
         await loadPaymentHistory();
         renderPaymentSummary();
+        renderCommandCenter();
       }).catch((error) => {
         paymentStatusMsg.style.color = '#dc2626';
         paymentStatusMsg.textContent = error.message || 'Payment could not be processed.';

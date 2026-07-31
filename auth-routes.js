@@ -1,9 +1,15 @@
 const express = require('express');
 const crypto = require('crypto');
-const fs = require('fs/promises');
-const path = require('path');
 
 const logger = require('./logger');
+const dataStore = require('./data-store');
+const {
+  normalizeEmail,
+  validatePassword,
+  isValidEmail,
+  parseSupportRoles,
+  PASSWORD_POLICY_MESSAGE
+} = require('./auth-policy');
 
 const router = express.Router();
 
@@ -13,15 +19,6 @@ const SESSION_TTL_MS = 1000 * 60 * 60 * 12;
 const PBKDF2_ITERATIONS = 210000;
 const PBKDF2_KEY_LENGTH = 64;
 const PBKDF2_DIGEST = 'sha512';
-const CUSTOMER_STORE_PATH = path.resolve(
-  process.env.CUSTOMER_STORE_PATH || path.join(__dirname, 'data', 'customer-accounts.json')
-);
-const ADMIN_STORE_PATH = path.resolve(
-  process.env.ADMIN_STORE_PATH || path.join(__dirname, 'data', 'admin-state.json')
-);
-const SESSION_STORE_PATH = path.resolve(
-  process.env.SESSION_STORE_PATH || path.join(__dirname, 'data', 'sessions.json')
-);
 const REQUIRE_EMAIL_VERIFICATION = String(process.env.REQUIRE_EMAIL_VERIFICATION || '').toLowerCase() === 'true';
 const sessions = new Map();
 let sessionStoreLoaded = false;
@@ -40,12 +37,7 @@ let adminStoreCacheLoaded = false;
 let adminStoreCacheLoadPromise = null;
 let adminStoreWriteQueue = Promise.resolve();
 
-const SUPPORT_ROLES = Object.freeze({
-  'support@creativewebsolutions.com': 'Support Agent',
-  'helpdesk@creativewebsolutions.com': 'Help Desk Agent',
-  'admin@creativewebsolutions.com': 'System Administrator',
-  'kyle.creativesolutions@gmail.com': 'System Administrator'
-});
+const SUPPORT_ROLES = Object.freeze(parseSupportRoles(process.env.SUPPORT_ROLES));
 
 const DEFAULT_CUSTOMER_PROFILE = Object.freeze({
   role: 'customer',
@@ -148,24 +140,12 @@ function safeEqual(left, right) {
   return crypto.timingSafeEqual(leftBuffer, rightBuffer);
 }
 
-function normalizeEmail(value) {
-  return String(value || '').trim().toLowerCase();
-}
-
 function normalizeDisplayName(value, fallback) {
   const text = String(value || '').trim();
   if (text) {
     return text.replace(/\s+/g, ' ');
   }
   return fallback;
-}
-
-function validatePassword(password) {
-  return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(String(password || ''));
-}
-
-function isValidEmail(value) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || ''));
 }
 
 function hashPassword(password, salt) {
@@ -257,22 +237,23 @@ function serializeCookie(sessionId, maxAgeMs) {
   return cookieParts.join('; ');
 }
 
-function clearSessionCookie(res) {
-  res.setHeader('Set-Cookie', serializeCookie('', 0));
+function appendSetCookie(res, cookieValue) {
+  const current = res.getHeader('Set-Cookie');
+  if (!current) {
+    res.setHeader('Set-Cookie', cookieValue);
+    return;
+  }
+
+  if (Array.isArray(current)) {
+    res.setHeader('Set-Cookie', [...current, cookieValue]);
+    return;
+  }
+
+  res.setHeader('Set-Cookie', [current, cookieValue]);
 }
 
-async function ensureCustomerStore() {
-  await fs.mkdir(path.dirname(CUSTOMER_STORE_PATH), { recursive: true });
-
-  try {
-    await fs.access(CUSTOMER_STORE_PATH);
-  } catch (error) {
-    await fs.writeFile(
-      CUSTOMER_STORE_PATH,
-      JSON.stringify({ customers: {} }, null, 2),
-      'utf8'
-    );
-  }
+function clearSessionCookie(res) {
+  appendSetCookie(res, serializeCookie('', 0));
 }
 
 async function loadCustomerStoreCache() {
@@ -280,9 +261,7 @@ async function loadCustomerStoreCache() {
   if (customerStoreCacheLoadPromise) return customerStoreCacheLoadPromise;
 
   customerStoreCacheLoadPromise = (async () => {
-    await ensureCustomerStore();
-    const raw = await fs.readFile(CUSTOMER_STORE_PATH, 'utf8');
-    const parsed = JSON.parse(raw || '{}');
+    const parsed = await dataStore.readJsonStore('customer_store', { customers: {} });
     customerStoreCache = parsed && typeof parsed === 'object' ? parsed : { customers: {} };
     customerStoreCacheLoaded = true;
   })();
@@ -304,8 +283,7 @@ async function writeCustomerStore(store) {
   customerStoreCacheLoaded = true;
   customerStoreWriteQueue = customerStoreWriteQueue
     .then(async () => {
-      await ensureCustomerStore();
-      await fs.writeFile(CUSTOMER_STORE_PATH, JSON.stringify(customerStoreCache, null, 2), 'utf8');
+      await dataStore.writeJsonStore('customer_store', customerStoreCache);
     })
     .catch((error) => {
       logger.error('Failed to persist customer store:', error);
@@ -345,24 +323,12 @@ function normalizeAdminStore(store) {
   };
 }
 
-async function ensureAdminStore() {
-  await fs.mkdir(path.dirname(ADMIN_STORE_PATH), { recursive: true });
-
-  try {
-    await fs.access(ADMIN_STORE_PATH);
-  } catch (error) {
-    await fs.writeFile(ADMIN_STORE_PATH, JSON.stringify(getDefaultAdminStore(), null, 2), 'utf8');
-  }
-}
-
 async function loadAdminStoreCache() {
   if (adminStoreCacheLoaded) return;
   if (adminStoreCacheLoadPromise) return adminStoreCacheLoadPromise;
 
   adminStoreCacheLoadPromise = (async () => {
-    await ensureAdminStore();
-    const raw = await fs.readFile(ADMIN_STORE_PATH, 'utf8');
-    const parsed = JSON.parse(raw || '{}');
+    const parsed = await dataStore.readJsonStore('admin_store', getDefaultAdminStore());
     adminStoreCache = normalizeAdminStore(parsed);
     adminStoreCacheLoaded = true;
   })();
@@ -384,23 +350,12 @@ async function writeAdminStore(store) {
   adminStoreCacheLoaded = true;
   adminStoreWriteQueue = adminStoreWriteQueue
     .then(async () => {
-      await ensureAdminStore();
-      await fs.writeFile(ADMIN_STORE_PATH, JSON.stringify(adminStoreCache, null, 2), 'utf8');
+      await dataStore.writeJsonStore('admin_store', adminStoreCache);
     })
     .catch((error) => {
       logger.error('Failed to persist admin store:', error);
     });
   await adminStoreWriteQueue;
-}
-
-async function ensureSessionStore() {
-  await fs.mkdir(path.dirname(SESSION_STORE_PATH), { recursive: true });
-
-  try {
-    await fs.access(SESSION_STORE_PATH);
-  } catch (error) {
-    await fs.writeFile(SESSION_STORE_PATH, JSON.stringify({ sessions: {} }, null, 2), 'utf8');
-  }
 }
 
 function normalizeSessionRecord(session) {
@@ -425,11 +380,9 @@ async function loadSessionStore() {
   }
 
   sessionStoreLoadPromise = (async () => {
-    await ensureSessionStore();
-    const raw = await fs.readFile(SESSION_STORE_PATH, 'utf8');
-    const parsed = JSON.parse(raw || '{}');
-    const entries = parsed && parsed.sessions && typeof parsed.sessions === 'object'
-      ? Object.entries(parsed.sessions)
+    const persistedMap = await dataStore.readSessionMap();
+    const entries = persistedMap && typeof persistedMap === 'object'
+      ? Object.entries(persistedMap)
       : [];
 
     sessions.clear();
@@ -451,8 +404,6 @@ async function loadSessionStore() {
 }
 
 async function writeSessionStore() {
-  await ensureSessionStore();
-
   const serialized = {};
   for (const [sessionId, session] of sessions.entries()) {
     const normalized = normalizeSessionRecord(session);
@@ -461,7 +412,7 @@ async function writeSessionStore() {
     }
   }
 
-  await fs.writeFile(SESSION_STORE_PATH, JSON.stringify({ sessions: serialized }, null, 2), 'utf8');
+  await dataStore.writeSessionMap(serialized);
 }
 
 function queueSessionStoreWrite() {
@@ -635,7 +586,7 @@ function createSession(res, user) {
     expiresAt
   });
 
-  res.setHeader('Set-Cookie', serializeCookie(sessionId, SESSION_TTL_MS));
+  appendSetCookie(res, serializeCookie(sessionId, SESSION_TTL_MS));
   return sessionId;
 }
 
@@ -829,7 +780,8 @@ router.get('/meta', async (req, res, next) => {
     const customers = store.customers && typeof store.customers === 'object' ? store.customers : {};
     res.json({
       hasCustomerAccounts: Object.keys(customers).length > 0,
-      supportLoginConfigured: supportPasswordConfigured(adminStore)
+      supportLoginConfigured: supportPasswordConfigured(adminStore),
+      supportRoles: SUPPORT_ROLES
     });
   } catch (error) {
     next(error);
@@ -1144,7 +1096,7 @@ router.post('/admin/support-password', requireSessionRole('admin'), async (req, 
   try {
     const password = String(req.body.password || '');
     if (!validatePassword(password)) {
-      return res.status(400).json({ error: 'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.' });
+      return res.status(400).json({ error: PASSWORD_POLICY_MESSAGE });
     }
 
     const adminStore = await readAdminStore();
@@ -1188,7 +1140,7 @@ router.post('/signup', async (req, res, next) => {
     }
 
     if (!validatePassword(password)) {
-      return res.status(400).json({ error: 'Password must be at least 8 characters and include uppercase, lowercase, number, and special character.' });
+      return res.status(400).json({ error: PASSWORD_POLICY_MESSAGE });
     }
 
     if (SUPPORT_ROLES[email]) {

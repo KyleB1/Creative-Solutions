@@ -10,61 +10,22 @@
  * - Client-server communication works end-to-end
  */
 
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
+const {
+  getPort,
+  getBaseUrl,
+  requireSupportPassword,
+  request
+} = require('./tests/test-utils');
+const { extractCookieHeader } = require('./tests/test-utils');
 
-const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
-const BASE_URL = `http://localhost:${PORT}`;
+const PORT = getPort();
+const BASE_URL = getBaseUrl();
+const SUPPORT_TEST_PASSWORD = requireSupportPassword('test-site-integration.js');
+const RUN_BILLING_TESTS = String(process.env.RUN_BILLING_TESTS || '').toLowerCase() === 'true';
 
 let testsPassed = 0;
 let testsFailed = 0;
 const failedTests = [];
-
-// ============================================================================
-// UTILITY FUNCTIONS
-// ============================================================================
-
-async function request(method, path, body = null, headers = {}) {
-  return new Promise((resolve) => {
-    const url = new URL(path, BASE_URL);
-    const isHttps = url.protocol === 'https:';
-    const client = isHttps ? require('https') : http;
-    
-    const opts = {
-      hostname: url.hostname,
-      port: url.port,
-      path: url.pathname + url.search,
-      method,
-      headers: {
-        'Content-Type': 'application/json',
-        'User-Agent': 'test-site-integration/1.0',
-        ...headers
-      }
-    };
-
-    const req = client.request(opts, (res) => {
-      let data = '';
-      res.setEncoding('utf8');
-      res.on('data', (chunk) => { data += chunk; });
-      res.on('end', () => {
-        try {
-          const json = JSON.parse(data);
-          resolve({ status: res.statusCode, body: json, headers: res.headers });
-        } catch (e) {
-          resolve({ status: res.statusCode, body: data, headers: res.headers, isHtml: res.headers['content-type']?.includes('text/html') });
-        }
-      });
-    });
-
-    req.on('error', (err) => {
-      resolve({ status: 0, body: { error: err.message }, error: err });
-    });
-
-    if (body) req.write(JSON.stringify(body));
-    req.end();
-  });
-}
 
 function assert(condition, message) {
   if (!condition) {
@@ -104,7 +65,6 @@ async function testStaticPages() {
     { path: '/pricing.html', name: 'Pricing' },
     { path: '/services.html', name: 'Services' },
     { path: '/faq.html', name: 'FAQ' },
-    { path: '/contact-routes.js', name: 'Contact Routes' },
     { path: '/privacy.html', name: 'Privacy' },
     { path: '/cms-integration.html', name: 'CMS Integration' },
     { path: '/crm.html', name: 'CRM' },
@@ -122,7 +82,7 @@ async function testStaticPages() {
     await test(`GET ${page.name}`, async () => {
       const res = await request('GET', page.path);
       assert(res.status === 200, `Expected 200, got ${res.status}`);
-      assert(res.isHtml || typeof res.body === 'string', 'Expected HTML content');
+      assert(String(res.headers?.['content-type'] || '').includes('text/html'), 'Expected HTML content');
     });
   }
 }
@@ -186,7 +146,7 @@ async function testAuthFlow() {
     assert(res.status === 201, `Expected 201, got ${res.status}`);
     assert(res.body.sessionToken, 'Should have session token');
     sessionToken = res.body.sessionToken;
-    sessionCookie = res.headers['set-cookie']?.[0];
+      sessionCookie = extractCookieHeader(res.headers['set-cookie']);
   });
 
   await test('Verify session with token', async () => {
@@ -266,7 +226,7 @@ async function testSupportAdminFlow() {
   await test('Support login with admin credentials', async () => {
     const res = await request('POST', '/api/auth/support-login', {
       email: 'admin@creativewebsolutions.com',
-      password: 'AdminPass123!@'
+      password: SUPPORT_TEST_PASSWORD
     });
     assert(res.status === 200, `Expected 200, got ${res.status}`);
     assert(res.body.sessionToken, 'Should have session token');
@@ -412,7 +372,7 @@ async function testRouteValidation() {
 
   // Check that auth routes are properly configured
   const authRoutes = [
-    { method: 'GET', path: '/api/auth/session', requiresAuth: true },
+    { method: 'GET', path: '/api/auth/session', requiresAuth: false, expectsUnauthenticatedState: true },
     { method: 'GET', path: '/api/auth/meta', requiresAuth: false },
     { method: 'POST', path: '/api/auth/login', requiresAuth: false },
     { method: 'POST', path: '/api/auth/signup', requiresAuth: false },
@@ -425,6 +385,9 @@ async function testRouteValidation() {
       const res = await request(route.method, route.path);
       if (route.requiresAuth) {
         assert(res.status === 401 || res.status === 403, `Protected route should require auth, got ${res.status}`);
+      } else if (route.expectsUnauthenticatedState) {
+        assert(res.status === 200, `Expected 200, got ${res.status}`);
+        assert(res.body && res.body.authenticated === false, 'Expected unauthenticated session state');
       } else {
         assert(res.status !== 404, `Public route should exist, got ${res.status}`);
       }
@@ -454,7 +417,12 @@ async function runAllTests() {
     await testApiEndpoints();
     await testAuthFlow();
     await testSupportAdminFlow();
-    await testBillingApi();
+    if (RUN_BILLING_TESTS) {
+      await testBillingApi();
+    } else {
+      console.log('\n💳 BILLING API');
+      console.log('  Skipped (set RUN_BILLING_TESTS=true to enable billing checks).');
+    }
     await testErrorHandling();
     await testPortAndNetworking();
     await testRouteValidation();

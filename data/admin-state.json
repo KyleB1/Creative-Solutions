@@ -1,10 +1,10 @@
 {
   "supportSettings": {
-    "passwordSalt": "aa88d6c5d2fa8e55fb0a7df0b293a469",
-    "passwordHash": "28d820e0663f0ab06002258dd84fd3852f57605704b90e93fbdad57bc15753c63ae546db912c00d0b4229d93c2d08346922cbfceeec7817d849f3a27143c5275",
+    "passwordSalt": "3fcfeebae688f7b7663843518cb7396c",
+    "passwordHash": "67727b2dca0eba20130c125772840ba5da53496ac4950d1ebb4a297d6cd96a3f91de6e37c1e294aeaa04e8c3512769a9578f49a7c9077046a88003a9aec5084c",
     "passwordResetTokenHash": null,
     "passwordResetExpiresAt": null,
-    "updatedAt": "2026-06-06T21:17:58.630Z",
+    "updatedAt": "2026-07-08T23:36:13.033Z",
     "updatedBy": "support-password-reset"
   },
   "supportTickets": [
@@ -185,6 +185,114 @@
     }
   ],
   "auditLog": [
+    {
+      "id": "fc523dce-3d35-452d-b9bd-b2b138ca44af",
+      "action": "customer.signup",
+      "title": "Test User created an account",
+      "description": "unique-1785469463307@example.com signed up for the Growth plan plan.",
+      "actorEmail": "unique-1785469463307@example.com",
+      "actorName": "Test User",
+      "actorRole": "customer",
+      "targetType": "customer",
+      "targetId": "unique-1785469463307@example.com",
+      "createdAt": "2026-07-31T03:44:23.450Z"
+    },
+    {
+      "id": "803b2159-a5fe-48e6-8f4d-4acceae13462",
+      "action": "customer.signup",
+      "title": "Test User created an account",
+      "description": "unique-1785469252746@example.com signed up for the Growth plan plan.",
+      "actorEmail": "unique-1785469252746@example.com",
+      "actorName": "Test User",
+      "actorRole": "customer",
+      "targetType": "customer",
+      "targetId": "unique-1785469252746@example.com",
+      "createdAt": "2026-07-31T03:40:52.913Z"
+    },
+    {
+      "id": "920ed0cf-0b2c-4025-9713-a7b5bb0b08e6",
+      "action": "customer.signup",
+      "title": "Valid Test created an account",
+      "description": "valid-1785456498291@example.com signed up for the Growth plan plan.",
+      "actorEmail": "valid-1785456498291@example.com",
+      "actorName": "Valid Test",
+      "actorRole": "customer",
+      "targetType": "customer",
+      "targetId": "valid-1785456498291@example.com",
+      "createdAt": "2026-07-31T00:08:18.458Z"
+    },
+    {
+      "id": "fa3c6173-d7b3-4f7d-96c0-5abefac86aae",
+      "action": "customer.signup",
+      "title": "Test User created an account",
+      "description": "unique-1785456497619@example.com signed up for the Growth plan plan.",
+      "actorEmail": "unique-1785456497619@example.com",
+      "actorName": "Test User",
+      "actorRole": "customer",
+      "targetType": "customer",
+      "targetId": "unique-1785456497619@example.com",
+      "createdAt": "2026-07-31T00:08:17.860Z"
+    },
+    {
+      "id": "28027f39-7653-4f29-8f5c-9bd819b45592",
+      "action": "support.login",
+      "title": "Kyle Creativesolutions signed in",
+      "description": "System Administrator session started for kyle.creativesolutions@gmail.com.",
+      "actorEmail": "kyle.creativesolutions@gmail.com",
+      "actorName": "Kyle Creativesolutions",
+      "actorRole": "System Administrator",
+      "targetType": "support-user",
+      "targetId": "kyle.creativesolutions@gmail.com",
+      "createdAt": "2026-07-08T23:37:11.478Z"
+    },
+    {
+      "id": "0a8bd6c6-19d0-4001-9482-2fffbfbceaa7",
+      "action": "support.password_reset.completed",
+      "title": "Support password reset completed",
+      "description": "The shared support password was updated via password reset.",
+      "actorEmail": null,
+      "actorName": null,
+      "actorRole": "support",
+      "targetType": "support-password",
+      "targetId": "support-password",
+      "createdAt": "2026-07-08T23:36:13.034Z"
+    },
+    {
+      "id": "f3db62f1-77ed-404f-acf5-22cb4419b18e",
+      "action": "support.password_reset.requested",
+      "title": "Support password reset requested by kyle.creativesolutions@gmail.com",
+      "description": "A support password reset token was requested for kyle.creativesolutions@gmail.com.",
+      "actorEmail": "kyle.creativesolutions@gmail.com",
+      "actorName": "kyle creativesolutions",
+      "actorRole": "support",
+      "targetType": "support-password",
+      "targetId": "kyle.creativesolutions@gmail.com",
+      "createdAt": "2026-07-08T23:35:55.114Z"
+    },
+    {
+      "id": "115e52d1-4177-4b60-8a10-1a56f8fee4fd",
+      "action": "customer.signup",
+      "title": "Test User created an account",
+      "description": "unique-1783553522747@example.com signed up for the Growth plan plan.",
+      "actorEmail": "unique-1783553522747@example.com",
+      "actorName": "Test User",
+      "actorRole": "customer",
+      "targetType": "customer",
+      "targetId": "unique-1783553522747@example.com",
+      "createdAt": "2026-07-08T23:32:02.818Z"
+    },
+    {
+      "id": "dca40ba8-60f2-4339-ad16-0becfa80dc74",
+      "action": "customer.signup",
+      "title": "Test User created an account",
+      "description": "unique-1783553007118@example.com signed up for the Growth plan plan.",
+      "actorEmail": "unique-1783553007118@example.com",
+      "actorName": "Test User",
+      "actorRole": "customer",
+      "targetType": "customer",
+      "targetId": "unique-1783553007118@example.com",
+      "createdAt": "2026-07-08T23:23:27.192Z"
+    },
     {
       "id": "0f6153a9-2803-4ae4-9a24-0258b2f87206",
       "action": "support.login",

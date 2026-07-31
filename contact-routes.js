@@ -6,31 +6,18 @@
 
 const express = require('express');
 const crypto = require('crypto');
-const fs = require('fs/promises');
-const path = require('path');
 
 const logger = require('./logger');
+const dataStore = require('./data-store');
 
 const router = express.Router();
 
-const CONTACT_STORE_PATH = path.resolve(
-  process.env.CONTACT_STORE_PATH ||
-    path.join(__dirname, 'data', 'contact-submissions.json')
-);
-
 async function loadSubmissions() {
-  try {
-    const raw = await fs.readFile(CONTACT_STORE_PATH, 'utf8');
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (_err) {
-    return [];
-  }
+  return dataStore.readContactSubmissions();
 }
 
 async function saveSubmissions(list) {
-  await fs.mkdir(path.dirname(CONTACT_STORE_PATH), { recursive: true });
-  await fs.writeFile(CONTACT_STORE_PATH, JSON.stringify(list, null, 2), 'utf8');
+  await dataStore.writeContactSubmissions(list);
 }
 
 function isValidEmail(value) {

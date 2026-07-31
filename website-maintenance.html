@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Website maintenance services from Creative Web Solutions: security patching, backups, uptime monitoring, and monthly updates.">
+  <meta name="description" content="Website maintenance services from Creative Web Solutions with a quick guided audit for support needs, urgency, and upgrade priorities.">
   <title>Website Maintenance | Creative Web Solutions</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -12,21 +12,149 @@
     <section class="svc-detail-panel">
       <span class="svc-eyebrow">Support</span>
       <h1>Website Maintenance</h1>
-      <p>Keep your site secure, current, and high-performing with proactive maintenance, issue monitoring, and prioritized support.</p>
+      <p>Keep your site secure, current, and high-performing with proactive maintenance, issue monitoring, and prioritized support. Use the quick audit below to get a practical starting plan before you request a quote.</p>
       <ul class="svc-list">
         <li>Plugin and dependency updates with compatibility checks</li>
         <li>Security patching, backups, uptime and performance monitoring</li>
         <li>Monthly enhancements and content update support</li>
       </ul>
       <div class="svc-actions">
-        <a class="cta-btn" href="index.htm#contact">Request a Quote</a>
+        <a class="cta-btn" href="#maintenance-audit">Start Quick Audit</a>
+        <a class="cta-btn outline" href="index.htm#contact">Request a Quote</a>
         <a class="cta-btn outline" href="services.html">Back to Services</a>
       </div>
+    </section>
+
+    <section class="svc-detail-grid svc-audit-layout" id="maintenance-audit">
+      <article class="svc-detail-card">
+        <h2>Quick maintenance audit</h2>
+        <p class="svc-field-help">Answer a few questions and we will map the most suitable maintenance level for your site.</p>
+        <form id="maintenanceAuditForm" class="svc-audit-form" novalidate>
+          <label class="svc-field">
+            <span>Site type</span>
+            <select id="auditSiteType" name="siteType">
+              <option value="marketing">Marketing site</option>
+              <option value="portal">Client or support portal</option>
+              <option value="commerce">E-commerce store</option>
+              <option value="custom">Custom application</option>
+            </select>
+          </label>
+
+          <label class="svc-field">
+            <span>Current urgency</span>
+            <select id="auditUrgency" name="urgency">
+              <option value="low">Routine upkeep only</option>
+              <option value="medium">A few known issues or updates</option>
+              <option value="high">Performance, security, or uptime concerns</option>
+            </select>
+          </label>
+
+          <label class="svc-field">
+            <span>Monthly update pace</span>
+            <select id="auditCadence" name="cadence">
+              <option value="light">Light content changes</option>
+              <option value="steady">Steady updates and support requests</option>
+              <option value="heavy">Frequent changes and active support load</option>
+            </select>
+          </label>
+
+          <label class="svc-field">
+            <span>Main concern</span>
+            <textarea id="auditConcern" name="concern" placeholder="Tell us what is causing the most friction right now"></textarea>
+          </label>
+
+          <button class="cta-btn" type="submit">Build My Maintenance Plan</button>
+        </form>
+      </article>
+
+      <article class="svc-detail-card svc-audit-result" aria-live="polite">
+        <span class="svc-audit-label">Recommended starting point</span>
+        <h3 id="auditPlanTitle">Essential maintenance</h3>
+        <p id="auditPlanScore" class="svc-audit-score">Best for smaller sites that mainly need stability and fast turnarounds.</p>
+        <ul id="auditPlanList" class="svc-audit-list">
+          <li>Security updates and compatibility checks</li>
+          <li>Backups, uptime monitoring, and issue triage</li>
+          <li>One focused improvement cycle each month</li>
+        </ul>
+        <p id="auditPlanNote" class="svc-audit-note">Submit the audit and we will tailor the quote to your actual workload, not a one-size-fits-all package.</p>
+      </article>
     </section>
   </main>
   <footer></footer>
   <script defer src="theme.js"></script>
   <script defer src="footer.js"></script>
   <script defer src="header.js"></script>
+  <script>
+    const planMap = {
+      essential: {
+        title: 'Essential maintenance',
+        summary: 'Best for smaller sites that mainly need stability and fast turnarounds.',
+        items: [
+          'Security updates and compatibility checks',
+          'Backups, uptime monitoring, and issue triage',
+          'One focused improvement cycle each month'
+        ]
+      },
+      growth: {
+        title: 'Growth maintenance',
+        summary: 'Best for active sites that need regular updates, support, and performance tuning.',
+        items: [
+          'Ongoing updates with priority issue handling',
+          'Performance and reliability monitoring',
+          'Monthly content or layout refinement support'
+        ]
+      },
+      priority: {
+        title: 'Priority support plan',
+        summary: 'Best for mission-critical portals and stores that need hands-on coverage.',
+        items: [
+          'Faster response for urgent fixes and changes',
+          'Expanded monitoring for security and uptime',
+          'Support coverage for launch windows or peak periods'
+        ]
+      }
+    };
+
+    const form = document.getElementById('maintenanceAuditForm');
+    const planTitle = document.getElementById('auditPlanTitle');
+    const planScore = document.getElementById('auditPlanScore');
+    const planList = document.getElementById('auditPlanList');
+    const planNote = document.getElementById('auditPlanNote');
+
+    function choosePlan() {
+      const urgency = document.getElementById('auditUrgency').value;
+      const cadence = document.getElementById('auditCadence').value;
+      const siteType = document.getElementById('auditSiteType').value;
+      const concern = document.getElementById('auditConcern').value.trim();
+
+      let planKey = 'essential';
+      if (urgency === 'high' || cadence === 'heavy' || siteType === 'portal' || siteType === 'commerce') {
+        planKey = 'priority';
+      } else if (urgency === 'medium' || cadence === 'steady' || siteType === 'custom') {
+        planKey = 'growth';
+      }
+
+      const plan = planMap[planKey];
+      planTitle.textContent = plan.title;
+      planScore.textContent = plan.summary;
+      planList.innerHTML = plan.items.map((item) => `<li>${item}</li>`).join('');
+      planNote.textContent = concern
+        ? `We also captured your main concern: ${concern}. That will shape the quote and prioritization.`
+        : 'Submit the audit and we will tailor the quote to your actual workload, not a one-size-fits-all package.';
+    }
+
+    form.addEventListener('submit', function (event) {
+      event.preventDefault();
+      choosePlan();
+      document.getElementById('maintenance-audit').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    ['auditSiteType', 'auditUrgency', 'auditCadence', 'auditConcern'].forEach((id) => {
+      document.getElementById(id).addEventListener('input', choosePlan);
+      document.getElementById(id).addEventListener('change', choosePlan);
+    });
+
+    choosePlan();
+  </script>
 </body>
 </html>

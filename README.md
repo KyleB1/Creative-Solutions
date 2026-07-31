@@ -33,7 +33,8 @@ Files added for deployment:
 ### Important deployment notes
 
 - Customer accounts are stored in a JSON file, so production needs persistent disk storage.
-- Sessions are currently stored in server memory. Users will be signed out when the app restarts or redeploys.
+- Sessions are persisted to the configured session store file (`SESSION_STORE_PATH`, default `data/sessions.json`) with expiration cleanup.
+- Active sessions can still be invalidated by restarts if the session file is not persisted between deployments.
 - GitHub Pages alone will not support the current login flow because `/api/auth/*` must be served by the backend.
 - The production URL should be the hosted Node app itself, for example `https://your-service.onrender.com`.
 
@@ -49,7 +50,7 @@ Files added for deployment:
 	- Windows PowerShell (execution-policy safe): `./start-local.cmd`
 5. Open `http://localhost:3000`.
 
-> Note: this app now enforces port `3000` explicitly. If `PORT` is set to a different value, the server will refuse to start.
+> Note: the default local port is `3000`. You can override it with `PORT`, but if the selected port is already in use the server exits with an error instead of auto-switching ports.
 
 ## Support login smoke test
 
@@ -64,3 +65,26 @@ This script assumes the backend is available on port `3000` and that
 
 If the backend starts on a different port, set `PORT=3000` before starting
 or modify the script's `PORT` constant.
+
+## Support role configuration
+
+Support account roles are defined on the server in `auth-routes.js` (`SUPPORT_ROLES`).
+The `/api/auth/meta` endpoint exposes this mapping as `supportRoles`, and the frontend
+hydrates its support role list from that response.
+
+You can override the built-in defaults by setting `SUPPORT_ROLES` in `.env`.
+Format:
+
+- `SUPPORT_ROLES=email1@example.com:Role One,email2@example.com:Role Two`
+
+Current built-in roles:
+
+- `support@creativewebsolutions.com` -> `Support Agent`
+- `helpdesk@creativewebsolutions.com` -> `Help Desk Agent`
+- `admin@creativewebsolutions.com` -> `System Administrator`
+- `kyle.creativesolutions@gmail.com` -> `System Administrator`
+
+## CI test workflow (non-Stripe)
+
+The repository includes `.github/workflows/test.yml` for local-auth and site behavior checks.
+It intentionally excludes Stripe integration tests while payment setup is still in progress.

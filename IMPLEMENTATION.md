@@ -321,7 +321,7 @@ You'll know it's working when:
 1. **Server starts** without Stripe errors
    ```
    ✓ Stripe connection successful
-   Server running on http://localhost:3000
+  Server running on http://localhost:3000
    ```
 
 2. **Payment form renders** in browser

@@ -145,6 +145,79 @@
             font-size: 0.95rem;
         }
 
+        .lab-intro {
+            display: grid;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            background: linear-gradient(160deg, #ffffff, #f8fbff);
+        }
+
+        .lab-eyebrow {
+            margin: 0;
+            color: #1d4ed8;
+            text-transform: uppercase;
+            letter-spacing: 0.22em;
+            font-size: 0.74rem;
+            font-weight: 800;
+        }
+
+        .lab-intro h1 {
+            margin: 0;
+            font-size: clamp(1.7rem, 3vw, 2.45rem);
+            line-height: 1.04;
+            letter-spacing: -0.03em;
+        }
+
+        .lab-intro p {
+            margin: 0;
+        }
+
+        .lab-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .lab-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.34rem 0.72rem;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: #334155;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .lab-steps {
+            display: grid;
+            gap: 0.6rem;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .lab-step {
+            padding: 0.8rem;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: #fff;
+            display: grid;
+            gap: 0.25rem;
+        }
+
+        .lab-step strong {
+            font-size: 0.92rem;
+        }
+
+        .lab-step span {
+            color: var(--muted);
+            font-size: 0.88rem;
+            line-height: 1.45;
+        }
+
         .field {
             margin-bottom: 1rem;
         }
@@ -345,6 +418,30 @@
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         }
 
+        .template-heading {
+            display: grid;
+            gap: 0.3rem;
+            margin: 0 0 0.75rem;
+        }
+
+        .template-heading p {
+            margin: 0;
+            color: var(--muted);
+        }
+
+        .template-badge {
+            display: inline-flex;
+            width: fit-content;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: var(--primary-soft);
+            color: #1d4ed8;
+            font-size: 0.74rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            padding: 0.28rem 0.6rem;
+        }
+
         .template {
             border: 1px solid var(--border);
             border-radius: 14px;
@@ -372,6 +469,19 @@
             padding: 0.5rem 0.75rem;
             cursor: pointer;
             font-weight: 700;
+        }
+
+        .template ul {
+            margin: 0 0 0.9rem;
+            padding-left: 1rem;
+            color: var(--muted);
+            display: grid;
+            gap: 0.35rem;
+        }
+
+        .template li {
+            line-height: 1.45;
+            font-size: 0.88rem;
         }
 
         .theme-dark {
@@ -422,6 +532,22 @@
             color: #cbd5ff;
         }
 
+        body.dark-mode .lab-intro,
+        body.dark-mode .lab-step,
+        body.dark-mode .template-badge,
+        body.dark-mode .template button {
+            background: #111827;
+            border-color: #334155;
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .lab-eyebrow,
+        body.dark-mode .template-heading p,
+        body.dark-mode .lab-step span,
+        body.dark-mode .template ul {
+            color: #c2cffd;
+        }
+
         body.dark-mode .topbar-actions .btn {
             background: #111827;
             color: #e2e8f0;
@@ -448,6 +574,10 @@
                 grid-template-columns: 1fr;
             }
 
+            .lab-steps {
+                grid-template-columns: 1fr;
+            }
+
             .controls {
                 position: static;
             }
@@ -466,8 +596,31 @@
 <body>
     <main class="wrap">
         <section class="panel controls" aria-label="Layout controls">
-            <h1>Layout Lab</h1>
-            <p>Try different page styles and save your favorite before purchase. Your selection follows you to signup.</p>
+            <div class="lab-intro">
+                <p class="lab-eyebrow">Layout lab</p>
+                <h1>Preview a layout direction before you commit to a build.</h1>
+                <p>Use the controls to shape a style, then save the result so signup and kickoff stay aligned with the design direction you picked.</p>
+                <div class="lab-pills" aria-label="What this tool is for">
+                    <span class="lab-pill">For new builds</span>
+                    <span class="lab-pill">For redesigns</span>
+                    <span class="lab-pill">For faster approvals</span>
+                </div>
+            </div>
+
+            <div class="lab-steps" aria-label="How the layout lab works">
+                <div class="lab-step">
+                    <strong>1. Choose a business type</strong>
+                    <span>Match the layout to agency, store, coach, or restaurant needs.</span>
+                </div>
+                <div class="lab-step">
+                    <strong>2. Pick a visual style</strong>
+                    <span>Test minimal, bold, editorial, or soft before a build starts.</span>
+                </div>
+                <div class="lab-step">
+                    <strong>3. Save or continue</strong>
+                    <span>Keep the selected direction and pass it into signup.</span>
+                </div>
+            </div>
 
             <div class="field">
                 <label for="industrySelect">Business Type</label>
@@ -527,21 +680,37 @@
                 </article>
             </div>
 
-            <h2 style="margin:0.2rem 0 0; font-size:1.15rem;">Quick Template Starters</h2>
+            <div class="template-heading">
+                <span class="template-badge">Quick starters</span>
+                <h2 style="margin:0.2rem 0 0; font-size:1.15rem;">Use a template to jump straight to a strong direction.</h2>
+                <p>Each starter is tuned to a different business objective so the preview feels closer to a real website brief.</p>
+            </div>
             <div class="template-grid">
                 <article class="template">
                     <h3>Conversion Landing</h3>
                     <p>High-contrast sections with clear CTA hierarchy for lead generation.</p>
+                    <ul>
+                        <li>Best for consultants and service businesses</li>
+                        <li>Focuses on one message and one conversion goal</li>
+                    </ul>
                     <button type="button" data-template='{"industry":"coach","style":"bold","accent":"#ea580c"}'>Try Template</button>
                 </article>
                 <article class="template">
                     <h3>Storefront Showcase</h3>
                     <p>Product-first layout with card-based visual rhythm for ecommerce teams.</p>
+                    <ul>
+                        <li>Best for product-heavy brands</li>
+                        <li>Highlights featured items and shopping rhythm</li>
+                    </ul>
                     <button type="button" data-template='{"industry":"shop","style":"minimal","accent":"#16a34a"}'>Try Template</button>
                 </article>
                 <article class="template">
                     <h3>Brand Story Site</h3>
                     <p>Editorial composition with typography-led storytelling and soft spacing.</p>
+                    <ul>
+                        <li>Best for agencies and portfolio brands</li>
+                        <li>Leans into narrative and visual breathing room</li>
+                    </ul>
                     <button type="button" data-template='{"industry":"agency","style":"editorial","accent":"#7c3aed"}'>Try Template</button>
                 </article>
             </div>

@@ -1,8 +1,10 @@
 const { chromium } = require('playwright');
 
 (async () => {
-  const frontendBase = 'http://localhost:3000';
-  const backendBase = 'http://localhost:3000';
+  const backendPort = process.env.BACKEND_PORT ? Number(process.env.BACKEND_PORT) : (process.env.PORT ? Number(process.env.PORT) : 3000);
+  const frontendPort = process.env.FRONTEND_PORT ? Number(process.env.FRONTEND_PORT) : backendPort;
+  const frontendBase = `http://localhost:${frontendPort}`;
+  const backendBase = `http://localhost:${backendPort}`;
 
   const testIdentity = {
     name: 'Jordan Backend',

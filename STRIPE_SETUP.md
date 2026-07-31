@@ -49,7 +49,7 @@ node server.js
 You should see:
 ```
 ✓ Stripe connection successful
-Server running on http://localhost:3000
+Server running on http://localhost:4000
 Mode: TEST
 ```
 
@@ -101,7 +101,7 @@ In test mode, use these card numbers to test different scenarios:
 
 1. **Create Payment Intent:**
    ```bash
-   curl -X POST http://localhost:3000/api/billing/payment-intent \
+  curl -X POST http://localhost:4000/api/billing/payment-intent \
      -H "Content-Type: application/json" \
      -H "Authorization: Bearer test_token" \
      -d '{
@@ -124,7 +124,7 @@ In test mode, use these card numbers to test different scenarios:
 
 3. **Process Charge:**
    ```bash
-   curl -X POST http://localhost:3000/api/billing/charge \
+  curl -X POST http://localhost:4000/api/billing/charge \
      -H "Content-Type: application/json" \
      -H "Authorization: Bearer test_token" \
      -d '{
